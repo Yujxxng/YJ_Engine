@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\include\GLFW;$(SolutionDir)Dependencies\include\GL;$(SolutionDir)Dependencies\include\GLM;$(SolutionDir)Dependencies\include</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\include\GLFW;$(SolutionDir)Dependencies\include\GL;$(SolutionDir)Dependencies\include\GLM;$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\json\single_include;$(SolutionDir)Dependencies\json\include</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\include\GLFW;$(SolutionDir)Dependencies\include\GL;$(SolutionDir)Dependencies\include\GLM;$(SolutionDir)Dependencies\include</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\include\GLFW;$(SolutionDir)Dependencies\include\GL;$(SolutionDir)Dependencies\include\GLM;$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\json\single_include;$(SolutionDir)Dependencies\json\include</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -119,7 +119,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /s /r /y /q</Command>
@@ -133,24 +133,48 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets\*" "$(OutDir)Assets\" /s /r /y /q</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentManager\GraphicComponent.cpp" />
+    <ClCompile Include="ComponentManager\GraphicComponentManager.cpp" />
+    <ClCompile Include="Components\SpriteComponent.cpp" />
+    <ClCompile Include="GSM\GameStateManager.cpp" />
+    <ClCompile Include="GSM\GoalLevel.cpp" />
+    <ClCompile Include="GSM\MainMenu.cpp" />
+    <ClCompile Include="GSM\Test.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="myStd\Color.cpp" />
+    <ClCompile Include="myStd\Mesh.cpp" />
+    <ClCompile Include="myStd\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ComponentManager\BaseComponent.h" />
+    <ClInclude Include="ComponentManager\GraphicComponent.h" />
+    <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
+    <ClInclude Include="Components\SpriteComponent.h" />
+    <ClInclude Include="GSM\BaseLevel.h" />
+    <ClInclude Include="GSM\GameStateManager.h" />
+    <ClInclude Include="GSM\GoalLevel.h" />
+    <ClInclude Include="GSM\MainMenu.h" />
+    <ClInclude Include="GSM\Test.h" />
+    <ClInclude Include="myStd\Color.h" />
+    <ClInclude Include="myStd\Mesh.h" />
+    <ClInclude Include="myStd\Model.h" />
+    <ClInclude Include="myStd\Shader.h" />
+    <ClInclude Include="Utils\myUtils.h" />
+    <ClInclude Include="myStd\Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
