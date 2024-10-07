@@ -147,9 +147,16 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentManager\EngineComponent.cpp" />
+    <ClCompile Include="ComponentManager\EngineComponentManager.cpp" />
+    <ClCompile Include="ComponentManager\GameObject.cpp" />
     <ClCompile Include="ComponentManager\GraphicComponent.cpp" />
     <ClCompile Include="ComponentManager\GraphicComponentManager.cpp" />
+    <ClCompile Include="ComponentManager\LogicComponent.cpp" />
+    <ClCompile Include="ComponentManager\LogicComponentManager.cpp" />
+    <ClCompile Include="Components\PlayerComponent.cpp" />
     <ClCompile Include="Components\SpriteComponent.cpp" />
+    <ClCompile Include="Components\TransformComponent.cpp" />
     <ClCompile Include="GSM\GameStateManager.cpp" />
     <ClCompile Include="GSM\GoalLevel.cpp" />
     <ClCompile Include="GSM\MainMenu.cpp" />
@@ -158,12 +165,20 @@
     <ClCompile Include="myStd\Color.cpp" />
     <ClCompile Include="myStd\Mesh.cpp" />
     <ClCompile Include="myStd\Shader.cpp" />
+    <ClCompile Include="Object\TestObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentManager\BaseComponent.h" />
+    <ClInclude Include="ComponentManager\EngineComponent.h" />
+    <ClInclude Include="ComponentManager\EngineComponentManager.h" />
+    <ClInclude Include="ComponentManager\GameObject.h" />
     <ClInclude Include="ComponentManager\GraphicComponent.h" />
     <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
+    <ClInclude Include="ComponentManager\LogicComponent.h" />
+    <ClInclude Include="ComponentManager\LogicComponentManager.h" />
+    <ClInclude Include="Components\PlayerComponent.h" />
     <ClInclude Include="Components\SpriteComponent.h" />
+    <ClInclude Include="Components\TransformComponent.h" />
     <ClInclude Include="GSM\BaseLevel.h" />
     <ClInclude Include="GSM\GameStateManager.h" />
     <ClInclude Include="GSM\GoalLevel.h" />
@@ -171,8 +186,8 @@
     <ClInclude Include="GSM\Test.h" />
     <ClInclude Include="myStd\Color.h" />
     <ClInclude Include="myStd\Mesh.h" />
-    <ClInclude Include="myStd\Model.h" />
     <ClInclude Include="myStd\Shader.h" />
+    <ClInclude Include="Object\TestObject.h" />
     <ClInclude Include="Utils\myUtils.h" />
     <ClInclude Include="myStd\Texture.h" />
   </ItemGroup>

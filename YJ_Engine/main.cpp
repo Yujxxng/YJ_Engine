@@ -9,9 +9,14 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 #include <filesystem>
 
-#include "myStd/Mesh.h"
+#include "GSM/GameStateManager.h"
+#include "GSM/Test.h"
+#include "ComponentManager/EngineComponentManager.h"
+#include "ComponentManager/GraphicComponentManager.h"
 
 void Window_Resized(GLFWwindow* window, int width, int height);
 
@@ -62,6 +67,8 @@ GLuint CreateTexture(const char* fileName)
 
 int main()
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	glfwSetErrorCallback(show_glfw_error);
 	copyAssets();
 	// Initialize the library
@@ -105,90 +112,53 @@ int main()
 	int nr_extensions = 0;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &nr_extensions);
 
-	glClearColor(0, 0, 0, 1);
-	/*
-	Shader myShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
+	//glClearColor(0, 0, 0, 1);
+	//Shader myShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
+	//
+	//GLuint tex = CreateTexture("Assets/manggom.png");
+	//glBindTexture(GL_TEXTURE_2D, tex);
 
-	float vertices[] = {
-		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   0.0f, 1.0f    // top left 
-	};
-
-	unsigned int indices[] =
-	{
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	unsigned int VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-	GLuint tex = CreateTexture("Assets/manggom.png");
-	glBindTexture(GL_TEXTURE_2D, tex);
-	*/
+	GSM::GameStateManager* gsm = GSM::GameStateManager::GetGSMPtr();
+	gsm->ChangeLevel(new Levels::Test);
 
 	double lastTime = glfwGetTime();
 	int frames = 0;
 	int count = 0;
-
-	Mesh mesh;
-
-	while (!glfwWindowShouldClose(window)) 
+	
+	std::string str;
+	std::string frm = std::to_string(frames) + "fps";
+	while(gsm->gGameRunning)
 	{
-		count++;
+		glClear(GL_COLOR_BUFFER_BIT);
 
+		count++;
 		double currentTime = glfwGetTime();
 		frames++;
-
+		
 		if (currentTime - lastTime >= 1.0f)
 		{
-			std::cout << 1000.0f / frames << "ms/frame | " << frames << "fps" << std::endl;
+			//std::cout << 1000.0f / frames << "ms/frame | " << frames << "fps" << std::endl;
+			frm = std::to_string(frames) + "fps";
 			frames = 0;
 			lastTime = currentTime;
 		}
-		
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		str = "YJ_Engine | " + frm;
+		glfwSetWindowTitle(window, str.c_str());
 
-		mesh.Draw();
-		//myShader.use();
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		gsm->Update();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-	}
 
-	//glDeleteVertexArrays(1, &VAO);
-	//glDeleteBuffers(1, &VBO);
-	//glDeleteBuffers(1, &EBO);
+		if (glfwWindowShouldClose(window))
+			gsm->gGameRunning = 0;
+	}
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	gsm->Exit();
+	gsm->DeleteGSM();
 
 	return 0;
 }
@@ -208,14 +178,13 @@ void PrintVersionInfo()
 void Window_Resized(GLFWwindow* window, int width, int height) {
 	std::cout << "Window resized, new window size: " << width << " x " << height << '\n';
 
-	glClearColor(0, 0, 1, 1);
+	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glfwSwapBuffers(window);
 }
 
 void Key_Pressed(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == 'Q' && action == GLFW_PRESS) {
-		glfwTerminate();
-		exit(0);
+		GSM::GameStateManager::GetGSMPtr()->gGameRunning = 0;
 	}
 }

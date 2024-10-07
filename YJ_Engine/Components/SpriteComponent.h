@@ -6,10 +6,15 @@
 //#include "../Resource/TextureResource.h"
 
 #include "../myStd/Color.h"
+#include "../myStd/Mesh.h"
+#include "../myStd/Shader.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 
 class SpriteComponent : public GraphicComponent
 {
@@ -48,6 +53,15 @@ public:
 	//
 	//static ComponentSerializer* CreateComponent(GameObject* owner);
 #elif 1
+private:
+	Mesh* mesh;
+	Shader shader;
+
+	Color color{};
+	std::string tex;
+	//std::vector<std::string> texture;
+	//int texIdx;
+
 public:
 	SpriteComponent(GameObject* go);
 	~SpriteComponent();
@@ -55,5 +69,7 @@ public:
 	GameObject* GetOwner();
 
 	void Update() override;
+
+	void SetColor(const Color&);
 #endif
 };

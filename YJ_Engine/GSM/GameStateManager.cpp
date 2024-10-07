@@ -1,9 +1,9 @@
 #include "GameStateManager.h"
 #include "BaseLevel.h"
-//#include "..\ComponentManager\LogicComponentManager.h"
-//#include "..\ComponentManager\LogicComponent.h"
-//#include "..\ComponentManager\EngineComponentManager.h"
-//#include "..\ComponentManager\GraphicComponentManager.h"
+#include "..\ComponentManager\LogicComponentManager.h"
+#include "..\ComponentManager\LogicComponent.h"
+#include "..\ComponentManager\EngineComponentManager.h"
+#include "..\ComponentManager\GraphicComponentManager.h"
 //#include "..\ComponentManager\EventManager.h"
 //#include "..\ComponentManager\ResourceManager.h"
 #include <iostream>
@@ -66,9 +66,9 @@ void GSM::GameStateManager::Update()
 
     if (currentLevel)
     {
-        //LogicComponentManager::getPtr()->Update();
-        //EngineComponentManager::getPtr()->Update();
-        //GraphicComponentManager::getPtr()->Update();
+        LogicComponentManager::getPtr()->Update();
+        EngineComponentManager::getPtr()->Update();
+        GraphicComponentManager::getPtr()->Update();
 
         currentLevel->Update();
     }
@@ -86,9 +86,9 @@ void GSM::GameStateManager::Exit()
         delete currentLevel;
         currentLevel = nullptr;
     }
-   //LogicComponentManager::DeletePtr();
-   //EngineComponentManager::DeletePtr();
-   //GraphicComponentManager::DeletePtr();
+   LogicComponentManager::DeletePtr();
+   EngineComponentManager::DeletePtr();
+   GraphicComponentManager::DeletePtr();
     //EventManager::DeletePtr();
 }
 

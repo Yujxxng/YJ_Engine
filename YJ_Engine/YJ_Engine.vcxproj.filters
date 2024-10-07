@@ -48,6 +48,30 @@
     <ClCompile Include="myStd\Mesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentManager\GameObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\TransformComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentManager\EngineComponentManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentManager\EngineComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\TestObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PlayerComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentManager\LogicComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentManager\LogicComponentManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myStd\Shader.h">
@@ -92,7 +116,28 @@
     <ClInclude Include="myStd\Mesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="myStd\Model.h">
+    <ClInclude Include="ComponentManager\GameObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\TransformComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager\EngineComponentManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager\EngineComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\TestObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PlayerComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager\LogicComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager\LogicComponentManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

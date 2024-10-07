@@ -6,11 +6,20 @@
 #include <glfw3.h>
 #include <glm.hpp>
 
-#include "Shader.h"
 #include "../myStd/Color.h"
+#include "Mesh.h"
+#include "Shader.h"
 
 #include <iostream>
 
 class Texture
 {
+	Mesh* mesh;
+	Shader shader;
+
+	GLuint textureName{};
+
+public:
+	Texture();
+	~Texture();
 };
