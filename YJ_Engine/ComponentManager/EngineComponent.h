@@ -8,7 +8,7 @@ class EngineComponent : public BaseComponent
 public:
 	EngineComponent() = delete;
 	EngineComponent(GameObject* go);
-	~EngineComponent();
+	virtual ~EngineComponent() override;
 
 	GameObject* GetOwner();
 

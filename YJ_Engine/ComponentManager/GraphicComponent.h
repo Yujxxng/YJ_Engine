@@ -6,7 +6,7 @@ class GraphicComponent : public BaseComponent
 public:
 	GraphicComponent() = delete;
 	GraphicComponent(GameObject* go);
-	~GraphicComponent();
+	virtual ~GraphicComponent() override;
 
 	GameObject* GetOwner();
 

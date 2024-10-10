@@ -9,7 +9,7 @@ class LogicComponent : public BaseComponent
 public:
 	LogicComponent() = delete;
 	LogicComponent(GameObject* go);
-	~LogicComponent();
+	virtual ~LogicComponent() override;
 
 	GameObject* GetOwner();
 

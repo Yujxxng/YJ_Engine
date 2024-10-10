@@ -1,25 +1,24 @@
 #pragma once
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
+
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
+
+#include <string>
+#include <iostream>
 
 #include "../myStd/Color.h"
 #include "Mesh.h"
 #include "Shader.h"
 
-#include <iostream>
-
-class Texture
+typedef struct Texture
 {
-	Mesh* mesh;
-	Shader shader;
+	const char* texName;
+	GLuint tex;
+	int width, height;
+}Texture;
 
-	GLuint textureName{};
-
-public:
-	Texture();
-	~Texture();
-};
+Texture* CreateTexture(const char* fileName);

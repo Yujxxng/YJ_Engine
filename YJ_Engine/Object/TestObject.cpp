@@ -40,11 +40,18 @@ void TestObject::SetPos(float x, float y)
 
 void TestObject::SetColor(float r, float g, float b, float a)
 {
-	color.r = r;
-	color.g = g;
-	color.b = b;
-	color.a = a;
+	color.r = (unsigned char)r;
+	color.g = (unsigned char)g;
+	color.b = (unsigned char)b;
+	color.a = (unsigned char)a;
 	SpriteComponent* sComp = (SpriteComponent*)FindComponent("Sprite");
 	if (sComp != nullptr)
 		sComp->SetColor(color);
+}
+
+void TestObject::SetTexture(const char* fileName)
+{
+	SpriteComponent* sComp = (SpriteComponent*)FindComponent("Sprite");
+	if (sComp != nullptr)
+		sComp->SetTexture(fileName);
 }

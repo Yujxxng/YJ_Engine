@@ -1,5 +1,16 @@
 #pragma once
 
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <glew.h>
+#include <glfw3.h>
+#include <glm.hpp>
+
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
+
 #include "..\ComponentManager\/GraphicComponent.h"
 #include "..\ComponentManager\/GraphicComponentManager.h"
 //#include "../ComponentManager/ResourceManager.h"
@@ -8,13 +19,7 @@
 #include "../myStd/Color.h"
 #include "../myStd/Mesh.h"
 #include "../myStd/Shader.h"
-
-#include <string>
-#include <vector>
-#include <iostream>
-
-#include <GLM/gtc/matrix_transform.hpp>
-#include <GLM/gtc/type_ptr.hpp>
+#include "../myStd/Texture.h"
 
 class SpriteComponent : public GraphicComponent
 {
@@ -58,7 +63,7 @@ private:
 	Shader shader;
 
 	Color color{};
-	std::string tex;
+	Texture* tex;
 	//std::vector<std::string> texture;
 	//int texIdx;
 
@@ -71,5 +76,7 @@ public:
 	void Update() override;
 
 	void SetColor(const Color&);
+	void SetTexture(const char* fileName);
+
 #endif
 };

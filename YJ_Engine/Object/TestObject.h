@@ -18,4 +18,5 @@ public:
 	void SetSize(float x, float y);
 	void SetPos(float x, float y);
 	void SetColor(float r, float g, float b, float a);
+	void SetTexture(const char* fileName);
 };

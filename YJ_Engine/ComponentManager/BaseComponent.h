@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
 #include <iostream>
+//#include "../Serializer/ComponentSerializer.h"
 
 using namespace std;
 
 class GameObject;
 
-class BaseComponent
+class BaseComponent// : public ComponentSerializer
 {
 	BaseComponent() = delete;
 
@@ -19,7 +20,7 @@ public:
 	BaseComponent(const BaseComponent&) = delete;
 	BaseComponent& operator=(const BaseComponent&) = delete;
 
-	//virtual ~BaseComponent() override {}
+	virtual ~BaseComponent() {};
 
 	string GetID() { return this->ID; }
 

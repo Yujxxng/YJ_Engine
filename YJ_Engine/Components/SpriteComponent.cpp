@@ -5,14 +5,16 @@
 
 #include "TransformComponent.h"
 
-SpriteComponent::SpriteComponent(GameObject* go) : GraphicComponent(go), shader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs")
+SpriteComponent::SpriteComponent(GameObject* go) : GraphicComponent(go)
 {
 	ID = "Sprite";
-	
+	shader.setShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
+	tex = CreateTexture("Assets/white.png");
 }
 
 SpriteComponent::~SpriteComponent()
 {
+	delete tex;
 	//if (mTex != nullptr && !texName.empty())
 	//	ResourceManager::GetPtr()->Unload(texName);
 	//if (!mTex.empty() && !texName.empty())
@@ -86,6 +88,9 @@ void SpriteComponent::Update()
 		std::exit(EXIT_FAILURE);
 	}
 
+	glActiveTexture(GL_TEXTURE0);
+	//automatically assign the texture to the fragment shader's sampler
+	glBindTexture(GL_TEXTURE_2D, tex->tex);
 	mesh->Draw();
 	delete mesh;
 	shader.unUse();
@@ -94,6 +99,10 @@ void SpriteComponent::Update()
 void SpriteComponent::SetColor(const Color& otherColor)
 {
 	color = otherColor;
+}
+void SpriteComponent::SetTexture(const char* fileName)
+{
+	tex = CreateTexture(fileName);
 }
 /*
 void SpriteComponent::SetColor(const Color& color)

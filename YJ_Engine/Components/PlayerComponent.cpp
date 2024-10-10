@@ -24,13 +24,13 @@ void PlayerComponent::Update()
 	//Check for input
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		std::cout << "Press LEFT" << std::endl;
+		//std::cout << "Press LEFT" << std::endl;
 		tComp->SetPos({ tComp->GetPos().x - 0.1f, tComp->GetPos().y });
 	}
 
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		std::cout << "Press RIGHT" << std::endl;
+		//std::cout << "Press RIGHT" << std::endl;
 		tComp->SetPos({ tComp->GetPos().x + 0.1f, tComp->GetPos().y });
 	}
 	//if (AEInputCheckCurr(AEVK_LEFT)) r->AddVelocity(-speed, 0);

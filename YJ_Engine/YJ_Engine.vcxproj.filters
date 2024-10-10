@@ -72,6 +72,9 @@
     <ClCompile Include="ComponentManager\LogicComponentManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="myStd\Texture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myStd\Shader.h">

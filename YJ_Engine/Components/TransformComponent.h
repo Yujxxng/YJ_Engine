@@ -1,8 +1,11 @@
 #pragma once
 #include "..\ComponentManager\/EngineComponentManager.h"
 #include "..\ComponentManager\/EngineComponent.h"
+
 #include <string>
 #include <glm.hpp>
+#include <glew.h>
+#include <glfw3.h>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 
@@ -45,7 +48,7 @@ public:
 	float angle_speed, angle_disp;
 	
 	glm::vec2 position{ 0.0f, 0.0f };
-	glm::vec2 scale{};
+	glm::vec2 scale{ 1.f, 1.f };
 	
 	glm::mat3 mdl_to_ndc_xform;
 	
@@ -64,5 +67,10 @@ public:
 	const glm::vec2& GetScale() const { return scale; }
 	const float& GetRot() const { return angle_disp; }
 	const glm::mat3x3& getMatrix() const { return mdl_to_ndc_xform; }
+
+	//void LoadFromJson(const json&) override;
+	//json SaveToJson() override;
+	//
+	//static ComponentSerializer* CreateComponent(GameObject* owner);
 #endif
 };
