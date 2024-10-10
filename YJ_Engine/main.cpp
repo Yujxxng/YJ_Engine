@@ -3,23 +3,19 @@
 #include <crtdbg.h>
 
 #include <iostream>
-#include <glew.h>
-#include <glfw3.h>
-#include <glm.hpp>
-#include <GLM/gtc/matrix_transform.hpp>
-#include <GLM/gtc/type_ptr.hpp>
 #include <filesystem>
+
+#include "myStd/Helper.h"
 
 #include "GSM/GameStateManager.h"
 #include "GSM/Test.h"
+
 #include "ComponentManager/EngineComponentManager.h"
 #include "ComponentManager/GraphicComponentManager.h"
 
-void Window_Resized(GLFWwindow* window, int width, int height);
-
-void Key_Pressed(GLFWwindow* window, int key, int scancode, int action, int mods);
-void show_glfw_error(int error, const char* description);
-void PrintVersionInfo();
+#include "source/imgui/imgui.h"
+#include "source/imgui/imgui_impl_glfw.h"
+#include "source/imgui/imgui_impl_opengl3.h"
 
 void copyAssets()
 {
@@ -31,73 +27,72 @@ void copyAssets()
 		std::filesystem::copy(entry.path(), targetDir / entry.path().filename(), std::filesystem::copy_options::overwrite_existing);	
 }
 
+static void init(GLint width, GLint height, std::string title);
+
+void InitImgui(GLFWwindow* window)
+{
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init();
+}
+void shutdownImgui()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	glfwSetErrorCallback(show_glfw_error);
+	//glfwSetErrorCallback(show_glfw_error);
 	copyAssets();
-	// Initialize the library
-	if (!glfwInit()) {
-		std::cerr << "fail to init GLFW" << '\n';
-		return -1;
-	}
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);	
-
-	GLFWwindow* window = glfwCreateWindow(800, 600, "YJ_Engine", NULL, NULL);
-	if (!window)
-	{
-		std::cerr << "fail to genetate window" << '\n';
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSetWindowSizeCallback(window, Window_Resized);
-	glfwSetKeyCallback(window, Key_Pressed);
+	init(800, 600, "YJEngine");
 
 	//Set Vsync (Buffer swapping, 60fps)
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
-	//Initialize GLEW
-	glewExperimental = GL_TRUE;
-	GLenum errorCode = glewInit();
-	if (errorCode != GLEW_OK) {
-		std::cerr << "fali to init GLEW " << glewGetErrorString(errorCode) << std::endl;
-		glfwTerminate();
-		exit(-1);
-	}
-	PrintVersionInfo();
+	InitImgui(Helper::ptr_window);
+
+	Helper::print_specs();
 
 	int nr_extensions = 0;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &nr_extensions);
 
-	//glClearColor(0, 0, 0, 1);
-	//Shader myShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
-	//
-	//GLuint tex = CreateTexture("Assets/manggom.png");
-	//glBindTexture(GL_TEXTURE_2D, tex);
-
 	GSM::GameStateManager* gsm = GSM::GameStateManager::GetGSMPtr();
 	gsm->ChangeLevel(new Levels::Test);
 
+	//Frame Controller
+	float frameRate = 1.f / 60.f;
 	double lastTime = glfwGetTime();
+	double startTime = 0;
 	int frames = 0;
-	int count = 0;
 	
 	std::string str;
 	std::string frm = std::to_string(frames) + "fps";
+
 	while(gsm->gGameRunning)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		startTime = glfwGetTime();
 
-		count++;
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		glfwPollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow(); // Show demo window! :)
+
 		double currentTime = glfwGetTime();
 		frames++;
 		
@@ -109,18 +104,26 @@ int main()
 			lastTime = currentTime;
 		}
 		str = "YJ_Engine | " + frm;
-		glfwSetWindowTitle(window, str.c_str());
+		glfwSetWindowTitle(Helper::ptr_window, str.c_str());
 
 		gsm->Update();
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		if (glfwWindowShouldClose(window))
+		glfwSwapBuffers(Helper::ptr_window);
+
+		double curTime = glfwGetTime();
+		while (curTime - startTime < frameRate)
+			curTime = glfwGetTime();
+
+		if (glfwWindowShouldClose(Helper::ptr_window))
 			gsm->gGameRunning = 0;
+
 	}
 
-	glfwDestroyWindow(window);
+	shutdownImgui();
+	glfwDestroyWindow(Helper::ptr_window);
 	glfwTerminate();
 
 	gsm->Exit();
@@ -129,28 +132,11 @@ int main()
 	return 0;
 }
 
-void show_glfw_error(int error, const char* description) {
-	std::cerr << "Error: " << description << '\n';
-}
-
-void PrintVersionInfo()
+void init(GLint width, GLint height, std::string title)
 {
-	std::cout << "OpenGL version : " << glGetString(GL_VERSION) << std::endl;
-	std::cout << "GLSL version : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-	std::cout << "Vendor : " << glGetString(GL_VENDOR) << std::endl;
-	std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
-}
-
-void Window_Resized(GLFWwindow* window, int width, int height) {
-	std::cout << "Window resized, new window size: " << width << " x " << height << '\n';
-
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glfwSwapBuffers(window);
-}
-
-void Key_Pressed(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (key == 'Q' && action == GLFW_PRESS) {
-		GSM::GameStateManager::GetGSMPtr()->gGameRunning = 0;
+	if (!Helper::init(width, height, title))
+	{
+		std::cout << "Unable to create OpenGL context" << std::endl;
+		std::exit(EXIT_FAILURE);
 	}
 }

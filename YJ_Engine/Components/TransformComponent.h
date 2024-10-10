@@ -50,6 +50,7 @@ public:
 	glm::vec2 position{ 0.0f, 0.0f };
 	glm::vec2 scale{ 1.f, 1.f };
 	
+	glm::mat3 mdl_xform;
 	glm::mat3 mdl_to_ndc_xform;
 	
 	void CalculateMatrix();

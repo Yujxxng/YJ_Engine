@@ -163,10 +163,20 @@
     <ClCompile Include="GSM\Test.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myStd\Color.cpp" />
+    <ClCompile Include="myStd\Helper.cpp" />
     <ClCompile Include="myStd\Mesh.cpp" />
     <ClCompile Include="myStd\Shader.cpp" />
     <ClCompile Include="myStd\Texture.cpp" />
+    <ClCompile Include="Object\Camera.cpp" />
     <ClCompile Include="Object\TestObject.cpp" />
+    <ClCompile Include="source\imgui\imgui.cpp" />
+    <ClCompile Include="source\imgui\imgui_demo.cpp" />
+    <ClCompile Include="source\imgui\imgui_draw.cpp" />
+    <ClCompile Include="source\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="source\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="source\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="source\imgui\imgui_tables.cpp" />
+    <ClCompile Include="source\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentManager\BaseComponent.h" />
@@ -180,15 +190,28 @@
     <ClInclude Include="Components\PlayerComponent.h" />
     <ClInclude Include="Components\SpriteComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
+    <ClInclude Include="Editor\MainEditor.h" />
     <ClInclude Include="GSM\BaseLevel.h" />
     <ClInclude Include="GSM\GameStateManager.h" />
     <ClInclude Include="GSM\GoalLevel.h" />
     <ClInclude Include="GSM\MainMenu.h" />
     <ClInclude Include="GSM\Test.h" />
     <ClInclude Include="myStd\Color.h" />
+    <ClInclude Include="myStd\Helper.h" />
     <ClInclude Include="myStd\Mesh.h" />
     <ClInclude Include="myStd\Shader.h" />
+    <ClInclude Include="Object\Camera.h" />
     <ClInclude Include="Object\TestObject.h" />
+    <ClInclude Include="source\imgui\imconfig.h" />
+    <ClInclude Include="source\imgui\imgui.h" />
+    <ClInclude Include="source\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="source\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="source\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="source\imgui\imgui_internal.h" />
+    <ClInclude Include="source\imgui\imgui_stdlib.h" />
+    <ClInclude Include="source\imgui\imstb_rectpack.h" />
+    <ClInclude Include="source\imgui\imstb_textedit.h" />
+    <ClInclude Include="source\imgui\imstb_truetype.h" />
     <ClInclude Include="Utils\myUtils.h" />
     <ClInclude Include="myStd\Texture.h" />
   </ItemGroup>

@@ -8,13 +8,20 @@
 SpriteComponent::SpriteComponent(GameObject* go) : GraphicComponent(go)
 {
 	ID = "Sprite";
+
+	mesh = new Mesh();
+	mesh->SetupMesh();
+
 	shader.setShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
+
 	tex = CreateTexture("Assets/white.png");
 }
 
 SpriteComponent::~SpriteComponent()
 {
 	delete tex;
+	delete mesh;
+
 	//if (mTex != nullptr && !texName.empty())
 	//	ResourceManager::GetPtr()->Unload(texName);
 	//if (!mTex.empty() && !texName.empty())
@@ -69,17 +76,22 @@ void SpriteComponent::Update()
 
 	AEGfxMeshFree(mesh);
 #elif 1
-	shader.use();
-	mesh = new Mesh();
-	//Color
-	mesh->SetColor(color.a, color.g, color.b, color.a);
-	
-	mesh->SetupMesh();
 
+	shader.use();
+	
+	//Color
+	mesh->SetColor(color.r, color.g, color.b, color.a);
+	
+	glActiveTexture(GL_TEXTURE0);
+	//automatically assign the texture to the fragment shader's sampler
+	glBindTexture(GL_TEXTURE_2D, tex->tex);
+	
 	//Transform
 	TransformComponent* trs = (TransformComponent*)owner->FindComponent("Transform");
 	glm::mat3x3 tranf = trs->getMatrix();
 
+	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
+	glUniform4f(uniform_var_color, color.r, color.g, color.b, color.a);
 	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
 	if (uniform_var_loc1 >= 0) 
 		glUniformMatrix3fv(uniform_var_loc1, 1, GL_FALSE, glm::value_ptr(tranf));
@@ -88,11 +100,8 @@ void SpriteComponent::Update()
 		std::exit(EXIT_FAILURE);
 	}
 
-	glActiveTexture(GL_TEXTURE0);
-	//automatically assign the texture to the fragment shader's sampler
-	glBindTexture(GL_TEXTURE_2D, tex->tex);
 	mesh->Draw();
-	delete mesh;
+	
 	shader.unUse();
 #endif
 }

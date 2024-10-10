@@ -1,4 +1,6 @@
 #include "TransformComponent.h"
+
+#include "../Object/Camera.h"
 #include <iostream>
 
 #if 0
@@ -137,7 +139,7 @@ TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), po
 
 void TransformComponent::CalculateMatrix()
 {
-#if 0
+#if 1
 	GLFWwindow* currentWindow = glfwGetCurrentContext();
 	GLint wWidth, wHeight;
 	glfwGetWindowSize(currentWindow, &wWidth, &wHeight);
@@ -151,7 +153,7 @@ void TransformComponent::CalculateMatrix()
 		0.f, 0.f, 1.f
 	);
 
-	float angle = glm::radians(30.f);
+	float angle = glm::radians(angle_disp);
 	float c = std::cos(angle);
 	float s = std::sin(angle);
 
@@ -182,13 +184,14 @@ void TransformComponent::CalculateMatrix()
 		0.f, 0.f, 1.f
 	);
 
-	mdl_to_ndc_xform = (tra_mtx2 * rot_mtx * scl_mtx);
+	mdl_xform = (tra_mtx * rot_mtx * scl_mtx);
+	mdl_to_ndc_xform = camera2d.world_to_ndc_xform * mdl_xform;
 	//mdl_to_ndc_xform = tra_mtx * rot_mtx * scl_mtx * h;
 
-#elif 1
+#elif 0
 	glm::mat4 transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(position.x, position.y, 0.0f));
-	transform = glm::rotate(transform, angle_disp, glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::rotate(transform, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 	transform = glm::scale(transform, glm::vec3(scale.x, scale.y, 1.0f));
 
 	mdl_to_ndc_xform = transform;
