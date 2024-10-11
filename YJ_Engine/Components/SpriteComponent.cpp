@@ -115,6 +115,37 @@ void SpriteComponent::SetTexture(const char* fileName)
 		delete tex;
 	tex = CreateTexture(fileName);
 }
+
+void SpriteComponent::LoadFromJson()
+{
+	auto componentData = data.find("componentData");
+	if (componentData != data.end())
+	{
+		auto it = componentData->find("color");
+		color.r = it->begin().value();
+		color.g = (it->begin() + 1).value();
+		color.b = (it->begin() + 2).value();
+
+		tex->texName = data.at("texName").get<std::string>().c_str();
+		SetTexture(tex->texName);
+	}
+}
+
+void SpriteComponent::SaveToJson()
+{
+	json data, componentData;
+	data["type"] = "Sprite";
+
+	componentData["color"] = { color.r, color.g, color.b };
+	componentData["texName"] = tex->texName;
+
+	data["componentData"] = componentData;
+}
+
+ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)
+{
+	return owner->FindComponent("Sprite");
+}
 /*
 void SpriteComponent::SetColor(const Color& color)
 {

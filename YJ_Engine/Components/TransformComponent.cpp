@@ -215,43 +215,41 @@ void TransformComponent::SetScale(const  glm::vec2& otherScale)
 	this->scale = otherScale;
 	CalculateMatrix();
 }
-/*
-void TransformComponent::LoadFromJson(const json& data)
+
+void TransformComponent::LoadFromJson()
 {
-	
+	LoadData();
 	auto componentData = data.find("componentData");
 	if (componentData != data.end())
 	{
 		auto p = componentData->find("position");
-		pos.x = p->begin().value();
-		pos.y = (p->begin() + 1).value();
+		position.x = p->begin().value();
+		position.y = (p->begin() + 1).value();
 
 		auto s = componentData->find("scale");
 		scale.x = s->begin().value();
 		scale.y = (s->begin() + 1).value();
 
 		auto r = componentData->find("rotation");
-		rot = r.value();
+		angle_disp = r.value();
 	}
 
 	CalculateMatrix();
 	
 }
 
-json TransformComponent::SaveToJson()
+void TransformComponent::SaveToJson()
 {
 	
 	json data, componentData;
 
 	data["type"] = "Transform";
 
-	componentData["position"] = { pos.x, pos.y };
+	componentData["position"] = { position.x, position.y };
 	componentData["scale"] = { scale.x, scale.y };
-	componentData["rotation"] = rot;
+	componentData["rotation"] = angle_disp;
 
 	data["componentData"] = componentData;
-
-	return data;
 	
 }
 
@@ -260,6 +258,5 @@ ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)
 
 	return owner->FindComponent("Transform");
 }
-*/
 #endif
 

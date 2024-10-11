@@ -69,9 +69,9 @@ public:
 	const float& GetRot() const { return angle_disp; }
 	const glm::mat3x3& getMatrix() const { return mdl_to_ndc_xform; }
 
-	//void LoadFromJson(const json&) override;
-	//json SaveToJson() override;
-	//
-	//static ComponentSerializer* CreateComponent(GameObject* owner);
+	void LoadFromJson() override;
+	void SaveToJson() override;
+	
+	static ComponentSerializer* CreateComponent(GameObject* owner);
 #endif
 };

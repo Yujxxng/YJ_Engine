@@ -78,5 +78,9 @@ public:
 	void SetColor(const Color&);
 	void SetTexture(const char* fileName);
 
+	void LoadFromJson() override;
+	void SaveToJson() override;
+
+	static ComponentSerializer* CreateComponent(GameObject* owner);
 #endif
 };

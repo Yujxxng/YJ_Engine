@@ -1,19 +1,13 @@
 #include "Registry.h"
 
 #include <iostream>
-#include "../Components/AudioComponent.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/PlayerComponent.h"
-#include "../Components/RigidbodyComponent.h"
 #include "../Components/SpriteComponent.h"
 
 Registry* Registry::registry_ptr = nullptr;
 
 Registry::Registry()
 {
-	componentMap.insert({ "Audio", &AudioComponent::CreateComponent });
-	componentMap.insert({ "Player", &PlayerComponent::CreateComponent });
-	componentMap.insert({ "Rigidbody", &RigidbodyComponent::CreateComponent });
 	componentMap.insert({ "Sprite", &SpriteComponent::CreateComponent });
 	componentMap.insert({ "Transform", &TransformComponent::CreateComponent });
 }

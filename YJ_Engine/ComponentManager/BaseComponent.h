@@ -1,18 +1,16 @@
 #pragma once
 #include <string>
 #include <iostream>
-//#include "../Serializer/ComponentSerializer.h"
-
-using namespace std;
+#include "../Serializer/ComponentSerializer.h"
 
 class GameObject;
 
-class BaseComponent// : public ComponentSerializer
+class BaseComponent : public ComponentSerializer
 {
 	BaseComponent() = delete;
 
 protected:
-	string ID;
+	std::string ID;
 	GameObject* owner = nullptr;
 
 public:

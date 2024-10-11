@@ -9,6 +9,7 @@
 #include "../Object/Camera.h"
 #include "../Object/TestObject.h"
 
+#include "../Components/TransformComponent.h"
 TestObject* testobj;
 void Levels::Test::Init()
 {
@@ -31,6 +32,8 @@ void Levels::Test::Init()
 	testobj[2].SetSize(75.f, 75.f);
 	testobj[2].SetColor(0, 0, 255, 255);
 
+	TransformComponent* tcompt = (TransformComponent*)testobj[0].FindComponent("Transform");
+	tcompt->SaveToJson();
 
 }
 

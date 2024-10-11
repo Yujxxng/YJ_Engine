@@ -169,6 +169,8 @@
     <ClCompile Include="myStd\Texture.cpp" />
     <ClCompile Include="Object\Camera.cpp" />
     <ClCompile Include="Object\TestObject.cpp" />
+    <ClCompile Include="Serializer\ComponentSerializer.cpp" />
+    <ClCompile Include="Serializer\Registry.cpp" />
     <ClCompile Include="source\imgui\imgui.cpp" />
     <ClCompile Include="source\imgui\imgui_demo.cpp" />
     <ClCompile Include="source\imgui\imgui_draw.cpp" />
@@ -202,6 +204,8 @@
     <ClInclude Include="myStd\Shader.h" />
     <ClInclude Include="Object\Camera.h" />
     <ClInclude Include="Object\TestObject.h" />
+    <ClInclude Include="Serializer\ComponentSerializer.h" />
+    <ClInclude Include="Serializer\Registry.h" />
     <ClInclude Include="source\imgui\imconfig.h" />
     <ClInclude Include="source\imgui\imgui.h" />
     <ClInclude Include="source\imgui\imgui_impl_glfw.h" />

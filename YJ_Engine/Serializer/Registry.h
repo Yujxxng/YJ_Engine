@@ -5,10 +5,7 @@
 class ComponentSerializer;
 class GameObject;
 
- ComponentSerializer* example_func(GameObject* owner)
- {
-	 
- }
+// ComponentSerializer* example_func(GameObject* owner){}
 
 class Registry
 {
