@@ -1,5 +1,4 @@
 #include "TransformComponent.h"
-
 #include "../Object/Camera.h"
 #include <iostream>
 
@@ -184,8 +183,10 @@ void TransformComponent::CalculateMatrix()
 		0.f, 0.f, 1.f
 	);
 
+	glm::mat3 tmp = Camera2D::getPtr()->world_to_ndc_xform;
 	mdl_xform = (tra_mtx * rot_mtx * scl_mtx);
-	mdl_to_ndc_xform = camera2d.world_to_ndc_xform * mdl_xform;
+	mdl_to_ndc_xform = tmp * mdl_xform;
+	
 	//mdl_to_ndc_xform = tra_mtx * rot_mtx * scl_mtx * h;
 
 #elif 0

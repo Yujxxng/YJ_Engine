@@ -91,13 +91,13 @@ void SpriteComponent::Update()
 	glm::mat3x3 tranf = trs->getMatrix();
 
 	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
-	glUniform4f(uniform_var_color, color.r, color.g, color.b, color.a);
+	glUniform3f(uniform_var_color, color.r, color.g, color.b);
 	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
 	if (uniform_var_loc1 >= 0) 
 		glUniformMatrix3fv(uniform_var_loc1, 1, GL_FALSE, glm::value_ptr(tranf));
 	else {
 		std::cout << "Uniform variable doesn't exist!!!\n";
-		std::exit(EXIT_FAILURE);
+		//std::exit(EXIT_FAILURE);
 	}
 
 	mesh->Draw();
@@ -111,6 +111,8 @@ void SpriteComponent::SetColor(const Color& otherColor)
 }
 void SpriteComponent::SetTexture(const char* fileName)
 {
+	if (tex)
+		delete tex;
 	tex = CreateTexture(fileName);
 }
 /*

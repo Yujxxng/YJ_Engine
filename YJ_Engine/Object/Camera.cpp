@@ -1,6 +1,26 @@
 #include "Camera.h"
 
-//Camera2D camera2d;
+Camera2D* Camera2D::camera_ptr = nullptr;
+
+Camera2D* Camera2D::getPtr()
+{
+	if (camera_ptr == nullptr)
+	{
+		camera_ptr = new Camera2D;
+		return camera_ptr;
+	}
+	else
+		return camera_ptr;
+}
+
+void Camera2D::DeletePtr()
+{
+	if (camera_ptr != nullptr)
+	{
+		delete camera_ptr;
+		camera_ptr = nullptr;
+	}
+}
 
 void Camera2D::init(GLFWwindow* pWindow)
 {
@@ -30,27 +50,27 @@ void Camera2D::init(GLFWwindow* pWindow)
 	world_to_ndc_xform = camwin * view;
 }
 
-void Camera2D::update(GLFWwindow* pWindow)
+void Camera2D::Update(GLFWwindow* pWindow)
 {
 	GLsizei fb_width, fb_height;
-	GLfloat h = camera2d.height;
+	GLfloat h = height;
 
 	fb_width = ar * h;
-	if (camera2d.zoom_flag)
+	if (zoom_flag)
 	{
 		if (!zoom_max)
 		{
-			camera2d.height -= camera2d.height_chg_val;
-			if (camera2d.height <= camera2d.min_height)
+			height -= height_chg_val;
+			if (height <= min_height)
 				zoom_max = true;
 		}
 		else
 		{
-			camera2d.height += camera2d.height_chg_val;
-			if (camera2d.height >= camera2d.max_height)
+			height += height_chg_val;
+			if (height >= max_height)
 				zoom_max = false;
 		}
-		camera2d.zoom_flag = GL_FALSE;
+		zoom_flag = GL_FALSE;
 	}
 
 	// compute appropriate world-to-camera view transformation matrix
@@ -61,7 +81,7 @@ void Camera2D::update(GLFWwindow* pWindow)
 	right = glm::vec2(c, s);
 
 	glm::mat3 view = glm::mat3x3(1.f);
-	if (camera2d.camtype_flag)
+	if (camtype_flag)
 	{
 		float v = -glm::dot(position, up);
 		float v2 = -glm::dot(position, right);

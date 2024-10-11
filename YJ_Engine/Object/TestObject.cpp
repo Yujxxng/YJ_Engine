@@ -40,10 +40,10 @@ void TestObject::SetPos(float x, float y)
 
 void TestObject::SetColor(float r, float g, float b, float a)
 {
-	color.r = (unsigned char)r;
-	color.g = (unsigned char)g;
-	color.b = (unsigned char)b;
-	color.a = (unsigned char)a;
+	color.r = (unsigned char)(r / 255.f);
+	color.g = (unsigned char)(g / 255.f);
+	color.b = (unsigned char)(b / 255.f);
+	color.a = (unsigned char)(a / 255.f);
 	SpriteComponent* sComp = (SpriteComponent*)FindComponent("Sprite");
 	if (sComp != nullptr)
 		sComp->SetColor(color);

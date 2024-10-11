@@ -6,7 +6,18 @@
 
 class Camera2D
 {
+	Camera2D() = default;
+	~Camera2D() = default;
+
+	Camera2D(const Camera2D&) = delete;
+	const Camera2D& operator=(const Camera2D& other) = delete;
+
+	static Camera2D* camera_ptr;
+
 public:
+	static Camera2D* getPtr();
+	static void DeletePtr();
+
 	glm::vec2 position{ 0, 0 };
 	float degree = 0.0f;
 	glm::vec2 right, up; //Camera control
@@ -14,7 +25,7 @@ public:
 	glm::mat3 camwin_to_ndc_xform;
 	glm::mat3 world_to_ndc_xform;
 
-	GLint height{ 100 };
+	GLint height{ 600 };
 	GLfloat ar;
 
 	GLint min_height{ 500 }, max_height{ 2000 };
@@ -29,7 +40,5 @@ public:
 	GLboolean zoom_max = false;
 
 	void init(GLFWwindow*);
-	void update(GLFWwindow*);
+	void Update(GLFWwindow*);
 };
-
-static Camera2D camera2d;

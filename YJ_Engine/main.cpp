@@ -12,6 +12,7 @@
 
 #include "ComponentManager/EngineComponentManager.h"
 #include "ComponentManager/GraphicComponentManager.h"
+#include "Object/Camera.h"
 
 #include "source/imgui/imgui.h"
 #include "source/imgui/imgui_impl_glfw.h"
@@ -60,9 +61,8 @@ int main()
 
 	//Set Vsync (Buffer swapping, 60fps)
 	glfwSwapInterval(0);
-
 	InitImgui(Helper::ptr_window);
-
+	
 	Helper::print_specs();
 
 	int nr_extensions = 0;

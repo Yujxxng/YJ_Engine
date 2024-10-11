@@ -4,6 +4,8 @@
 #include "..\ComponentManager\LogicComponent.h"
 #include "..\ComponentManager\EngineComponentManager.h"
 #include "..\ComponentManager\GraphicComponentManager.h"
+#include "../Object/Camera.h"
+
 //#include "..\ComponentManager\EventManager.h"
 //#include "..\ComponentManager\ResourceManager.h"
 #include <iostream>
@@ -66,6 +68,7 @@ void GSM::GameStateManager::Update()
 
     if (currentLevel)
     {
+        Camera2D::getPtr()->Update(Helper::ptr_window);
         LogicComponentManager::getPtr()->Update();
         EngineComponentManager::getPtr()->Update();
         GraphicComponentManager::getPtr()->Update();
@@ -86,9 +89,10 @@ void GSM::GameStateManager::Exit()
         delete currentLevel;
         currentLevel = nullptr;
     }
-   LogicComponentManager::DeletePtr();
-   EngineComponentManager::DeletePtr();
-   GraphicComponentManager::DeletePtr();
+    Camera2D::DeletePtr();
+    LogicComponentManager::DeletePtr();
+    EngineComponentManager::DeletePtr();
+    GraphicComponentManager::DeletePtr();
     //EventManager::DeletePtr();
 }
 
