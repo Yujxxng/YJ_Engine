@@ -5,8 +5,15 @@
 
 #include "../ComponentManager/GameObject.h"
 
+enum Status
+{
+	Dead = 0,
+	Alive = 1
+};
+
 class TestObject : public GameObject
 {
+	Status status = Dead;
 	glm::vec2 size{0.f, 0.f};
 	glm::vec2 pos{100.f, 100.f};
 	Color color{255, 255, 255, 255};

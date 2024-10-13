@@ -12,7 +12,7 @@ class GraphicComponentManager
 	const GraphicComponentManager& operator=(const GraphicComponentManager& other) = delete;
 
 	static GraphicComponentManager* graphic_ptr;
-	list<GraphicComponent*> graphics;
+	std::list<GraphicComponent*> graphics;
 
 public:
 	static GraphicComponentManager* getPtr();

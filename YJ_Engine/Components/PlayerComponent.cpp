@@ -41,6 +41,12 @@ void PlayerComponent::SetSpeed(float v)
 {
 	this->speed = v;
 }
+void PlayerComponent::LoadFromJson()
+{
+}
+void PlayerComponent::SaveToJson()
+{
+}
 /*
 void PlayerComponent::LoadFromJson(const json& data)
 {

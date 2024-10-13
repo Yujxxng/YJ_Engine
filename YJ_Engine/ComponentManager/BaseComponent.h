@@ -20,7 +20,7 @@ public:
 
 	virtual ~BaseComponent() {};
 
-	string GetID() { return this->ID; }
+	std::string GetID(){ return this->ID; }
 
 	virtual void Update() = 0;
 };

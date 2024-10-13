@@ -150,6 +150,7 @@
     <ClCompile Include="ComponentManager\EngineComponent.cpp" />
     <ClCompile Include="ComponentManager\EngineComponentManager.cpp" />
     <ClCompile Include="ComponentManager\GameObject.cpp" />
+    <ClCompile Include="ComponentManager\GameObjectManager.cpp" />
     <ClCompile Include="ComponentManager\GraphicComponent.cpp" />
     <ClCompile Include="ComponentManager\GraphicComponentManager.cpp" />
     <ClCompile Include="ComponentManager\LogicComponent.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="ComponentManager\EngineComponent.h" />
     <ClInclude Include="ComponentManager\EngineComponentManager.h" />
     <ClInclude Include="ComponentManager\GameObject.h" />
+    <ClInclude Include="ComponentManager\GameObjectManager.h" />
     <ClInclude Include="ComponentManager\GraphicComponent.h" />
     <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
     <ClInclude Include="ComponentManager\LogicComponent.h" />

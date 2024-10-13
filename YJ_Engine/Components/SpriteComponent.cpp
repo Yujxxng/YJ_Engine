@@ -34,49 +34,6 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::Update()
 {
-#if 0
-	AEGfxMeshStart();
-
-	AEGfxTriAdd(
-		-0.5f, -0.5f, 0xFFFFFFFF, 0.0f, 1.0f,
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
-
-	AEGfxTriAdd(
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		0.5f, 0.5f, 0xFFFFFFFF, 1.0f, 0.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
-
-	AEGfxVertexList* mesh = AEGfxMeshEnd();
-	if (!mTex.empty())
-		AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-	else
-		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-
-	//AEGfxSetColorToMultiply(mColor.r / 255.f, mColor.g / 255.f, mColor.b / 255.f, 255.f);
-	if(!mTex.empty())
-		AEGfxSetColorToMultiply(1, 1, 1, alpha / 255.f);
-	else
-		AEGfxSetColorToMultiply(mColor.r / 255.f, mColor.g / 255.f, mColor.b / 255.f, alpha / 255.f);
-	
-	AEGfxSetColorToAdd(mColor.r / 255.f, mColor.g / 255.f, mColor.b / 255.f, alpha / 255.f);
-	
-	AEGfxSetBlendMode(AE_GFX_BM_BLEND);
-	AEGfxSetTransparency(1);
-
-	if(!mTex.empty())
-		AEGfxTextureSet(mTex[index], 0, 0);
-
-
-	TransformComponent* trs = (TransformComponent*)owner->FindComponent("Transform");
-	AEMtx33 tranf = trs->getMatrix();
-	AEGfxSetTransform(tranf.m);
-
-	AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
-
-	AEGfxMeshFree(mesh);
-#elif 1
-
 	shader.use();
 	
 	//Color
@@ -103,7 +60,6 @@ void SpriteComponent::Update()
 	mesh->Draw();
 	
 	shader.unUse();
-#endif
 }
 void SpriteComponent::SetColor(const Color& otherColor)
 {
@@ -118,28 +74,87 @@ void SpriteComponent::SetTexture(const char* fileName)
 
 void SpriteComponent::LoadFromJson()
 {
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
-	{
-		auto it = componentData->find("color");
-		color.r = it->begin().value();
-		color.g = (it->begin() + 1).value();
-		color.b = (it->begin() + 2).value();
+	std::cout << __FUNCTION__ << std::endl;
+	json data;
+	data = LoadData(GameDataName);
 
-		tex->texName = data.at("texName").get<std::string>().c_str();
-		SetTexture(tex->texName);
+	if (data == nullptr)
+	{
+		std::cout << "DATA::EMPTY DATA" << std::endl;
+		return;
+	}
+
+	for (auto& obj : data.items())
+	{
+		std::cout << obj.key() << ", " << obj.value() << std::endl;
+		if (obj.key() == this->owner->GetID())
+		{
+			auto compData = obj.value().find("Component Data");
+			if (compData != obj.value().end())
+			{
+				auto spriteData = compData.value().find("Sprite");
+				//std::cout << tranData.key() << " || "  << tranData.value().find("position").value().at(1) << std::endl;
+				auto colorData = spriteData.value().find("color");
+				color.r = colorData.value().at(0);
+				color.g = colorData.value().at(1);
+				color.b = colorData.value().at(2);
+				color.a = colorData.value().at(3);
+
+				std::string texName;
+				texName = spriteData.value().find("texName").value();
+				this->SetTexture(texName.c_str());
+			}
+		}
 	}
 }
 
 void SpriteComponent::SaveToJson()
 {
-	json data, componentData;
-	data["type"] = "Sprite";
+	std::cout << __FUNCTION__ << std::endl;
 
-	componentData["color"] = { color.r, color.g, color.b };
-	componentData["texName"] = tex->texName;
+	//File open
+	std::ifstream ifs(GameDataName);
+	if (!ifs.is_open())
+	{
+		CreateDirectory(GameDataName);
+		ifs.open(GameDataName);
+	}
 
-	data["componentData"] = componentData;
+	using json = nlohmann::json;
+	json data;
+	ifs.seekg(0, std::ios::end);
+	if (ifs.tellg() != 0) {
+		ifs.seekg(0);
+		ifs >> data;
+	}
+	ifs.close();
+	std::cout << data << std::endl;
+
+	//Find owner
+	for (auto& obj : data.items())
+	{
+		std::cout << obj.key() << ", " << obj.value() << std::endl;
+		if (obj.key() == this->owner->GetID())
+		{
+			//Get component Data
+			auto compData = obj.value().find("Component Data");
+			if (compData != obj.value().end())
+			{
+				json sprite;
+				sprite["color"] = { color.r, color.g, color.b, color.a };
+				sprite["texName"] = tex->texName;
+				//sprite["shader"] = (vtx, fgm) shader_file_name;
+				// 
+				//Add Sprite data at Component data
+				compData.value()["Sprite"] = sprite;
+			}
+		}
+	}
+	//Save the data
+	std::ofstream jf(GameDataName);
+	jf << data.dump(4);
+
+	jf.close();
 }
 
 ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)

@@ -11,8 +11,8 @@ public:
 
 	void SetSpeed(float speed);
 
-	//void LoadFromJson(const json&) override;
-	//json SaveToJson() override;
+	void LoadFromJson() override;
+	void SaveToJson() override;
 	//
 	//static ComponentSerializer* CreateComponent(GameObject* owner);
 };

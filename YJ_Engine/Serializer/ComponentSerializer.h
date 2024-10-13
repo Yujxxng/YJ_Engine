@@ -12,6 +12,7 @@ public:
 	virtual void LoadFromJson() = 0;
 	virtual void SaveToJson() = 0;
 
+	void CreateDirectory(const char* path);
 	json LoadData(const char* path);
-	void SaveData(const char* path);
+	//void SaveData(const char* path);
 };

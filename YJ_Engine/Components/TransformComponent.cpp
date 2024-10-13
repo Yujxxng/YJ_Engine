@@ -1,6 +1,7 @@
 #include "TransformComponent.h"
 #include "../Object/Camera.h"
 #include <iostream>
+#include <fstream>
 
 #if 0
 void TransformComponent::CalculateMatrix()
@@ -218,39 +219,97 @@ void TransformComponent::SetScale(const  glm::vec2& otherScale)
 
 void TransformComponent::LoadFromJson()
 {
-	LoadData();
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
+	std::cout << __FUNCTION__ << std::endl;
+	json data;
+	data = LoadData(GameDataName);
+
+	if (data == nullptr)
 	{
-		auto p = componentData->find("position");
-		position.x = p->begin().value();
-		position.y = (p->begin() + 1).value();
-
-		auto s = componentData->find("scale");
-		scale.x = s->begin().value();
-		scale.y = (s->begin() + 1).value();
-
-		auto r = componentData->find("rotation");
-		angle_disp = r.value();
+		std::cout << "DATA::EMPTY DATA" << std::endl;
+		return;
 	}
 
+	for (auto& obj : data.items())
+	{
+		std::cout << obj.key() << ", " << obj.value() << std::endl;
+		if (obj.key() == this->owner->GetID())
+		{
+			auto compData = obj.value().find("Component Data");
+			if (compData != obj.value().end())
+			{
+				auto tranData = compData.value().find("Transform");
+				//std::cout << tranData.key() << " || "  << tranData.value().find("position").value().at(1) << std::endl;
+				
+				position.x = tranData.value().find("position").value().at(0);
+				position.y = tranData.value().find("position").value().at(1);
+				
+				scale.x = tranData.value().find("scale").value().at(0);
+				scale.y = tranData.value().find("scale").value().at(1);
+				
+				angle_disp = tranData.value().find("rotation").value();
+			}
+		}
+	}
 	CalculateMatrix();
-	
 }
 
 void TransformComponent::SaveToJson()
 {
-	
-	json data, componentData;
+	std::cout << __FUNCTION__ << std::endl;
 
-	data["type"] = "Transform";
+	//File open
+	std::ifstream ifs(GameDataName);
+	if (!ifs.is_open())
+	{
+		CreateDirectory(GameDataName);
+		ifs.open(GameDataName);
+	}
 
-	componentData["position"] = { position.x, position.y };
-	componentData["scale"] = { scale.x, scale.y };
-	componentData["rotation"] = angle_disp;
+	using json = nlohmann::json;
+	json data;
+	ifs.seekg(0, std::ios::end);
+	if (ifs.tellg() != 0) {
+		ifs.seekg(0);
+		ifs >> data;
+	}
+	ifs.close();
+	/* ---> only save for component
+	//Find owner
+	for (auto& obj : data.items())
+	{
+		std::cout << obj.key() << ", " << obj.value() << std::endl;
+		if (obj.key() == this->owner->GetID())
+		{
+			//Get component Data
+			auto compData = obj.value().find("Component Data");
+			if (compData != obj.value().end())
+			{
+				json transform;
+				transform["position"] = { position.x, position.y };
+				transform["scale"] = { scale.x, scale.y };
+				transform["rotation"] = angle_disp;
 
-	data["componentData"] = componentData;
-	
+				compData.value()["Transform"] = transform;
+			}
+		}
+	}
+	*/
+	//Save the data
+	json transform, componentData;
+
+	transform["position"] = { position.x, position.y };
+	transform["scale"] = { scale.x, scale.y };
+	transform["rotation"] = angle_disp;
+
+	componentData["Transform"] = transform;
+
+	std::string ownerName = this->owner->GetID();
+	data[ownerName]["Component Data"] = componentData;
+
+	std::ofstream jf(GameDataName);
+	jf << data.dump(4);
+
+	jf.close();
 }
 
 ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)
