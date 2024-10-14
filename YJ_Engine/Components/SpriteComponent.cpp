@@ -72,18 +72,37 @@ void SpriteComponent::SetTexture(const char* fileName)
 	tex = CreateTexture(fileName);
 }
 
-void SpriteComponent::LoadFromJson()
+void SpriteComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	json data;
-	data = LoadData(GameDataName);
+	std::cout << data << std::endl;
+
+	auto spriteData = data.find("Sprite");
+	if (spriteData != data.end())
+	{
+		std::cout << spriteData.key() << ", " << spriteData.value() << std::endl;
+		auto colorData = spriteData.value().find("color");
+		color.r = colorData.value().at(0);
+		color.g = colorData.value().at(1);
+		color.b = colorData.value().at(2);
+		color.a = colorData.value().at(3);
+
+		std::string texName;
+		texName = spriteData.value().find("texName").value();
+		this->SetTexture(texName.c_str());
+	}
+	else
+	{
+		std::cout << "DATA::EMPTY SPRITE DATA" << std::endl;
+		return;
+	}
 
 	if (data == nullptr)
 	{
 		std::cout << "DATA::EMPTY DATA" << std::endl;
 		return;
 	}
-
+	/*
 	for (auto& obj : data.items())
 	{
 		std::cout << obj.key() << ", " << obj.value() << std::endl;
@@ -106,12 +125,23 @@ void SpriteComponent::LoadFromJson()
 			}
 		}
 	}
+	*/
 }
 
-void SpriteComponent::SaveToJson()
+json SpriteComponent::SaveToJson()
 {
 	std::cout << __FUNCTION__ << std::endl;
 
+	json sprite, componentData;
+
+	sprite["color"] = { color.r, color.g, color.b, color.a };
+	sprite["texName"] = tex->texName;
+	//sprite["shader"] = (vtx, fgm) shader_file_name;
+
+	//Add Sprite data at Component data
+	componentData["Sprite"] = sprite;
+
+	/*
 	//File open
 	std::ifstream ifs(GameDataName);
 	if (!ifs.is_open())
@@ -155,11 +185,16 @@ void SpriteComponent::SaveToJson()
 	jf << data.dump(4);
 
 	jf.close();
+	*/
+	return componentData;
 }
 
 ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)
 {
-	return owner->FindComponent("Sprite");
+	SpriteComponent* tmp = new SpriteComponent(owner);
+	owner->AddComponent(tmp);
+	
+	return tmp;
 }
 /*
 void SpriteComponent::SetColor(const Color& color)

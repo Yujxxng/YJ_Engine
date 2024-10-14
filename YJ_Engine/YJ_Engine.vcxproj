@@ -156,6 +156,7 @@
     <ClCompile Include="ComponentManager\LogicComponent.cpp" />
     <ClCompile Include="ComponentManager\LogicComponentManager.cpp" />
     <ClCompile Include="Components\PlayerComponent.cpp" />
+    <ClCompile Include="Components\SimpleObjectCreator.cpp" />
     <ClCompile Include="Components\SpriteComponent.cpp" />
     <ClCompile Include="Components\TransformComponent.cpp" />
     <ClCompile Include="GSM\GameStateManager.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="myStd\Color.cpp" />
     <ClCompile Include="myStd\Helper.cpp" />
     <ClCompile Include="myStd\Mesh.cpp" />
+    <ClCompile Include="myStd\MyFile.cpp" />
     <ClCompile Include="myStd\Shader.cpp" />
     <ClCompile Include="myStd\Texture.cpp" />
     <ClCompile Include="Object\Camera.cpp" />
@@ -192,6 +194,7 @@
     <ClInclude Include="ComponentManager\LogicComponent.h" />
     <ClInclude Include="ComponentManager\LogicComponentManager.h" />
     <ClInclude Include="Components\PlayerComponent.h" />
+    <ClInclude Include="Components\SimpleObjectCreator.h" />
     <ClInclude Include="Components\SpriteComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
     <ClInclude Include="Editor\MainEditor.h" />
@@ -203,6 +206,7 @@
     <ClInclude Include="myStd\Color.h" />
     <ClInclude Include="myStd\Helper.h" />
     <ClInclude Include="myStd\Mesh.h" />
+    <ClInclude Include="myStd\MyFile.h" />
     <ClInclude Include="myStd\Shader.h" />
     <ClInclude Include="Object\Camera.h" />
     <ClInclude Include="Object\TestObject.h" />

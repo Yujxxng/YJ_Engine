@@ -3,13 +3,16 @@
 #include <iostream>
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/SimpleObjectCreator.h"
 
 Registry* Registry::registry_ptr = nullptr;
 
 Registry::Registry()
 {
 	componentMap.insert({ "Sprite", &SpriteComponent::CreateComponent });
+	componentMap.insert({ "SimpleObjectCreator", &SimpleObjectCreator::CreateComponent });
 	componentMap.insert({ "Transform", &TransformComponent::CreateComponent });
+
 }
 
 ComponentSerializer* Registry::CreateComponent(const std::string& type, GameObject* owner)
@@ -31,7 +34,7 @@ Registry* Registry::GetPtr()
 		return registry_ptr;
 	}
 	else
-		return nullptr;
+		return registry_ptr;
 }
 
 void Registry::DeletePtr()

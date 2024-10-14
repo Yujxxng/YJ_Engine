@@ -3,128 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-#if 0
-void TransformComponent::CalculateMatrix()
-{
-	//Create a transtorm matrix
-	AEMtx33 translateMtx;
-	AEMtx33Trans(&translateMtx, pos.x, pos.y);
-	
-	//Create a Rotation matrix
-	AEMtx33 rotationMtx;
-	AEMtx33Rot(&rotationMtx, rot);
-
-	//Create a scale matrix
-	AEMtx33 scaleMtx;
-	AEMtx33Scale(&scaleMtx, scale.x, scale.y);
-
-	//Concatenate them
-	AEMtx33Concat(&transformMatrix, &rotationMtx, &scaleMtx);
-	AEMtx33Concat(&transformMatrix, &translateMtx, &transformMatrix);
-}
-
-TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), pos(), scale(), rot(0), transformMatrix()
-{
-	ID = "Transform";
-	//EngineComponentManager* mgt = EngineComponentManager::getPtr();
-	//mgt->AddEngine(this);
-
-	pos.x = 0;
-	pos.y = 0;
-
-	scale.x = 1;
-	scale.y = 1;
-
-	CalculateMatrix();
-}
-
-void TransformComponent::Update()
-{
-	//PrintMatrix();
-	CalculateMatrix();
-
-	float x = AEClamp(pos.x, -limit.x /* + scale.x / 2*/, limit.x);
-	float y = AEClamp(pos.y, -limit.y, limit.y);
-
-	SetPos({ x, y });
-}
-
-void TransformComponent::SetPos(const AEVec2& otherPos)
-{
-	this->pos = otherPos;
-	CalculateMatrix();
-}
-
-void TransformComponent::SetScale(const AEVec2& otherScale)
-{
-	this->scale = otherScale;
-	CalculateMatrix();
-}
-
-void TransformComponent::SetRot(const float& otherRot)
-{
-	this->rot = otherRot;
-	CalculateMatrix();
-}
-
-void TransformComponent::PrintMatrix()
-{
-	std::cout << "Printing Transform Comp. With this values : " << std::endl;
-	std::cout << "Translate : " << pos.x << " " << pos.y << std::endl;
-	std::cout << "   Rotate : " << rot << std::endl;
-	std::cout << "    Scale : " << scale.x << " " << scale.y << std::endl;
-	std::cout << "-----------------------------------\n";
-	for (int i = 0; i < 3; i++)
-	{
-		std::cout << "|";
-		for (int j = 0; j < 3; j++)
-			std::cout << " " << transformMatrix.m[i][j];
-		std::cout << "|\n";
-	}
-	std::cout << "-----------------------------------\n";
-}
-
-void TransformComponent::LoadFromJson(const json& data)
-{
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
-	{
-		auto p = componentData->find("position");
-		pos.x = p->begin().value();
-		pos.y = (p->begin() + 1).value();
-
-		auto s = componentData->find("scale");
-		scale.x = s->begin().value();
-		scale.y = (s->begin() + 1).value();
-
-		auto r = componentData->find("rotation");
-		rot = r.value();
-	}
-
-	CalculateMatrix();
-}
-
-json TransformComponent::SaveToJson()
-{
-	json data, componentData;
-
-	data["type"] = "Transform";
-
-	componentData["position"] = { pos.x, pos.y };
-	componentData["scale"] = { scale.x, scale.y };
-	componentData["rotation"] = rot;
-
-	data["componentData"] = componentData;
-
-	return data;
-}
-
-ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)
-{
-	
-	return owner->FindComponent("Transform");
-}
-#elif 1
 TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), position(), scale()
 {
 	ID = "Transform";
@@ -217,83 +95,35 @@ void TransformComponent::SetScale(const  glm::vec2& otherScale)
 	CalculateMatrix();
 }
 
-void TransformComponent::LoadFromJson()
+void TransformComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	json data;
-	data = LoadData(GameDataName);
+	std::cout << data << std::endl;
 
-	if (data == nullptr)
+	auto transformData = data.find("Transform");
+	if (transformData != data.end())
 	{
-		std::cout << "DATA::EMPTY DATA" << std::endl;
-		return;
+		std::cout << transformData.key() << ", " << transformData.value() << std::endl;
+		position.x = transformData.value().find("position").value().at(0);
+		position.y = transformData.value().find("position").value().at(1);
+
+		scale.x = transformData.value().find("scale").value().at(0);
+		scale.y = transformData.value().find("scale").value().at(1);
+
+		angle_disp = transformData.value().find("rotation").value();
 	}
-
-	for (auto& obj : data.items())
+	else
 	{
-		std::cout << obj.key() << ", " << obj.value() << std::endl;
-		if (obj.key() == this->owner->GetID())
-		{
-			auto compData = obj.value().find("Component Data");
-			if (compData != obj.value().end())
-			{
-				auto tranData = compData.value().find("Transform");
-				//std::cout << tranData.key() << " || "  << tranData.value().find("position").value().at(1) << std::endl;
-				
-				position.x = tranData.value().find("position").value().at(0);
-				position.y = tranData.value().find("position").value().at(1);
-				
-				scale.x = tranData.value().find("scale").value().at(0);
-				scale.y = tranData.value().find("scale").value().at(1);
-				
-				angle_disp = tranData.value().find("rotation").value();
-			}
-		}
+		std::cout << "DATA::EMPTY TRANSFORM DATA" << std::endl;
+		return;
 	}
 	CalculateMatrix();
 }
 
-void TransformComponent::SaveToJson()
+json TransformComponent::SaveToJson()
 {
 	std::cout << __FUNCTION__ << std::endl;
 
-	//File open
-	std::ifstream ifs(GameDataName);
-	if (!ifs.is_open())
-	{
-		CreateDirectory(GameDataName);
-		ifs.open(GameDataName);
-	}
-
-	using json = nlohmann::json;
-	json data;
-	ifs.seekg(0, std::ios::end);
-	if (ifs.tellg() != 0) {
-		ifs.seekg(0);
-		ifs >> data;
-	}
-	ifs.close();
-	/* ---> only save for component
-	//Find owner
-	for (auto& obj : data.items())
-	{
-		std::cout << obj.key() << ", " << obj.value() << std::endl;
-		if (obj.key() == this->owner->GetID())
-		{
-			//Get component Data
-			auto compData = obj.value().find("Component Data");
-			if (compData != obj.value().end())
-			{
-				json transform;
-				transform["position"] = { position.x, position.y };
-				transform["scale"] = { scale.x, scale.y };
-				transform["rotation"] = angle_disp;
-
-				compData.value()["Transform"] = transform;
-			}
-		}
-	}
-	*/
 	//Save the data
 	json transform, componentData;
 
@@ -302,20 +132,15 @@ void TransformComponent::SaveToJson()
 	transform["rotation"] = angle_disp;
 
 	componentData["Transform"] = transform;
-
-	std::string ownerName = this->owner->GetID();
-	data[ownerName]["Component Data"] = componentData;
-
-	std::ofstream jf(GameDataName);
-	jf << data.dump(4);
-
-	jf.close();
+	std::cout << componentData << std::endl;
+	return componentData;
 }
 
 ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)
 {
+	TransformComponent* tmp = new TransformComponent(owner);
+	owner->AddComponent(tmp);
 
-	return owner->FindComponent("Transform");
+	return tmp;
 }
-#endif
 

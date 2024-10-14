@@ -41,11 +41,49 @@ void PlayerComponent::SetSpeed(float v)
 {
 	this->speed = v;
 }
-void PlayerComponent::LoadFromJson()
+void PlayerComponent::LoadFromJson(const json& data)
 {
+	std::cout << __FUNCTION__ << std::endl;
+	std::cout << data << std::endl;
+
+	auto playerData = data.find("Player");
+	if (playerData != data.end())
+	{
+		std::cout << playerData.key() << ", " << playerData.value() << std::endl;
+		auto speedData = playerData.value().find("speed");
+		speed = speedData.value();
+	}
+	else
+	{
+		std::cout << "DATA::EMPTY PLAYER DATA" << std::endl;
+		return;
+	}
+
+	if (data == nullptr)
+	{
+		std::cout << "DATA::EMPTY DATA" << std::endl;
+		return;
+	}
 }
-void PlayerComponent::SaveToJson()
+json PlayerComponent::SaveToJson()
 {
+	std::cout << __FUNCTION__ << std::endl;
+
+	json player, componentData;
+
+	player["speed"] = speed;
+
+	//Add Sprite data at Component data
+	componentData["Player"] = player;
+	return componentData;
+}
+
+ComponentSerializer* PlayerComponent::CreateComponent(GameObject* owner)
+{
+	PlayerComponent* tmp = new PlayerComponent(owner);
+	owner->AddComponent(tmp);
+
+	return tmp;
 }
 /*
 void PlayerComponent::LoadFromJson(const json& data)
@@ -69,8 +107,5 @@ json PlayerComponent::SaveToJson()
 	return data;
 }
 
-ComponentSerializer* PlayerComponent::CreateComponent(GameObject* owner)
-{
-	return owner->FindComponent("Player");
-}
+
 */

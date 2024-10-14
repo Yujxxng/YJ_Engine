@@ -9,8 +9,8 @@ class ComponentSerializer
 {
 public:
 	virtual ~ComponentSerializer() = default;
-	virtual void LoadFromJson() = 0;
-	virtual void SaveToJson() = 0;
+	virtual void LoadFromJson(const json& data) = 0;
+	virtual json SaveToJson() = 0;
 
 	void CreateDirectory(const char* path);
 	json LoadData(const char* path);

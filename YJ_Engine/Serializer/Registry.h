@@ -19,11 +19,12 @@ private:
 	std::map<std::string, ComponentSerializer* (*)(GameObject* owner)> componentMap;
 	static Registry* registry_ptr;
 
-	ComponentSerializer* CreateComponent(const std::string&, GameObject*);
 
 public:
 	static Registry* GetPtr();
 	static void DeletePtr();
 
+	ComponentSerializer* CreateComponent(const std::string&, GameObject*);
+	
 	friend class StateSerializer;
 };

@@ -20,7 +20,7 @@ class TestObject : public GameObject
 
 public:
 	TestObject();
-	~TestObject();
+	~TestObject() override;
 
 	void SetSize(float x, float y);
 	void SetPos(float x, float y);
