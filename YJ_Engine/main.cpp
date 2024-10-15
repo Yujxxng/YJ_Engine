@@ -9,11 +9,10 @@
 
 #include "GSM/GameStateManager.h"
 #include "GSM/Test.h"
+#include "ComponentManager/GameObjectManager.h"
 
-#include "ComponentManager/EngineComponentManager.h"
-#include "ComponentManager/GraphicComponentManager.h"
 #include "Object/Camera.h"
-
+#include "Editor/MyEditor.h"
 #include "source/imgui/imgui.h"
 #include "source/imgui/imgui_impl_glfw.h"
 #include "source/imgui/imgui_impl_opengl3.h"
@@ -58,7 +57,7 @@ int main()
 	//_crtBreakAlloc = 1565;
 	//glfwSetErrorCallback(show_glfw_error);
 	copyAssets();
-	init(800, 600, "YJEngine");
+	init(1600, 900, "YJEngine");
 
 	//Set Vsync (Buffer swapping, 60fps)
 	glfwSwapInterval(0);
@@ -93,7 +92,7 @@ int main()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		ImGui::ShowDemoWindow(); // Show demo window! :)
-
+		MyEditor::GetPtr()->Draw();
 		double currentTime = glfwGetTime();
 		frames++;
 		
@@ -123,12 +122,17 @@ int main()
 
 	}
 
-	shutdownImgui();
-	glfwDestroyWindow(Helper::ptr_window);
-	glfwTerminate();
 
 	gsm->Exit();
 	gsm->DeleteGSM();
+
+	GameObjectManager::DeletePtr();
+
+	shutdownImgui();
+	MyEditor::DeletePtr();
+
+	glfwDestroyWindow(Helper::ptr_window);
+	glfwTerminate();
 
 	return 0;
 }

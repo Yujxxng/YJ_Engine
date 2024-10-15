@@ -7,13 +7,13 @@ LogicComponent::LogicComponent(GameObject* owner) : BaseComponent(owner)
 {
 	//this->ID = "Logic";
 
-	LogicComponentManager* mgt = LogicComponentManager::getPtr();
+	LogicComponentManager* mgt = LogicComponentManager::GetPtr();
 	mgt->AddLogic(this);
 }
 
 LogicComponent::~LogicComponent()
 {
-	LogicComponentManager* mgt = LogicComponentManager::getPtr();
+	LogicComponentManager* mgt = LogicComponentManager::GetPtr();
 	mgt->DeleteLogic(this);
 }
 

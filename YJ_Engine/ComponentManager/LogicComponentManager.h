@@ -16,7 +16,7 @@ class LogicComponentManager
 	list<LogicComponent*> logics;
 
 public:
-	static LogicComponentManager* getPtr();
+	static LogicComponentManager* GetPtr();
 	static void DeletePtr();
 
 	void AddLogic(LogicComponent* lc);

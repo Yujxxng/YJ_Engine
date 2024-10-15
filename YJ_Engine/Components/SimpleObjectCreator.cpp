@@ -5,6 +5,10 @@
 #include <iostream>
 
 
+SimpleObjectCreator::~SimpleObjectCreator()
+{
+}
+
 SimpleObjectCreator::SimpleObjectCreator(GameObject* owner) : LogicComponent(owner)
 {
 	ID = "SimpleObjectCreator";
@@ -17,7 +21,6 @@ void SimpleObjectCreator::Update()
 void SimpleObjectCreator::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	std::cout << data << std::endl;
 
 	auto creatorData = data.find("SimpleObjectCreator");
 	if (creatorData != data.end())
@@ -42,13 +45,12 @@ json SimpleObjectCreator::SaveToJson()
 {
 	std::cout << __FUNCTION__ << std::endl;
 
-	json creator, componentData;
+	json creator;
 
 	creator["num_column"] = num_column;
 	creator["num_row"] = num_row;
-	//Add Sprite data at Component data
-	componentData["SimpleObjectCreator"] = creator;
-	return componentData;
+
+	return creator;
 }
 ComponentSerializer* SimpleObjectCreator::CreateComponent(GameObject* owner)
 {

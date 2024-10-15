@@ -16,20 +16,13 @@
 
 #include "../ComponentManager/GameObjectManager.h"
 
-TestObject* testobj;
+TestObject* testobj[2];
 void Levels::Test::Init()
 {	
 	std::cout << "Test Level Init" << std::endl;
-	Camera2D::getPtr()->init(Helper::ptr_window);
+	Camera2D::GetPtr()->init(Helper::ptr_window);
 	glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	json objData = MyFile::LoadData(GameDataName);
-	GameObjectManager::getPtr()->LoadAllObjects(objData);
-	//testobj = new TestObject;
-	//testobj->SetID("manggom");
-	//testobj->LoadToJson(data);
-	//testobj->SaveToJson();
 }
 
 void Levels::Test::Update()
@@ -40,7 +33,5 @@ void Levels::Test::Update()
 void Levels::Test::Exit()
 {
 	std::cout << "Test Level Exit" << std::endl;
-	GameObjectManager::getPtr()->DeleteAllObject();
-	GameObjectManager::DeletePtr();
-	//delete testobj;
+	GameObjectManager::GetPtr()->DeleteAllObject();
 }

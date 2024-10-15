@@ -25,7 +25,8 @@ class GameObject
 	std::list<BaseComponent*> components;
 
 public:
-	//GameObject();
+	GameObject() = delete;
+	GameObject(std::string id);
 	virtual ~GameObject();
 
 	const OBJECT_TYPE GetType() const;
@@ -39,5 +40,5 @@ public:
 	void DeleteComponent(std::string cmpID);
 
 	void LoadToJson(const json& data);
-	void SaveToJson();
+	json SaveToJson();
 };

@@ -15,7 +15,7 @@ class GraphicComponentManager
 	std::list<GraphicComponent*> graphics;
 
 public:
-	static GraphicComponentManager* getPtr();
+	static GraphicComponentManager* GetPtr();
 	static void DeletePtr();
 
 	void AddGraphic(GraphicComponent* lc);

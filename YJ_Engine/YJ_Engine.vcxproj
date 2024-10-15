@@ -159,6 +159,7 @@
     <ClCompile Include="Components\SimpleObjectCreator.cpp" />
     <ClCompile Include="Components\SpriteComponent.cpp" />
     <ClCompile Include="Components\TransformComponent.cpp" />
+    <ClCompile Include="Editor\MyEditor.cpp" />
     <ClCompile Include="GSM\GameStateManager.cpp" />
     <ClCompile Include="GSM\GoalLevel.cpp" />
     <ClCompile Include="GSM\MainMenu.cpp" />
@@ -197,7 +198,7 @@
     <ClInclude Include="Components\SimpleObjectCreator.h" />
     <ClInclude Include="Components\SpriteComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
-    <ClInclude Include="Editor\MainEditor.h" />
+    <ClInclude Include="Editor\MyEditor.h" />
     <ClInclude Include="GSM\BaseLevel.h" />
     <ClInclude Include="GSM\GameStateManager.h" />
     <ClInclude Include="GSM\GoalLevel.h" />

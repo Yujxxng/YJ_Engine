@@ -19,7 +19,7 @@ class TestObject : public GameObject
 	Color color{255, 255, 255, 255};
 
 public:
-	TestObject();
+	TestObject(std::string id);
 	~TestObject() override;
 
 	void SetSize(float x, float y);

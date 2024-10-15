@@ -20,10 +20,12 @@ class GameObjectManager
 	const GameObjectManager& operator=(const GameObjectManager& other) = delete;
 
 	static GameObjectManager* obj_ptr;
-	std::list<std::pair<std::string, GameObject*>> objects;
+
+	using StrObjPair = std::pair<std::string, GameObject*>;
+	std::list<StrObjPair> objects;
 
 public:
-	static GameObjectManager* getPtr();
+	static GameObjectManager* GetPtr();
 	static void DeletePtr();
 
 
@@ -33,5 +35,5 @@ public:
 	void DeleteAllObject();
 
 	void LoadAllObjects(const json& data);
-	void SaveAllObjects();
+	void SaveAllObjects(const char* path);
 };

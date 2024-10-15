@@ -3,7 +3,7 @@
 LogicComponentManager* LogicComponentManager::logic_ptr = nullptr;
 
 
-LogicComponentManager* LogicComponentManager::getPtr()
+LogicComponentManager* LogicComponentManager::GetPtr()
 {
     if (logic_ptr == nullptr)
     {

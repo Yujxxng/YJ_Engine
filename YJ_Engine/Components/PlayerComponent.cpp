@@ -44,7 +44,6 @@ void PlayerComponent::SetSpeed(float v)
 void PlayerComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	std::cout << data << std::endl;
 
 	auto playerData = data.find("Player");
 	if (playerData != data.end())
@@ -69,13 +68,11 @@ json PlayerComponent::SaveToJson()
 {
 	std::cout << __FUNCTION__ << std::endl;
 
-	json player, componentData;
+	json player;
 
 	player["speed"] = speed;
 
-	//Add Sprite data at Component data
-	componentData["Player"] = player;
-	return componentData;
+	return player;
 }
 
 ComponentSerializer* PlayerComponent::CreateComponent(GameObject* owner)

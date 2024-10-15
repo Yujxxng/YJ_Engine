@@ -15,7 +15,7 @@ class Camera2D
 	static Camera2D* camera_ptr;
 
 public:
-	static Camera2D* getPtr();
+	static Camera2D* GetPtr();
 	static void DeletePtr();
 
 	glm::vec2 position{ 0, 0 };
@@ -25,7 +25,7 @@ public:
 	glm::mat3 camwin_to_ndc_xform;
 	glm::mat3 world_to_ndc_xform;
 
-	GLint height{ 600 };
+	GLint height;
 	GLfloat ar;
 
 	GLint min_height{ 500 }, max_height{ 2000 };

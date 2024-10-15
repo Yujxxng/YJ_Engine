@@ -54,7 +54,6 @@ void SpriteComponent::Update()
 		glUniformMatrix3fv(uniform_var_loc1, 1, GL_FALSE, glm::value_ptr(tranf));
 	else {
 		std::cout << "Uniform variable doesn't exist!!!\n";
-		//std::exit(EXIT_FAILURE);
 	}
 
 	mesh->Draw();
@@ -64,6 +63,13 @@ void SpriteComponent::Update()
 void SpriteComponent::SetColor(const Color& otherColor)
 {
 	color = otherColor;
+}
+void SpriteComponent::SetColor(float r, float g, float b, float a)
+{
+	color.r = (unsigned char)(r / 255.f);
+	color.g = (unsigned char)(g / 255.f);
+	color.b = (unsigned char)(b / 255.f);
+	color.a = (unsigned char)(a / 255.f);
 }
 void SpriteComponent::SetTexture(const char* fileName)
 {
@@ -75,7 +81,6 @@ void SpriteComponent::SetTexture(const char* fileName)
 void SpriteComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	std::cout << data << std::endl;
 
 	auto spriteData = data.find("Sprite");
 	if (spriteData != data.end())
@@ -102,91 +107,19 @@ void SpriteComponent::LoadFromJson(const json& data)
 		std::cout << "DATA::EMPTY DATA" << std::endl;
 		return;
 	}
-	/*
-	for (auto& obj : data.items())
-	{
-		std::cout << obj.key() << ", " << obj.value() << std::endl;
-		if (obj.key() == this->owner->GetID())
-		{
-			auto compData = obj.value().find("Component Data");
-			if (compData != obj.value().end())
-			{
-				auto spriteData = compData.value().find("Sprite");
-				//std::cout << tranData.key() << " || "  << tranData.value().find("position").value().at(1) << std::endl;
-				auto colorData = spriteData.value().find("color");
-				color.r = colorData.value().at(0);
-				color.g = colorData.value().at(1);
-				color.b = colorData.value().at(2);
-				color.a = colorData.value().at(3);
-
-				std::string texName;
-				texName = spriteData.value().find("texName").value();
-				this->SetTexture(texName.c_str());
-			}
-		}
-	}
-	*/
 }
 
 json SpriteComponent::SaveToJson()
 {
 	std::cout << __FUNCTION__ << std::endl;
 
-	json sprite, componentData;
+	json sprite;
 
 	sprite["color"] = { color.r, color.g, color.b, color.a };
 	sprite["texName"] = tex->texName;
 	//sprite["shader"] = (vtx, fgm) shader_file_name;
 
-	//Add Sprite data at Component data
-	componentData["Sprite"] = sprite;
-
-	/*
-	//File open
-	std::ifstream ifs(GameDataName);
-	if (!ifs.is_open())
-	{
-		CreateDirectory(GameDataName);
-		ifs.open(GameDataName);
-	}
-
-	using json = nlohmann::json;
-	json data;
-	ifs.seekg(0, std::ios::end);
-	if (ifs.tellg() != 0) {
-		ifs.seekg(0);
-		ifs >> data;
-	}
-	ifs.close();
-	std::cout << data << std::endl;
-
-	//Find owner
-	for (auto& obj : data.items())
-	{
-		std::cout << obj.key() << ", " << obj.value() << std::endl;
-		if (obj.key() == this->owner->GetID())
-		{
-			//Get component Data
-			auto compData = obj.value().find("Component Data");
-			if (compData != obj.value().end())
-			{
-				json sprite;
-				sprite["color"] = { color.r, color.g, color.b, color.a };
-				sprite["texName"] = tex->texName;
-				//sprite["shader"] = (vtx, fgm) shader_file_name;
-				// 
-				//Add Sprite data at Component data
-				compData.value()["Sprite"] = sprite;
-			}
-		}
-	}
-	//Save the data
-	std::ofstream jf(GameDataName);
-	jf << data.dump(4);
-
-	jf.close();
-	*/
-	return componentData;
+	return sprite;
 }
 
 ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)
@@ -196,75 +129,3 @@ ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)
 	
 	return tmp;
 }
-/*
-void SpriteComponent::SetColor(const Color& color)
-{
-	//mColor = color;
-}
-
-void SpriteComponent::SetAlpha(float a)
-{
-	//alpha = a;
-}
-
-void SpriteComponent::SetTexture(std::string s)
-{
-	//if (mTex != nullptr)
-	//	AEGfxTextureUnload(mTex);
-	//
-	//mTex = AEGfxTextureLoad(s.c_str());
-
-	//if (FindTextureName(s))
-	//	return;
-
-	//mTex.push_back(ResourceManager::GetPtr()->Get<TextureResource>(s)->GetData());
-}
-
-bool SpriteComponent::FindTextureName(std::string name)
-{	
-#if 0
-	if (mTex.empty()) return false;
-
-	for (int i = 0; i < texName.size(); i++)
-	{
-		if (texName[i] == name)
-			return true;
-	}
-
-	return false;
-#endif
-}
-
-void SpriteComponent::LoadFromJson(const json& data)
-{
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
-	{
-		auto it = componentData->find("color");
-		mColor.r = it->begin().value();
-		mColor.g = (it->begin() + 1).value();
-		mColor.b = (it->begin() + 2).value();
-
-		//texName = data.at("texName").get<std::string>();
-		//SetTexture(texName);
-	}
-}
-
-json SpriteComponent::SaveToJson()
-{
-	json data, componentData;
-	data["type"] = "Sprite";
-
-	componentData["color"] = { mColor.r, mColor.g, mColor.b };
-	//componentData["texName"] = texName;
-
-	data["componentData"] = componentData;
-
-	return data;
-}
-
-ComponentSerializer* SpriteComponent::CreateComponent(GameObject* owner)
-{
-	return owner->FindComponent("Sprite");
-}
-*/

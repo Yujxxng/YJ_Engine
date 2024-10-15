@@ -1,11 +1,10 @@
 #include "GameObjectManager.h"
-
 #include <fstream>
 #include <iostream>
 
 GameObjectManager* GameObjectManager::obj_ptr = nullptr;
 
-GameObjectManager* GameObjectManager::getPtr()
+GameObjectManager* GameObjectManager::GetPtr()
 {
     if (obj_ptr == nullptr)
     {
@@ -44,9 +43,6 @@ void GameObjectManager::DeleteAllObject()
 
 void GameObjectManager::LoadAllObjects(const json& data)
 {
-    std::cout << __FUNCTION__ << std::endl;
-    std::cout << data << std::endl;
-
     for (auto& obj : data.items())
     {
         std::string id = obj.key();
@@ -54,11 +50,28 @@ void GameObjectManager::LoadAllObjects(const json& data)
 
         if (tp == TEST)
         {
-            TestObject* newObject = new TestObject;
-            newObject->SetID(id);
+            TestObject* newObject = new TestObject(id);
             newObject->LoadToJson(data);
-
-            AddObject(newObject);
         }
     }
+}
+
+void GameObjectManager::SaveAllObjects(const char* path)
+{
+    json data;
+
+    for (auto& obj : objects)
+        data.merge_patch(obj.second->SaveToJson());
+
+    std::cout << data << std::endl;
+
+    std::ofstream ofs(path);
+    if (!ofs.is_open())
+    {
+        std::cout << "FILE NOT FOUND" << std::endl;
+    }
+
+    ofs << data.dump(4);
+
+    ofs.close();
 }

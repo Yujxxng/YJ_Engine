@@ -7,6 +7,7 @@ class SimpleObjectCreator : public LogicComponent
 	int num_row{};
 
 public:
+	~SimpleObjectCreator() override;
 	SimpleObjectCreator(GameObject* owner);
 
 	void Update() override;

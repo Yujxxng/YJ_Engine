@@ -5,13 +5,13 @@
 
 EngineComponent::EngineComponent(GameObject* owner) : BaseComponent(owner)
 {
-	EngineComponentManager* mgt = EngineComponentManager::getPtr();
+	EngineComponentManager* mgt = EngineComponentManager::GetPtr();
 	mgt->AddEngine(this);
 }
 
 EngineComponent::~EngineComponent()
 {
-	EngineComponentManager* mgt = EngineComponentManager::getPtr();
+	EngineComponentManager* mgt = EngineComponentManager::GetPtr();
 	mgt->DeleteEngine(this);
 }
 

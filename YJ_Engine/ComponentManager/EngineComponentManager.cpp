@@ -2,7 +2,7 @@
 
 EngineComponentManager* EngineComponentManager::engine_ptr = nullptr;
 
-EngineComponentManager* EngineComponentManager::getPtr()
+EngineComponentManager* EngineComponentManager::GetPtr()
 {
     if (engine_ptr == nullptr)
     {

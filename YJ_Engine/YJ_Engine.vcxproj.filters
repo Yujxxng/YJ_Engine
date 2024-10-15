@@ -114,6 +114,15 @@
     <ClCompile Include="ComponentManager\GameObjectManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Components\SimpleObjectCreator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="myStd\MyFile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\MyEditor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myStd\Shader.h">
@@ -212,7 +221,7 @@
     <ClInclude Include="source\imgui\imstb_truetype.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\MainEditor.h">
+    <ClInclude Include="Editor\MyEditor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object\Camera.h">
@@ -228,6 +237,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ComponentManager\GameObjectManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\SimpleObjectCreator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="myStd\MyFile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

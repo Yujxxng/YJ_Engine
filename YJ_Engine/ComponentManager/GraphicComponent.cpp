@@ -4,13 +4,13 @@
 
 GraphicComponent::GraphicComponent(GameObject* owner) : BaseComponent(owner)
 {
-	GraphicComponentManager* mgt = GraphicComponentManager::getPtr();
+	GraphicComponentManager* mgt = GraphicComponentManager::GetPtr();
 	mgt->AddGraphic(this);
 }
 
 GraphicComponent::~GraphicComponent()
 {
-	GraphicComponentManager* mgt = GraphicComponentManager::getPtr();
+	GraphicComponentManager* mgt = GraphicComponentManager::GetPtr();
 	mgt->DeleteGraphic(this);
 }
 

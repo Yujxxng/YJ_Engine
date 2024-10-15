@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include "../Serializer/ComponentSerializer.h"
+#include "../ComponentManager/GameObjectManager.h"
 
 using json = nlohmann::json;
 
@@ -31,4 +33,10 @@ json MyFile::LoadData(const char* path)
     jf.close();
 
     return data;
+}
+
+void MyFile::LoadObjectFile(const char* path)
+{
+    json objData = MyFile::LoadData(path);
+    GameObjectManager::GetPtr()->LoadAllObjects(objData);
 }

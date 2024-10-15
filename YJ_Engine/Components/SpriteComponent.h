@@ -76,6 +76,7 @@ public:
 	void Update() override;
 
 	void SetColor(const Color&);
+	void SetColor(float r, float g, float b, float a);
 	void SetTexture(const char* fileName);
 
 	void LoadFromJson(const json& data) override;

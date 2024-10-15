@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), position(), scale()
+TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), position(), scale(), angle_disp(0)
 {
 	ID = "Transform";
 
@@ -62,7 +62,7 @@ void TransformComponent::CalculateMatrix()
 		0.f, 0.f, 1.f
 	);
 
-	glm::mat3 tmp = Camera2D::getPtr()->world_to_ndc_xform;
+	glm::mat3 tmp = Camera2D::GetPtr()->world_to_ndc_xform;
 	mdl_xform = (tra_mtx * rot_mtx * scl_mtx);
 	mdl_to_ndc_xform = tmp * mdl_xform;
 	
@@ -83,9 +83,24 @@ void TransformComponent::Update()
 	CalculateMatrix();
 }
 
+void TransformComponent::SetPos(float px, float py)
+{
+	this->position.x = px;
+	this->position.y = py;
+
+	CalculateMatrix();
+}
+
 void TransformComponent::SetPos(const glm::vec2& otherPos)
 {
 	this->position = otherPos;
+	CalculateMatrix();
+}
+
+void TransformComponent::SetScale(float sx, float sy)
+{
+	this->scale.x = sx;
+	this->scale.y = sy;
 	CalculateMatrix();
 }
 
@@ -95,10 +110,15 @@ void TransformComponent::SetScale(const  glm::vec2& otherScale)
 	CalculateMatrix();
 }
 
+void TransformComponent::SetRotate(float angle)
+{
+	this->angle_disp = angle;
+	CalculateMatrix();
+}
+
 void TransformComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
-	std::cout << data << std::endl;
 
 	auto transformData = data.find("Transform");
 	if (transformData != data.end())
@@ -125,15 +145,13 @@ json TransformComponent::SaveToJson()
 	std::cout << __FUNCTION__ << std::endl;
 
 	//Save the data
-	json transform, componentData;
+	json transform;
 
 	transform["position"] = { position.x, position.y };
 	transform["scale"] = { scale.x, scale.y };
 	transform["rotation"] = angle_disp;
 
-	componentData["Transform"] = transform;
-	std::cout << componentData << std::endl;
-	return componentData;
+	return transform;
 }
 
 ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)

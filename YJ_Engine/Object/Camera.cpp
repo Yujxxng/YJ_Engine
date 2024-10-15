@@ -2,7 +2,7 @@
 
 Camera2D* Camera2D::camera_ptr = nullptr;
 
-Camera2D* Camera2D::getPtr()
+Camera2D* Camera2D::GetPtr()
 {
 	if (camera_ptr == nullptr)
 	{
@@ -28,6 +28,7 @@ void Camera2D::init(GLFWwindow* pWindow)
 	GLsizei fb_width, fb_height;
 	glfwGetFramebufferSize(pWindow, &fb_width, &fb_height);
 	ar = static_cast<GLfloat>(fb_width) / fb_height;
+	height = fb_height;
 
 	// at startup, the camera must be initialized to free camera ...
 	glm::mat3 view = glm::mat3x3(1.f);

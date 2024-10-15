@@ -1,8 +1,15 @@
 #include "GameObject.h"
 #include "../Serializer/Registry.h"
+#include "../ComponentManager/GameObjectManager.h"
 
 #include <fstream>
 #include <iostream>
+
+GameObject::GameObject(std::string id)
+{
+	ID = id;
+	GameObjectManager::GetPtr()->AddObject(this);
+}
 
 GameObject::~GameObject()
 {
@@ -60,11 +67,8 @@ void GameObject::DeleteComponent(std::string cmpID)
 
 void GameObject::LoadToJson(const json& data)
 {
-	std::cout << __FUNCTION__ << std::endl;
-
 	for (auto& obj : data.items())
 	{
-		std::cout << obj.key() << ", " << obj.value() << std::endl;
 		if (obj.key() == this->GetID())
 		{
 			//Get component Data
@@ -72,14 +76,11 @@ void GameObject::LoadToJson(const json& data)
 			if (compData != obj.value().end())
 			{
 				//Add new component
-				//Registry* comp_registry = Registry::GetPtr();
 				json compType = compData.value();
 				for (auto& comp : compType.items())
-				{
-					std::cout << comp.key() << std::endl;
 					Registry::GetPtr()->CreateComponent(comp.key(), this);
-				}
 
+				//input data in components
 				for (auto& comp : components)
 					comp->LoadFromJson(compData.value());
 			}
@@ -87,16 +88,22 @@ void GameObject::LoadToJson(const json& data)
 	}
 }
 
-void GameObject::SaveToJson() //need to modify 
+json GameObject::SaveToJson() //need to modify 
 {
 	std::cout << __FUNCTION__ << std::endl;
 
-	json data;
+	json data, CompData;
 
-	for (auto& comp : components)
-		data += comp->SaveToJson();
-
+	data[ID]["Type"] = ObjectType;
+	if(!components.empty())
+	{
+		for (auto& comp : components)
+		{
+			CompData[comp->GetID()] = comp->SaveToJson();
+		}
+	}
+	data[ID]["Component Data"] = CompData;
 	std::cout << data << std::endl;
 
-
+	return data;
 }

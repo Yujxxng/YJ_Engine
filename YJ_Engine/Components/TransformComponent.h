@@ -45,7 +45,7 @@ public:
 	//
 	//static ComponentSerializer* CreateComponent(GameObject* owner);
 #elif 1
-	float angle_speed, angle_disp;
+	float angle_disp;
 	
 	glm::vec2 position{ 0.0f, 0.0f };
 	glm::vec2 scale{ 1.f, 1.f };
@@ -61,8 +61,11 @@ public:
 
 	void Update() override;
 
+	void SetPos(float px, float py);
 	void SetPos(const glm::vec2& otherPos);
+	void SetScale(float sx, float sy);
 	void SetScale(const glm::vec2& otherScale);
+	void SetRotate(float angle);
 
 	const glm::vec2& GetPos() const { return position; }
 	const glm::vec2& GetScale() const { return scale; }

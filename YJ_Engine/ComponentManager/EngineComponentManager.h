@@ -15,7 +15,7 @@ class EngineComponentManager
 	std::list<EngineComponent*> engines;
 
 public:
-	static EngineComponentManager* getPtr();
+	static EngineComponentManager* GetPtr();
 	static void DeletePtr();
 
 	void AddEngine(EngineComponent* lc);

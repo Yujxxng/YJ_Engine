@@ -3,7 +3,7 @@
 GraphicComponentManager* GraphicComponentManager::graphic_ptr = nullptr;
 
 
-GraphicComponentManager* GraphicComponentManager::getPtr()
+GraphicComponentManager* GraphicComponentManager::GetPtr()
 {
     if (graphic_ptr == nullptr)
     {
