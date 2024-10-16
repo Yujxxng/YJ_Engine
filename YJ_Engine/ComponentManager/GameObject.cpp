@@ -43,12 +43,14 @@ void GameObject::SetID(std::string id)
 
 void GameObject::AddComponent(BaseComponent* component)
 {
-	this->components.push_back(component);
+	if(!CheckComponent(component->GetID()))
+		this->components.push_back(component);
 }
 
 void GameObject::AddComponent(std::string compName)
 {
-	Registry::GetPtr()->CreateComponent(compName, this);
+	if (!CheckComponent(compName))
+		Registry::GetPtr()->CreateComponent(compName, this);
 }
 
 BaseComponent* GameObject::FindComponent(std::string cmpID)
@@ -68,6 +70,25 @@ void GameObject::DeleteComponent(std::string cmpID)
 
 	if(tmp)
 		delete tmp;
+}
+
+bool GameObject::CheckComponent(std::string compName)
+{
+	for (auto& cmpt : components)
+	{
+		if (cmpt->GetID() == compName)
+			return true;
+	}
+	return false;
+}
+
+std::vector<std::string> GameObject::GetComponentsID()
+{
+	std::vector<std::string> cID;
+	for (auto& c : components)
+		cID.push_back(c->GetID());
+	
+	return cID;
 }
 
 void GameObject::LoadToJson(const json& data)

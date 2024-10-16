@@ -45,7 +45,11 @@ void SpriteComponent::Update()
 	
 	//Transform
 	TransformComponent* trs = (TransformComponent*)owner->FindComponent("Transform");
-	glm::mat3x3 tranf = trs->getMatrix();
+	glm::mat3x3 tranf;
+	if (trs != nullptr)
+		tranf = trs->getMatrix();
+	else
+		tranf = glm::mat3x3(1.0f);
 
 	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
 	glUniform3f(uniform_var_color, color.r, color.g, color.b);

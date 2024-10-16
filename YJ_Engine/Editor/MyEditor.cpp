@@ -1,9 +1,5 @@
 #include "MyEditor.h"
 
-#include "../GSM/GameStateManager.h"
-#include "../ComponentManager/GameObjectManager.h"
-#include "../Object/TestObject.h"
-
 #include <iostream>
 #include <vector>
 #include <cctype>
@@ -44,10 +40,14 @@ void MyEditor::Draw()
 		ShowTestObjectSetting(&show_obj_setting);
 
 	if (show_delete_obj)
-		ShowDeleteObject(&show_delete_obj, message);
+		ShowDeleteObject(&show_delete_obj);
+
 
 	if (show_add_comp)
 		ShowAddComponent(&show_add_comp);
+
+	if (show_delete_cmp)
+		ShowDeleteComponent(&show_delete_cmp, tmpStr);
 
 	if (alarm_window)
 		AlarmWindow(&alarm_window, message);
@@ -84,13 +84,35 @@ void MyEditor::ComponentListBox()
 		if (ImGui::IsMouseDoubleClicked(0))
 		{
 			if (selected >= 0 && selected < IM_ARRAYSIZE(components))
-			{
-				std::cout << "You double-clicked : " << components[selected] << std::endl;
+				selectedObj->AddComponent(components[selected]);
+		}
+		ImGui::EndListBox();
+	}
+}
 
+void MyEditor::ShowHasComponent()
+{
+	std::vector<std::string> compID = selectedObj->GetComponentsID();
+	for (int i = 0; i < compID.size(); i++)
+	{
+		if (ImGui::CollapsingHeader(compID[i].c_str()))
+		{
+			if (ImGui::TreeNode(compID[i].c_str()))
+			{
+				ImGui::Text(compID[i].c_str());
+				
+				ImGui::NewLine();
+				ImGui::SetCursorPosX(300.f);
+				if (ImGui::Button("Delete", ImVec2(80, 0)))
+				{
+					tmpStr = compID[i];
+					show_delete_cmp = true;
+				}
+
+				ImGui::TreePop();
 			}
 		}
 	}
-	ImGui::EndListBox();
 }
 
 void MyEditor::ShowMenuFile()
@@ -209,13 +231,12 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 	ImVec2 windowSize = ImVec2(400, 600);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 
-	TestObject* newObj = (TestObject*)GameObjectManager::GetPtr()->GetLastObjects();
 	if (ImGui::Begin("TestObject", p_open, ImGuiWindowFlags_NoResize))
 	{
 		ImGui::SetCursorPosX((windowSize.x - 200.f) * 0.5f);
 		if (ImGui::Button("Delete Object", ImVec2(200, 0)))
 		{
-			message = newObj->GetID();
+			message = selectedObj->GetID();
 			show_delete_obj = true;
 		}
 		
@@ -227,7 +248,7 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 		std::string buf{};
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(230);
-		if (ImGui::InputTextWithHint("  ", newObj->GetID().c_str(), &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
+		if (ImGui::InputTextWithHint("  ", selectedObj->GetID().c_str(), &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
 			tmpStr = buf;
 
 		ImGui::SameLine();
@@ -240,8 +261,8 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 			}
 			else
 			{
-				newObj->SetID(tmpStr);
-				if(newObj->GetID() == tmpStr)
+				selectedObj->SetID(tmpStr);
+				if(selectedObj->GetID() == tmpStr)
 				{
 					message = "Successfully modified.";
 					alarm_window = true;
@@ -249,18 +270,55 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 			}
 		}
 
+		ImGui::NewLine();
 		ImGui::SetCursorPosX((windowSize.x - 300.f) * 0.5f);
 		if (ImGui::Button("Add Component", ImVec2(300, 0)))
-		{
-			message = newObj->GetID();
 			show_add_comp = true;
-		}
+
+		ImGui::NewLine();
+		ShowHasComponent();
 	}
 
 	ImGui::End();
 }
 
-void MyEditor::ShowDeleteObject(bool* p_open, std::string msg)
+void MyEditor::ShowDeleteObject(bool* p_open)
+{
+	ImVec2 windowSize = ImVec2(400, 100);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	float centerX = (windowSize.x - 260.f) * 0.5f;
+
+	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		float textX = ImGui::CalcTextSize("Are you sure you want to delete this object?").x;
+		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Are you sure you want to delete this object?");
+
+		ImGui::NewLine();
+		float buttonX = (windowSize.x - 165.f) * 0.5f;
+		ImGui::SetCursorPosX(buttonX);
+		if (ImGui::Button("Yes", ImVec2(80, 0)))
+		{
+			GameObjectManager::GetPtr()->DeleteObject(selectedObj);
+			selectedObj = nullptr;
+			show_delete_obj = false;
+
+			message = "Successfully deleted";
+			alarm_window = true;
+			show_obj_setting = false;
+			show_add_comp = false;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("No", ImVec2(80, 0)))
+			show_delete_obj = false;
+	}
+
+	ImGui::End();
+}
+
+void MyEditor::ShowDeleteComponent(bool* p_open, std::string compName)
 {
 	ImVec2 windowSize = ImVec2(400, 100);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
@@ -278,26 +336,26 @@ void MyEditor::ShowDeleteObject(bool* p_open, std::string msg)
 		ImGui::SetCursorPosX(buttonX);
 		if (ImGui::Button("Yes", ImVec2(80, 0)))
 		{
-			GameObjectManager::GetPtr()->DeleteObject(msg);
+			selectedObj->DeleteComponent(tmpStr);
 			show_delete_obj = false;
 
 			message = "Successfully deleted";
 			alarm_window = true;
-			show_obj_setting = false;
+			show_delete_cmp = false;
 		}
 
 		ImGui::SameLine();
 		if (ImGui::Button("No", ImVec2(80, 0)))
-			show_delete_obj = false;
+			show_delete_cmp = false;
 	}
 
 	ImGui::End();
 }
 
-
 void MyEditor::CreateObjChangeWindow(std::string id)
 {
 	TestObject* testobj = new TestObject(id);
+	selectedObj = testobj;
 
 	show_new_obj_window = false;
 	show_obj_setting = true;
@@ -340,12 +398,13 @@ void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 	ImVec2 textSize = ImGui::CalcTextSize(msg.c_str());
 	ImVec2 windowSize = ImVec2(300, textSize.y + 80.f);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
-
 	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		//When this window should close
 		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
 			alarm_window = false;
-
+		if (alarm_window && !ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
+			alarm_window = false;
 
 		ImGui::SetCursorPosX((windowSize.x - textSize.x) * 0.5f);
 		ImGui::Text(msg.c_str());
@@ -354,9 +413,7 @@ void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 		float buttonX = (windowSize.x - 80.f) * 0.5f;
 		ImGui::SetCursorPosX(buttonX);
 		if (ImGui::Button("OK", ImVec2(80, 0)))
-		{
 			alarm_window = false;
-		}
 	}
 	ImGui::End();
 }

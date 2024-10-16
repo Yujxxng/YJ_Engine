@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <list>
+#include <vector>
 #include <string>
 #include "BaseComponent.h"
 
@@ -39,6 +40,9 @@ public:
 	void AddComponent(std::string compName);
 	BaseComponent* FindComponent(std::string cmpID);
 	void DeleteComponent(std::string cmpID);
+
+	bool CheckComponent(std::string compName);
+	std::vector<std::string> GetComponentsID();
 
 	void LoadToJson(const json& data);
 	json SaveToJson();
