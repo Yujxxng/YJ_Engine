@@ -33,6 +33,7 @@ public:
 
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);
+	void DeleteObject(std::string id);
 
 	void DeleteAllObject();
 

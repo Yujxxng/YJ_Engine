@@ -49,7 +49,30 @@ void GameObjectManager::AddObject(GameObject* obj)
 
 void GameObjectManager::DeleteObject(GameObject* obj)
 {
-    objects.remove(std::make_pair(obj->GetID(), obj));
+    for (auto it = objects.begin(); it != objects.end();)
+    {
+        if (it->second == obj)
+        {
+            delete it->second;
+            it = objects.erase(it);
+        }
+        else
+            ++it;
+    }
+}
+
+void GameObjectManager::DeleteObject(std::string id)
+{
+    for (auto it = objects.begin(); it != objects.end();)
+    {
+        if (it->first == id)
+        {
+            delete it->second;
+            it = objects.erase(it);
+        }
+        else
+            ++it;
+    }
 }
 
 void GameObjectManager::DeleteAllObject()

@@ -17,13 +17,17 @@ class MyEditor
 	static MyEditor* editor_ptr;
 
 private:
+	bool alarm_window = false;
 	bool show_new_obj_window = false;
 	bool show_obj_setting = false;
-	bool show_success_modi_id = false;
-	bool alarm_window = false;
+	bool show_delete_obj = false;
+	bool show_add_comp = false;
 
+	//For alarm window
 	std::string message{};
+	int selected = -1;
 public:
+	//For New Object's ID
 	std::string tmpStr{};
 
 	static MyEditor* GetPtr();
@@ -31,12 +35,14 @@ public:
 
 	void Draw();
 
-	void TopBar();
-	void ShowMenuFile();
+	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
 	void ShowTestObjectSetting(bool* p_open);
-
+	void ShowDeleteObject(bool* p_open, std::string msg);
 	void CreateObjChangeWindow(std::string id);
-	void SuccessModifyId(bool* p_open);
-	void AlarmWindow(bool* p_open, std::string msg);
+	void ShowAddComponent(bool* p_open);
+
+	void TopBar();
+	void ComponentListBox();
+	void ShowMenuFile();
 };

@@ -36,6 +36,7 @@ public:
 	void SetID(std::string id);
 
 	void AddComponent(BaseComponent* component);
+	void AddComponent(std::string compName);
 	BaseComponent* FindComponent(std::string cmpID);
 	void DeleteComponent(std::string cmpID);
 

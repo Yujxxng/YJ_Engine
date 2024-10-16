@@ -5,6 +5,7 @@
 #include "../Object/TestObject.h"
 
 #include <iostream>
+#include <vector>
 #include <cctype>
 
 #include "../myStd/MyFile.h"
@@ -42,6 +43,12 @@ void MyEditor::Draw()
 	if (show_obj_setting)
 		ShowTestObjectSetting(&show_obj_setting);
 
+	if (show_delete_obj)
+		ShowDeleteObject(&show_delete_obj, message);
+
+	if (show_add_comp)
+		ShowAddComponent(&show_add_comp);
+
 	if (alarm_window)
 		AlarmWindow(&alarm_window, message);
 }
@@ -57,6 +64,33 @@ void MyEditor::TopBar()
 		}
 		ImGui::EndMainMenuBar();
 	}
+}
+
+void MyEditor::ComponentListBox()
+{
+	const char* components[] = { "Transform", "Sprite" };
+
+	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
+	{
+		for (int i = 0; i < IM_ARRAYSIZE(components); i++)
+		{
+			const bool is_selected = (selected == i);
+			if (ImGui::Selectable(components[i], is_selected))
+				selected = i;
+
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		if (ImGui::IsMouseDoubleClicked(0))
+		{
+			if (selected >= 0 && selected < IM_ARRAYSIZE(components))
+			{
+				std::cout << "You double-clicked : " << components[selected] << std::endl;
+
+			}
+		}
+	}
+	ImGui::EndListBox();
 }
 
 void MyEditor::ShowMenuFile()
@@ -102,6 +136,9 @@ void MyEditor::ShowMenuFile()
 }
 
 bool filterInput(const std::string& input) {
+	if (input.empty())
+		return false;
+
 	std::string filtered;
 	for (char c : input) {
 		if (!std::isalnum(c))
@@ -127,7 +164,7 @@ void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 
 		ImGui::NewLine();
 		ImGui::SetCursorPosX(centerX);
-		if (ImGui::InputTextWithHint("  ", "ID", &buf, ImGuiInputTextFlags_CallbackAlways))
+		if (ImGui::InputTextWithHint("  ", "ID", &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
 		{
 			tmpStr = buf;
 			if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
@@ -175,13 +212,22 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 	TestObject* newObj = (TestObject*)GameObjectManager::GetPtr()->GetLastObjects();
 	if (ImGui::Begin("TestObject", p_open, ImGuiWindowFlags_NoResize))
 	{
+		ImGui::SetCursorPosX((windowSize.x - 200.f) * 0.5f);
+		if (ImGui::Button("Delete Object", ImVec2(200, 0)))
+		{
+			message = newObj->GetID();
+			show_delete_obj = true;
+		}
+		
+		ImGui::NewLine();
+
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("ID : ");
 
 		std::string buf{};
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(230);
-		if (ImGui::InputTextWithHint("  ", newObj->GetID().c_str(), &buf, ImGuiInputTextFlags_CallbackAlways))
+		if (ImGui::InputTextWithHint("  ", newObj->GetID().c_str(), &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
 			tmpStr = buf;
 
 		ImGui::SameLine();
@@ -202,6 +248,47 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 				}
 			}
 		}
+
+		ImGui::SetCursorPosX((windowSize.x - 300.f) * 0.5f);
+		if (ImGui::Button("Add Component", ImVec2(300, 0)))
+		{
+			message = newObj->GetID();
+			show_add_comp = true;
+		}
+	}
+
+	ImGui::End();
+}
+
+void MyEditor::ShowDeleteObject(bool* p_open, std::string msg)
+{
+	ImVec2 windowSize = ImVec2(400, 100);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	float centerX = (windowSize.x - 260.f) * 0.5f;
+
+	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		float textX = ImGui::CalcTextSize("Are you sure you want to delete this component?").x;
+		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Are you sure you want to delete this component?");
+
+		ImGui::NewLine();
+		float buttonX = (windowSize.x - 165.f) * 0.5f;
+		ImGui::SetCursorPosX(buttonX);
+		if (ImGui::Button("Yes", ImVec2(80, 0)))
+		{
+			GameObjectManager::GetPtr()->DeleteObject(msg);
+			show_delete_obj = false;
+
+			message = "Successfully deleted";
+			alarm_window = true;
+			show_obj_setting = false;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("No", ImVec2(80, 0)))
+			show_delete_obj = false;
 	}
 
 	ImGui::End();
@@ -216,6 +303,38 @@ void MyEditor::CreateObjChangeWindow(std::string id)
 	show_obj_setting = true;
 }
 
+void MyEditor::ShowAddComponent(bool* p_open)
+{
+	ImVec2 windowSize = ImVec2(300, 200);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	std::vector<std::string> items = {"Transform", "Sprite"};
+
+	if (ImGui::Begin("Add Component", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+			show_add_comp = false;
+
+		//Start Listbox
+		const char* components[] = { "Transform", "Sprite" };
+	
+		float textX = ImGui::CalcTextSize("Components").x;
+		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Components");
+		ImGui::NewLine();
+
+		ImGui::SetCursorPos(ImVec2((windowSize.x - 250.f) * 0.5f, 60.f));
+		ComponentListBox();
+
+		//Button
+		ImGui::SetCursorPos(ImVec2(195, 170));
+		if (ImGui::Button("OK", ImVec2(80, 0)))
+			show_add_comp = false;
+	}
+	ImGui::End();
+}
+
 void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 {
 	ImVec2 textSize = ImGui::CalcTextSize(msg.c_str());
@@ -224,6 +343,10 @@ void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 
 	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+			alarm_window = false;
+
+
 		ImGui::SetCursorPosX((windowSize.x - textSize.x) * 0.5f);
 		ImGui::Text(msg.c_str());
 

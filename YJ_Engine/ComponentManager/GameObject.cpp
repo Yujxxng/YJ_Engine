@@ -46,6 +46,11 @@ void GameObject::AddComponent(BaseComponent* component)
 	this->components.push_back(component);
 }
 
+void GameObject::AddComponent(std::string compName)
+{
+	Registry::GetPtr()->CreateComponent(compName, this);
+}
+
 BaseComponent* GameObject::FindComponent(std::string cmpID)
 {	
 	for (auto it = components.begin(); it != components.end(); it++)

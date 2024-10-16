@@ -79,7 +79,7 @@ void Helper::error_cb(int error, char const* description)
 void Helper::fbsize_cb(GLFWwindow* ptr_win, int width, int height)
 {
 #ifdef _DEBUG
-    std::cout << "fbsize_cb getting called!!!" << std::endl;
+    //std::cout << "fbsize_cb getting called!!!" << std::endl;
 #endif
     W_WIDTH= width;
     W_HEIGHT = height;
@@ -89,19 +89,19 @@ void Helper::key_cb(GLFWwindow* pwin, int key, int scancode, int action, int mod
 {
     if (GLFW_PRESS == action) {
 #ifdef _DEBUG
-        std::cout << "Key pressed" << std::endl;
+        //std::cout << "Key pressed" << std::endl;
 #endif
     }
     else if (GLFW_REPEAT == action) {
 
 #ifdef _DEBUG
-        std::cout << "Key repeatedly pressed" << std::endl;
+        //std::cout << "Key repeatedly pressed" << std::endl;
 #endif
     }
     else if (GLFW_RELEASE == action) {
         
 #ifdef _DEBUG
-        std::cout << "Key released" << std::endl;
+        //std::cout << "Key released" << std::endl;
 #endif
     }
 
@@ -118,24 +118,24 @@ void Helper::mousebutton_cb(GLFWwindow* pwin, int button, int action, int mod)
     switch (button) {
     case GLFW_MOUSE_BUTTON_LEFT:
 #ifdef _DEBUG
-        std::cout << "Left mouse button ";
+        //std::cout << "Left mouse button ";
 #endif
         break;
     case GLFW_MOUSE_BUTTON_RIGHT:
 #ifdef _DEBUG
-        std::cout << "Right mouse button ";
+        //std::cout << "Right mouse button ";
 #endif
         break;
     }
     switch (action) {
     case GLFW_PRESS:
 #ifdef _DEBUG
-        std::cout << "pressed!!!" << std::endl;
+        //std::cout << "pressed!!!" << std::endl;
 #endif
         break;
     case GLFW_RELEASE:
 #ifdef _DEBUG
-        std::cout << "released!!!" << std::endl;
+        //std::cout << "released!!!" << std::endl;
 #endif
         break;
     }
@@ -144,15 +144,15 @@ void Helper::mousebutton_cb(GLFWwindow* pwin, int button, int action, int mod)
 void Helper::mousescroll_cb(GLFWwindow* pwin, double xoffset, double yoffset)
 {
 #ifdef _DEBUG
-    std::cout << "Mouse scroll wheel offset: ("
-        << xoffset << ", " << yoffset << ")" << std::endl;
+    //std::cout << "Mouse scroll wheel offset: ("
+    //    << xoffset << ", " << yoffset << ")" << std::endl;
 #endif
 }
 
 void Helper::mousepos_cb(GLFWwindow* pwin, double xpos, double ypos)
 {
 #ifdef _DEBUG
-    std::cout << "Mouse cursor position: (" << xpos << ", " << ypos << ")" << std::endl;
+    //std::cout << "Mouse cursor position: (" << xpos << ", " << ypos << ")" << std::endl;
 #endif
 }
 
