@@ -2,9 +2,11 @@
 
 #include "../GSM/GameStateManager.h"
 #include "../ComponentManager/GameObjectManager.h"
+#include "../Object/TestObject.h"
 
 #include <iostream>
-#include <string>
+#include <cctype>
+
 #include "../myStd/MyFile.h"
 
 MyEditor* MyEditor::editor_ptr = nullptr;
@@ -33,8 +35,15 @@ void MyEditor::DeletePtr()
 void MyEditor::Draw()
 {
 	TopBar();
+
 	if (show_new_obj_window)
 		ShowCreateNewObjectWindow(&show_new_obj_window);
+
+	if (show_obj_setting)
+		ShowTestObjectSetting(&show_obj_setting);
+
+	if (alarm_window)
+		AlarmWindow(&alarm_window, message);
 }
 
 void MyEditor::TopBar()
@@ -92,6 +101,15 @@ void MyEditor::ShowMenuFile()
 	}
 }
 
+bool filterInput(const std::string& input) {
+	std::string filtered;
+	for (char c : input) {
+		if (!std::isalnum(c))
+			return false;
+	}
+	return true;
+}
+
 void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 {
 	ImVec2 windowSize = ImVec2(400, 140);
@@ -105,26 +123,117 @@ void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Enter new object's ID.");
 
+		std::string buf{};
+
 		ImGui::NewLine();
-		std::string str{};
 		ImGui::SetCursorPosX(centerX);
-		ImGui::InputTextWithHint("  ", "ID", &str);
+		if (ImGui::InputTextWithHint("  ", "ID", &buf, ImGuiInputTextFlags_CallbackAlways))
+		{
+			tmpStr = buf;
+			if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+			{
+				if (!filterInput(buf))
+				{
+					message = "Creation failed. \nOnly letters and numbers are allowed.";
+					alarm_window = true;
+				}
+				else
+					CreateObjChangeWindow(buf);
+			}
+		}
 
 		ImGui::NewLine();
 		float buttonX = (windowSize.x - 165.f) * 0.5f;
 		ImGui::SetCursorPosX(buttonX);
 		if (ImGui::Button("Create", ImVec2(80, 0)))
 		{
-			std::cout << "Create New TestObj" << std::endl;
-			show_new_obj_window = false;
+			if (!filterInput(tmpStr))
+			{
+				message = "Creation failed. \nOnly letters and numbers are allowed.";
+				alarm_window = true;
+			}
+			else
+			{
+				CreateObjChangeWindow(tmpStr);
+				tmpStr.clear();
+			}
 		}
+		
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(80, 0)))
-		{
-			std::cout << "Cancel to create new testobj" << std::endl;
 			show_new_obj_window = false;
+	}
+
+	ImGui::End();
+}
+
+void MyEditor::ShowTestObjectSetting(bool* p_open)
+{
+	ImVec2 windowSize = ImVec2(400, 600);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	TestObject* newObj = (TestObject*)GameObjectManager::GetPtr()->GetLastObjects();
+	if (ImGui::Begin("TestObject", p_open, ImGuiWindowFlags_NoResize))
+	{
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("ID : ");
+
+		std::string buf{};
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(230);
+		if (ImGui::InputTextWithHint("  ", newObj->GetID().c_str(), &buf, ImGuiInputTextFlags_CallbackAlways))
+			tmpStr = buf;
+
+		ImGui::SameLine();
+		if (ImGui::Button("Modify", ImVec2(80, 0)))
+		{
+			if (!filterInput(tmpStr))
+			{
+				message = "Modification failed. \nOnly letters and numbers are allowed.";
+				alarm_window = true;
+			}
+			else
+			{
+				newObj->SetID(tmpStr);
+				if(newObj->GetID() == tmpStr)
+				{
+					message = "Successfully modified.";
+					alarm_window = true;
+				}
+			}
 		}
 	}
 
+	ImGui::End();
+}
+
+
+void MyEditor::CreateObjChangeWindow(std::string id)
+{
+	TestObject* testobj = new TestObject(id);
+
+	show_new_obj_window = false;
+	show_obj_setting = true;
+}
+
+void MyEditor::AlarmWindow(bool* p_open, std::string msg)
+{
+	ImVec2 textSize = ImGui::CalcTextSize(msg.c_str());
+	ImVec2 windowSize = ImVec2(300, textSize.y + 80.f);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		ImGui::SetCursorPosX((windowSize.x - textSize.x) * 0.5f);
+		ImGui::Text(msg.c_str());
+
+		ImGui::NewLine();
+		float buttonX = (windowSize.x - 80.f) * 0.5f;
+		ImGui::SetCursorPosX(buttonX);
+		if (ImGui::Button("OK", ImVec2(80, 0)))
+		{
+			alarm_window = false;
+		}
+	}
 	ImGui::End();
 }

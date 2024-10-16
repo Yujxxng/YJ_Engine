@@ -25,6 +25,23 @@ void GameObjectManager::DeletePtr()
     }
 }
 
+GameObject* GameObjectManager::GetLastObjects()
+{
+    if (objects.empty()) return nullptr;
+    return objects.back().second;
+}
+
+GameObject* GameObjectManager::FindObjects(std::string id)
+{
+    for (auto& obj : objects)
+    {
+        if (id == obj.first)
+            return obj.second;
+    }
+
+    return nullptr;
+}
+
 void GameObjectManager::AddObject(GameObject* obj)
 {
     objects.push_back(std::make_pair(obj->GetID(), obj));

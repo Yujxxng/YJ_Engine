@@ -28,6 +28,8 @@ public:
 	static GameObjectManager* GetPtr();
 	static void DeletePtr();
 
+	GameObject* GetLastObjects();
+	GameObject* FindObjects(std::string);
 
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);
