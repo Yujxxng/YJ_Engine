@@ -52,7 +52,8 @@ void SpriteComponent::Update()
 		tranf = glm::mat3x3(1.0f);
 
 	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
-	glUniform3f(uniform_var_color, color.r, color.g, color.b);
+	glUniform3f(uniform_var_color, (color.r / 255.f), (color.g / 255.f), (color.b / 255.f));
+	//glUniform3f(uniform_var_color, color.r, color.g, color.b);
 	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
 	if (uniform_var_loc1 >= 0) 
 		glUniformMatrix3fv(uniform_var_loc1, 1, GL_FALSE, glm::value_ptr(tranf));
@@ -70,16 +71,21 @@ void SpriteComponent::SetColor(const Color& otherColor)
 }
 void SpriteComponent::SetColor(float r, float g, float b, float a)
 {
-	color.r = (unsigned char)(r / 255.f);
-	color.g = (unsigned char)(g / 255.f);
-	color.b = (unsigned char)(b / 255.f);
-	color.a = (unsigned char)(a / 255.f);
+	color.r = (unsigned char)r;
+	color.g = (unsigned char)g;
+	color.b = (unsigned char)b;
+	color.a = (unsigned char)a;
 }
 void SpriteComponent::SetTexture(const char* fileName)
 {
 	if (tex)
 		delete tex;
 	tex = CreateTexture(fileName);
+}
+
+Color& SpriteComponent::GetColor()
+{
+	return this->color;
 }
 
 void SpriteComponent::LoadFromJson(const json& data)

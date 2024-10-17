@@ -4,6 +4,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/SimpleObjectCreator.h"
+#include "../Components/PlayerComponent.h"
 
 Registry* Registry::registry_ptr = nullptr;
 
@@ -12,6 +13,7 @@ Registry::Registry()
 	componentMap.insert({ "Sprite", &SpriteComponent::CreateComponent });
 	componentMap.insert({ "SimpleObjectCreator", &SimpleObjectCreator::CreateComponent });
 	componentMap.insert({ "Transform", &TransformComponent::CreateComponent });
+	componentMap.insert({ "Player", &PlayerComponent::CreateComponent });
 
 }
 

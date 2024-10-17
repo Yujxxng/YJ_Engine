@@ -34,14 +34,9 @@ private:
 	std::string tmpStr{};	//For New Object's
 	GameObject* selectedObj = nullptr;
 	int selected = -1;		//For list
+	int selected_img = 0; //For image combo
 
-public:
-
-	static MyEditor* GetPtr();
-	static void DeletePtr();
-
-	void Draw();
-
+private:
 	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
 	void ShowTestObjectSetting(bool* p_open);
@@ -54,4 +49,15 @@ public:
 	void ComponentListBox();
 	void ShowHasComponent();
 	void ShowMenuFile();
+	void DrawComponentProperties(std::string compName);
+	void DrawTransform();
+	void DrawSprite();
+	void DrawPlayer();
+	const char* SelectImage(int n);
+public:
+
+	static MyEditor* GetPtr();
+	static void DeletePtr();
+
+	void Draw();
 };

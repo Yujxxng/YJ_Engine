@@ -3,7 +3,7 @@
 
 class PlayerComponent : public LogicComponent
 {
-	float speed = 200.f;
+	float speed = 1.f;
 public:
 	PlayerComponent(GameObject* owner);
 
@@ -11,6 +11,7 @@ public:
 
 	void SetSpeed(float speed);
 
+	const float GetSpeed() const;
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;
 	//

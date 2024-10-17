@@ -25,13 +25,13 @@ void PlayerComponent::Update()
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
 		//std::cout << "Press LEFT" << std::endl;
-		tComp->SetPos({ tComp->GetPos().x - 0.1f, tComp->GetPos().y });
+		tComp->SetPos({ tComp->GetPos().x - 1.f * speed, tComp->GetPos().y });
 	}
 
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
 		//std::cout << "Press RIGHT" << std::endl;
-		tComp->SetPos({ tComp->GetPos().x + 0.1f, tComp->GetPos().y });
+		tComp->SetPos({ tComp->GetPos().x + 1.f * speed, tComp->GetPos().y });
 	}
 	//if (AEInputCheckCurr(AEVK_LEFT)) r->AddVelocity(-speed, 0);
 	//if (AEInputCheckCurr(AEVK_RIGHT)) r->AddVelocity(speed, 0);
@@ -40,6 +40,10 @@ void PlayerComponent::Update()
 void PlayerComponent::SetSpeed(float v)
 {
 	this->speed = v;
+}
+const float PlayerComponent::GetSpeed() const
+{
+	return speed;
 }
 void PlayerComponent::LoadFromJson(const json& data)
 {
@@ -82,27 +86,3 @@ ComponentSerializer* PlayerComponent::CreateComponent(GameObject* owner)
 
 	return tmp;
 }
-/*
-void PlayerComponent::LoadFromJson(const json& data)
-{
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
-	{
-		auto it = componentData->find("speed");
-		speed = it->begin().value();
-	}
-}
-
-json PlayerComponent::SaveToJson()
-{
-	json data, componentData;
-	data["type"] = "Player";
-
-	componentData["speed"] = speed;
-	data["componentData"] = componentData;
-
-	return data;
-}
-
-
-*/

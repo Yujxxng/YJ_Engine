@@ -62,7 +62,7 @@ private:
 	Mesh* mesh;
 	Shader shader;
 
-	Color color{};
+	Color color{255, 255, 255, 255};
 	Texture* tex;
 	//std::vector<std::string> texture;
 	//int texIdx;
@@ -78,6 +78,8 @@ public:
 	void SetColor(const Color&);
 	void SetColor(float r, float g, float b, float a);
 	void SetTexture(const char* fileName);
+
+	Color& GetColor();
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;

@@ -5,6 +5,12 @@
 #include <cctype>
 
 #include "../myStd/MyFile.h"
+#include "../myStd/Helper.h"
+#include "../myStd/Color.h"
+
+#include "../Components/TransformComponent.h"
+#include "../Components/SpriteComponent.h"
+#include "../Components/PlayerComponent.h"
 
 MyEditor* MyEditor::editor_ptr = nullptr;
 
@@ -68,7 +74,7 @@ void MyEditor::TopBar()
 
 void MyEditor::ComponentListBox()
 {
-	const char* components[] = { "Transform", "Sprite" };
+	const char* components[] = { "Transform", "Sprite", "Player"};
 
 	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
 	{
@@ -99,8 +105,8 @@ void MyEditor::ShowHasComponent()
 		{
 			if (ImGui::TreeNode(compID[i].c_str()))
 			{
-				ImGui::Text(compID[i].c_str());
-				
+				DrawComponentProperties(compID[i]);
+
 				ImGui::NewLine();
 				ImGui::SetCursorPosX(300.f);
 				if (ImGui::Button("Delete", ImVec2(80, 0)))
@@ -137,12 +143,12 @@ void MyEditor::ShowMenuFile()
 	{
 		if (ImGui::MenuItem("app.dat"))
 			MyFile::LoadObjectFile("app.dat");
-		
+
 		ImGui::MenuItem("1");
 		ImGui::MenuItem("2");
 		ImGui::EndMenu();
 	}
-	if (ImGui::MenuItem("Save", "Ctrl_S"))
+	if (ImGui::MenuItem("Save", "Ctrl+S"))
 	{
 		std::cout << "Save" << std::endl;
 	}
@@ -154,6 +160,201 @@ void MyEditor::ShowMenuFile()
 	{
 		std::cout << "Close" << std::endl;
 		GSM::GameStateManager::GetGSMPtr()->gGameRunning = 0;
+	}
+}
+
+void MyEditor::DrawComponentProperties(std::string compName)
+{
+	if (compName == "Transform")
+		DrawTransform();
+	else if (compName == "Sprite")
+		DrawSprite();
+	else if (compName == "Player")
+		DrawPlayer();
+}
+
+void MyEditor::DrawTransform()
+{
+	TransformComponent* tComp = (TransformComponent*)selectedObj->FindComponent("Transform");
+	if (tComp != nullptr)
+	{
+		//POSITION
+		float pos_x{ tComp->GetPos().x }, pos_y{ tComp->GetPos().y };
+		if (ImGui::TreeNode("Position"))
+		{
+			ImGui::Text("X :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##pos_x", &pos_x, -(Helper::W_WIDTH / 2.f), (Helper::W_WIDTH / 2.f), "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				pos_x = pos_x;
+				tComp->SetPos(pos_x, pos_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_pos_x", &pos_x, 0.0f, 0.0f, "%.2f"))
+			{
+				pos_x = std::max(-(Helper::W_WIDTH / 2.f), std::min(pos_x, (Helper::W_WIDTH / 2.f)));
+
+				pos_x = pos_x;
+				tComp->SetPos(pos_x, pos_y);
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Y :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if(ImGui::SliderFloat("##pos_y", &pos_y, -(Helper::W_HEIGHT / 2.f), (Helper::W_HEIGHT / 2.f), "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				pos_y = pos_y;
+				tComp->SetPos(pos_x, pos_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_pos_y", &pos_y, 0.0f, 0.0f, "%.2f"))
+			{
+				pos_y = std::max(-(Helper::W_HEIGHT / 2.f), std::min(pos_y, (Helper::W_HEIGHT / 2.f)));
+
+				pos_y = pos_y;
+				tComp->SetPos(pos_x, pos_y);
+			}
+
+			ImGui::TreePop();
+		}
+		
+		ImGui::NewLine();
+		//SCALE
+		float scale_x{ tComp->GetScale().x }, scale_y{ tComp->GetScale().y };
+		if (ImGui::TreeNode("Scale"))
+		{
+			ImGui::Text("X :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##scale_x", &scale_x, 0.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				scale_x = scale_x;
+				tComp->SetScale(scale_x, scale_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(40.f);
+			if (ImGui::InputFloat("##input_scale_x", &scale_x, 0.0f, 0.0f, "%.2f"))
+			{
+				scale_x = std::max(0.f, std::min(scale_x, 1000.f));
+
+				scale_x = scale_x;
+				tComp->SetScale(scale_x, scale_y);
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Y :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##scale_y", &scale_y, 0.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				scale_y = scale_y;
+				tComp->SetScale(scale_x, scale_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(40.f);
+			if (ImGui::InputFloat("##input_scale_y", &scale_y, 0.0f, 0.0f, "%.2f"))
+			{
+				scale_y = std::max(0.f, std::min(scale_y, 1000.f));
+
+				scale_y = scale_y;
+				tComp->SetScale(scale_x, scale_y);
+			}
+			//bool test = false;
+			//ImGui::SetCursorPos(ImVec2(365.f, 260.f));
+			//ImGui::Checkbox("##uniform", &test);
+			ImGui::TreePop();
+		}
+	
+		ImGui::NewLine();
+		//ANGLE
+		float angle{ tComp->GetRot() };
+		if (ImGui::TreeNode("Angle"))
+		{
+			ImGui::SeparatorText("Degree");
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##angle", &angle, 0.f, 360.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				angle = angle;
+				tComp->SetRotate(angle);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_degree", &angle, 0.0f, 0.0f, "%.2f"))
+			{
+				angle = std::max(0.f, std::min(angle, 360.f));
+
+				angle = angle;
+				tComp->SetRotate(angle);
+			}
+			ImGui::TreePop();
+		}
+	}
+}
+
+void MyEditor::DrawSprite()
+{
+	SpriteComponent* sComp = (SpriteComponent*)selectedObj->FindComponent("Sprite");
+	if (sComp != nullptr)
+	{
+		//COLOR
+		ImVec4 color = ImVec4((float)(sComp->GetColor().r / 255.f), (float)(sComp->GetColor().g / 255.f), (float)(sComp->GetColor().b / 255.f), (float)(sComp->GetColor().a / 255.f));
+
+		if (ImGui::TreeNode("Color"))
+		{
+			if (ImGui::ColorEdit4("##MyColor2f", (float*)&color))
+			{
+				color = color;
+				sComp->SetColor(color.x * 255.f, color.y * 255.f, color.z * 255.f, color.w * 255.f);
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Image"))
+		{
+			const char* items[] = { "Default", "Mangom", "Planet" };
+			if(ImGui::Combo("##image", &selected_img, items, IM_ARRAYSIZE(items)))
+			{
+				sComp->SetTexture(SelectImage(selected_img));
+			}
+			ImGui::TreePop();
+		}
+	}
+}
+
+void MyEditor::DrawPlayer()
+{
+	PlayerComponent* pComp = (PlayerComponent*)selectedObj->FindComponent("Player");
+	if (pComp != nullptr)
+	{
+		//SPEED
+		float speed{ pComp->GetSpeed()};
+		if (ImGui::TreeNode("Speed"))
+		{
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##angle", &speed, -100.f, 100.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				speed = speed;
+				pComp->SetSpeed(speed);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_degree", &speed, 0.0f, 0.0f, "%.2f"))
+			{
+				speed = std::max(-100.f, std::min(speed, 100.f));
+
+				speed = speed;
+				pComp->SetSpeed(speed);
+			}
+			ImGui::TreePop();
+		}
+	}
+}
+
+const char* MyEditor::SelectImage(int n)
+{
+	switch (n)
+	{
+	case 0:
+		return "Assets/white.png";
+	case 1:
+		return "Assets/manggom.png";
+	case 2:
+		return "Assets/PlanetTexture.png";
+	default:
+		return "";
 	}
 }
 
@@ -366,16 +567,12 @@ void MyEditor::ShowAddComponent(bool* p_open)
 	ImVec2 windowSize = ImVec2(300, 200);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 
-	std::vector<std::string> items = {"Transform", "Sprite"};
-
 	if (ImGui::Begin("Add Component", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
 		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
 			show_add_comp = false;
 
 		//Start Listbox
-		const char* components[] = { "Transform", "Sprite" };
-	
 		float textX = ImGui::CalcTextSize("Components").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
 		ImGui::AlignTextToFramePadding();
