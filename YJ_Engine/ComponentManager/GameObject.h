@@ -7,15 +7,17 @@
 
 enum OBJECT_TYPE
 {
-	TEST = 0,
-	CREAT = 1,
+	PLAYER = 0,
+	SCENE = 1,
+	OTHERS = 2,
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM
 (OBJECT_TYPE,
 	{
-		{TEST, "Test"},
-		{CREAT, "Creat"}
+		{PLAYER, "PLAYER"},
+		{SCENE, "SCENE"},
+		{OTHERS, "OTHERS"},
 	}
 )
 

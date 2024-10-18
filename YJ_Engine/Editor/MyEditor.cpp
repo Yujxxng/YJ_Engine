@@ -14,7 +14,6 @@
 
 MyEditor* MyEditor::editor_ptr = nullptr;
 
-
 MyEditor* MyEditor::GetPtr()
 {
 	if (editor_ptr == nullptr)
@@ -38,16 +37,19 @@ void MyEditor::DeletePtr()
 void MyEditor::Draw()
 {
 	TopBar();
+	if (show_all_obj)
+		ShowAllObjects(&show_all_obj);
 
 	if (show_new_obj_window)
 		ShowCreateNewObjectWindow(&show_new_obj_window);
 
 	if (show_obj_setting)
-		ShowTestObjectSetting(&show_obj_setting);
+		ShowObjectSetting(&show_obj_setting);
+	else
+		show_add_comp = false;
 
 	if (show_delete_obj)
 		ShowDeleteObject(&show_delete_obj);
-
 
 	if (show_add_comp)
 		ShowAddComponent(&show_add_comp);
@@ -129,13 +131,9 @@ void MyEditor::ShowMenuFile()
 		{
 			std::cout << "File.." << std::endl;
 		}
-		if (ImGui::BeginMenu("Object.."))
+		if (ImGui::MenuItem("Object.."))
 		{
-			if (ImGui::MenuItem("TestObject"))
-			{
-				show_new_obj_window = true;
-			}
-			ImGui::EndMenu();
+			show_new_obj_window = true;
 		}
 		ImGui::EndMenu();
 	}
@@ -218,7 +216,6 @@ void MyEditor::DrawTransform()
 			ImGui::TreePop();
 		}
 		
-		ImGui::NewLine();
 		//SCALE
 		float scale_x{ tComp->GetScale().x }, scale_y{ tComp->GetScale().y };
 		if (ImGui::TreeNode("Scale"))
@@ -261,7 +258,6 @@ void MyEditor::DrawTransform()
 			ImGui::TreePop();
 		}
 	
-		ImGui::NewLine();
 		//ANGLE
 		float angle{ tComp->GetRot() };
 		if (ImGui::TreeNode("Angle"))
@@ -372,11 +368,13 @@ bool filterInput(const std::string& input) {
 
 void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 {
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 	ImVec2 windowSize = ImVec2(400, 140);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 	float centerX = (windowSize.x - 260.f) * 0.5f;
 
-	if(ImGui::Begin("New Object : TestObject", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	if(ImGui::Begin("New Object", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
 		float textX = ImGui::CalcTextSize("Enter new object's ID.").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
@@ -427,12 +425,12 @@ void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 	ImGui::End();
 }
 
-void MyEditor::ShowTestObjectSetting(bool* p_open)
+void MyEditor::ShowObjectSetting(bool* p_open)
 {
 	ImVec2 windowSize = ImVec2(400, 600);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 
-	if (ImGui::Begin("TestObject", p_open, ImGuiWindowFlags_NoResize))
+	if (ImGui::Begin("Object Setting", p_open, ImGuiWindowFlags_NoResize))
 	{
 		ImGui::SetCursorPosX((windowSize.x - 200.f) * 0.5f);
 		if (ImGui::Button("Delete Object", ImVec2(200, 0)))
@@ -441,19 +439,17 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 			show_delete_obj = true;
 		}
 		
-		ImGui::NewLine();
-
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("ID : ");
+		ImGui::NewLine(); ImGui::AlignTextToFramePadding();
+		ImGui::Text("ID :");
 
 		std::string buf{};
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(230);
+		ImGui::SetNextItemWidth(100);
 		if (ImGui::InputTextWithHint("  ", selectedObj->GetID().c_str(), &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
 			tmpStr = buf;
 
-		ImGui::SameLine();
-		if (ImGui::Button("Modify", ImVec2(80, 0)))
+		ImGui::SameLine(); ImGui::SetCursorPosX(150.f);
+		if (ImGui::Button("Modify", ImVec2(50, 0)))
 		{
 			if (!filterInput(tmpStr))
 			{
@@ -470,6 +466,31 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 				}
 			}
 		}
+		//Set Object Type Combo
+		ImGui::SameLine(); ImGui::SetCursorPosX(230.f);
+		ImGui::Text("TYPE :"); ImGui::SameLine();
+		const char* items[] = { "PLAYER", "SCENE", "OTHERS" };
+
+		// Pass in the preview value visible before opening the combo (it could technically be different contents or not pulled from items[])
+		const char* combo_preview_value = items[selected_type];
+		ImGui::SetNextItemWidth(100.f);
+		if (ImGui::BeginCombo("##Type", combo_preview_value, 0))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			{
+				const bool is_selected = (selected_type == n);
+				if (ImGui::Selectable(items[n], is_selected))
+				{
+					selected_type = n;
+					//selectedObj->SetType(n);
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
 
 		ImGui::NewLine();
 		ImGui::SetCursorPosX((windowSize.x - 300.f) * 0.5f);
@@ -485,6 +506,8 @@ void MyEditor::ShowTestObjectSetting(bool* p_open)
 
 void MyEditor::ShowDeleteObject(bool* p_open)
 {
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 	ImVec2 windowSize = ImVec2(400, 100);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 	float centerX = (windowSize.x - 260.f) * 0.5f;
@@ -525,7 +548,10 @@ void MyEditor::ShowDeleteComponent(bool* p_open, std::string compName)
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 	float centerX = (windowSize.x - 260.f) * 0.5f;
 
-	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	ImGui::OpenPopup("##Delete component");
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	if (ImGui::BeginPopupModal("##Delete component", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
 		float textX = ImGui::CalcTextSize("Are you sure you want to delete this component?").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
@@ -548,15 +574,15 @@ void MyEditor::ShowDeleteComponent(bool* p_open, std::string compName)
 		ImGui::SameLine();
 		if (ImGui::Button("No", ImVec2(80, 0)))
 			show_delete_cmp = false;
+		ImGui::EndPopup();
 	}
-
-	ImGui::End();
 }
 
 void MyEditor::CreateObjChangeWindow(std::string id)
 {
-	TestObject* testobj = new TestObject(id);
-	selectedObj = testobj;
+	GameObject* obj = new GameObject(id);
+	selectedObj = obj;
+	new_obj = true;
 
 	show_new_obj_window = false;
 	show_obj_setting = true;
@@ -590,11 +616,82 @@ void MyEditor::ShowAddComponent(bool* p_open)
 	ImGui::End();
 }
 
+void MyEditor::ShowAllObjects(bool* p_open)
+{
+	//ImVec2 center = ImGui::GetMainViewport()->;
+	ImGui::SetNextWindowPos(ImVec2(Helper::W_WIDTH - 202.f, 130.f), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowSize(ImVec2(400, 220), ImGuiCond_Always);
+	if (ImGui::Begin("Objects", p_open, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize))
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Close", "Ctrl+W")) { *p_open = false; }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		// Left
+		int i = 0;
+		bool y_obj = false;
+
+		ImGuiTextFilter filter;
+		filter.Draw("##Object filter", 380.f);
+		
+		GameObjectManager* gom = GameObjectManager::GetPtr();
+		{
+			ImGui::BeginChild("left pane", ImVec2(380, 120), ImGuiChildFlags_Border);
+			//draw objects
+			auto it_begin = gom->Iter_begin;
+			for (; it_begin != gom->Iter_end; ++it_begin)
+			{
+				//First Load
+				y_obj = true;
+				if(selectedObj == nullptr)
+					selectedObj = gom->Iter_begin->second;
+
+				std::string label;
+				label = it_begin->first;
+				if(filter.PassFilter(label.c_str()))
+				{
+					if (ImGui::Selectable(label.c_str(), selected_obj == i))
+					{
+						selected_obj = i;
+						selectedObj = gom->FindObjects(label);
+					}
+					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+						show_obj_setting = true;
+				}
+				i++;
+			}
+
+			if (new_obj) //If created new obj, focus on the new obj
+			{
+				selected_obj = i - 1;
+				new_obj = false;
+			}
+
+
+			ImGui::EndChild();
+		}
+
+		// Right
+			if (ImGui::Button("Revert")) {}
+			ImGui::SameLine();
+			if (ImGui::Button("Save")) {}
+	}
+	ImGui::End();
+}
+
 void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 {
 	ImVec2 textSize = ImGui::CalcTextSize(msg.c_str());
 	ImVec2 windowSize = ImVec2(300, textSize.y + 80.f);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
 		//When this window should close

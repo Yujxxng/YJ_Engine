@@ -5,7 +5,7 @@
 
 TestObject::TestObject(std::string id) : GameObject(id)
 {
-	SetType(TEST);
+	//SetType(TEST);
 	SetPos(0.f, 0.f);
 	SetSize(0.5f, 0.5f);
 }

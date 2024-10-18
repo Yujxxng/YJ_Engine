@@ -42,9 +42,21 @@ GameObject* GameObjectManager::FindObjects(std::string id)
     return nullptr;
 }
 
+int GameObjectManager::GetAllObjectsNumber()
+{
+    return objects.size();
+}
+
+void GameObjectManager::UpdateIterator()
+{
+    Iter_begin = objects.begin();
+    Iter_end = objects.end();
+}
+
 void GameObjectManager::AddObject(GameObject* obj)
 {
     objects.push_back(std::make_pair(obj->GetID(), obj));
+    UpdateIterator();
 }
 
 void GameObjectManager::DeleteObject(GameObject* obj)
@@ -59,6 +71,7 @@ void GameObjectManager::DeleteObject(GameObject* obj)
         else
             ++it;
     }
+    UpdateIterator();
 }
 
 void GameObjectManager::DeleteObject(std::string id)
@@ -73,12 +86,14 @@ void GameObjectManager::DeleteObject(std::string id)
         else
             ++it;
     }
+    UpdateIterator();
 }
 
 void GameObjectManager::DeleteAllObject()
 {
     for (auto& obj : objects)
         delete obj.second;
+    UpdateIterator();
 }
 
 void GameObjectManager::LoadAllObjects(const json& data)
@@ -86,13 +101,8 @@ void GameObjectManager::LoadAllObjects(const json& data)
     for (auto& obj : data.items())
     {
         std::string id = obj.key();
-        auto tp = obj.value().find("Type").value().get<OBJECT_TYPE>();
-
-        if (tp == TEST)
-        {
-            TestObject* newObject = new TestObject(id);
-            newObject->LoadToJson(data);
-        }
+        GameObject* newObject = new GameObject(id);
+        newObject->LoadToJson(data);
     }
 }
 

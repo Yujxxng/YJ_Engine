@@ -28,8 +28,13 @@ public:
 	static GameObjectManager* GetPtr();
 	static void DeletePtr();
 
+	std::list<StrObjPair>::iterator Iter_begin = objects.begin();
+	std::list<StrObjPair>::iterator Iter_end = objects.end();
+	void UpdateIterator();
+
 	GameObject* GetLastObjects();
 	GameObject* FindObjects(std::string);
+	int GetAllObjectsNumber();
 
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);

@@ -16,7 +16,6 @@
 
 #include "../ComponentManager/GameObjectManager.h"
 
-TestObject* testobj[2];
 void Levels::Test::Init()
 {	
 	std::cout << "Test Level Init" << std::endl;

@@ -97,6 +97,10 @@ void GameObject::LoadToJson(const json& data)
 	{
 		if (obj.key() == this->GetID())
 		{
+			//Get Type
+			auto obj_type = obj.value().find("Type").value().get<OBJECT_TYPE>();
+			SetType(obj_type);
+
 			//Get component Data
 			auto compData = obj.value().find("Component Data");
 			if (compData != obj.value().end())

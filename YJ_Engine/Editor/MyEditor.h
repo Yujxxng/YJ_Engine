@@ -6,7 +6,6 @@
 
 #include "../GSM/GameStateManager.h"
 #include "../ComponentManager/GameObjectManager.h"
-#include "../Object/TestObject.h"
 
 #include <string>
 
@@ -27,23 +26,29 @@ private:
 	bool show_delete_obj = false;
 	bool show_delete_cmp = false;
 	bool show_add_comp = false;
+	bool show_all_obj = true;
 
 private:
-	
+	bool new_obj = false;
+
 	std::string message{};	//For alarm window
 	std::string tmpStr{};	//For New Object's
 	GameObject* selectedObj = nullptr;
+
 	int selected = -1;		//For list
-	int selected_img = 0; //For image combo
+	int selected_obj = 0;	//For AllObjList
+	int selected_img = 0;	//For image combo
+	int selected_type = 0;
 
 private:
 	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
-	void ShowTestObjectSetting(bool* p_open);
+	void ShowObjectSetting(bool* p_open);
 	void ShowDeleteObject(bool* p_open);
 	void ShowDeleteComponent(bool* p_open, std::string compName);
 	void CreateObjChangeWindow(std::string id);
 	void ShowAddComponent(bool* p_open);
+	void ShowAllObjects(bool* p_open);
 
 	void TopBar();
 	void ComponentListBox();
