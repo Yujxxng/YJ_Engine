@@ -8,6 +8,7 @@ GLdouble Helper::fps;
 GLdouble Helper::delta_time; // time taken to complete most recent game loop
 std::string Helper::W_TITLE;
 GLFWwindow* Helper::ptr_window;
+bool Helper::editMode = false;
 
 bool Helper::init(GLint width, GLint height, std::string title)
 {
@@ -108,9 +109,8 @@ void Helper::key_cb(GLFWwindow* pwin, int key, int scancode, int action, int mod
     if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action) {
         glfwSetWindowShouldClose(pwin, GLFW_TRUE);
     }
-    //if (key == 'Q' && action == GLFW_PRESS)
-    //    GSM::GameStateManager::GetGSMPtr()->gGameRunning = 0;
-    //
+    if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
+        Helper::editMode = !Helper::editMode;
 }
 
 void Helper::mousebutton_cb(GLFWwindow* pwin, int button, int action, int mod)

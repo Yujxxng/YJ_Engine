@@ -6,7 +6,7 @@
 Texture* CreateTexture(const char* fileName)
 {
 	Texture* texture = new Texture;
-	texture->texName = fileName;
+	strcat_s(texture->texName, sizeof(texture->texName), fileName);
 	glGenTextures(1, &texture->tex);
 	glBindTexture(GL_TEXTURE_2D, texture->tex);
 

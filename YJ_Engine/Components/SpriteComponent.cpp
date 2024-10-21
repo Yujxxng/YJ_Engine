@@ -88,6 +88,11 @@ Color& SpriteComponent::GetColor()
 	return this->color;
 }
 
+const char* SpriteComponent::GetTexName()
+{
+	return tex->texName;
+}
+
 void SpriteComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;

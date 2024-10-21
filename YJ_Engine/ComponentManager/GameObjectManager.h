@@ -23,6 +23,7 @@ class GameObjectManager
 
 	using StrObjPair = std::pair<std::string, GameObject*>;
 	std::list<StrObjPair> objects;
+	std::list<StrObjPair> tmp_objects;
 
 public:
 	static GameObjectManager* GetPtr();
@@ -34,11 +35,14 @@ public:
 
 	GameObject* GetLastObjects();
 	GameObject* FindObjects(std::string);
+	
 	int GetAllObjectsNumber();
 
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);
 	void DeleteObject(std::string id);
+	void ChangeFirstStr(GameObject* obj, std::string newName);
+	void CopyCurrentState();
 
 	void DeleteAllObject();
 

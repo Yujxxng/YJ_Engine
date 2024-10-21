@@ -80,6 +80,7 @@ public:
 	void SetTexture(const char* fileName);
 
 	Color& GetColor();
+	const char* GetTexName();
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;

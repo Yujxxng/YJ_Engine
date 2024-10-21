@@ -34,6 +34,7 @@ struct Helper
 	static std::string W_TITLE;
 	static GLFWwindow* ptr_window;
 	//static GLfloat clear_color[4]; // rgba normalize components in range 0.0f to 1.0f
+	static bool editMode;
 };
 
 #endif HELPER_H

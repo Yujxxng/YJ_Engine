@@ -91,8 +91,10 @@ int main()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::ShowDemoWindow(); // Show demo window! :)
-		MyEditor::GetPtr()->Draw();
+		//ImGui::ShowDemoWindow(); // Show demo window! :)
+		if(Helper::editMode)
+			MyEditor::GetPtr()->Draw();
+
 		double currentTime = glfwGetTime();
 		frames++;
 		
@@ -121,7 +123,6 @@ int main()
 			gsm->gGameRunning = 0;
 
 	}
-
 
 	gsm->Exit();
 	gsm->DeleteGSM();

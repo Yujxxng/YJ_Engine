@@ -21,16 +21,17 @@ class MyEditor
 
 private:
 	bool alarm_window = false;
+	bool show_all_obj = true;
 	bool show_new_obj_window = false;
 	bool show_obj_setting = false;
 	bool show_delete_obj = false;
 	bool show_delete_cmp = false;
 	bool show_add_comp = false;
-	bool show_all_obj = true;
-
+	bool show_make_new_file = false;
 private:
 	bool new_obj = false;
 
+	std::string curPath{};	//For save
 	std::string message{};	//For alarm window
 	std::string tmpStr{};	//For New Object's
 	GameObject* selectedObj = nullptr;
@@ -49,6 +50,7 @@ private:
 	void CreateObjChangeWindow(std::string id);
 	void ShowAddComponent(bool* p_open);
 	void ShowAllObjects(bool* p_open);
+	void ShowMakeNewFile(bool* p_open);
 
 	void TopBar();
 	void ComponentListBox();
@@ -58,7 +60,10 @@ private:
 	void DrawTransform();
 	void DrawSprite();
 	void DrawPlayer();
+
 	const char* SelectImage(int n);
+	void SaveFile();
+	void CloseFile();
 public:
 
 	static MyEditor* GetPtr();

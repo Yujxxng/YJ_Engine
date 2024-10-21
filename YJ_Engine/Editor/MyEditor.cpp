@@ -57,6 +57,9 @@ void MyEditor::Draw()
 	if (show_delete_cmp)
 		ShowDeleteComponent(&show_delete_cmp, tmpStr);
 
+	if (show_make_new_file)
+		ShowMakeNewFile(&show_make_new_file);
+
 	if (alarm_window)
 		AlarmWindow(&alarm_window, message);
 }
@@ -70,6 +73,19 @@ void MyEditor::TopBar()
 			ShowMenuFile();
 			ImGui::EndMenu();
 		}
+
+		ImGui::SetCursorPosX(1560.f);
+
+		ImGui::PushID(0);
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(7.0f, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(7.0f, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(7.0f, 0.8f, 0.8f));
+
+		if (ImGui::Button("Exit", ImVec2(40.f, 0)))
+			Helper::editMode = false;
+	
+		ImGui::PopStyleColor(3);
+		ImGui::PopID();
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -139,16 +155,28 @@ void MyEditor::ShowMenuFile()
 	}
 	if (ImGui::BeginMenu("Open"))
 	{
-		if (ImGui::MenuItem("app.dat"))
-			MyFile::LoadObjectFile("app.dat");
+		const char* paths[] = {
+			"app.dat",
+			"yrds.dat"
+		};
 
-		ImGui::MenuItem("1");
-		ImGui::MenuItem("2");
+		for (auto path : paths)
+		{
+			if (ImGui::MenuItem(path))
+			{
+				if (!curPath.empty())
+					CloseFile();
+
+				curPath = path;
+				MyFile::LoadObjectFile(path);
+			}
+		}
 		ImGui::EndMenu();
 	}
 	if (ImGui::MenuItem("Save", "Ctrl+S"))
 	{
 		std::cout << "Save" << std::endl;
+		SaveFile();
 	}
 	if (ImGui::MenuItem("Save As.."))
 	{
@@ -299,13 +327,42 @@ void MyEditor::DrawSprite()
 			}
 			ImGui::TreePop();
 		}
+
 		if (ImGui::TreeNode("Image"))
 		{
-			const char* items[] = { "Default", "Mangom", "Planet" };
+			const char* items[] = { "Assets/white.png", "Assets/manggom.png", "Assets/PlanetTexture.png" };
+			const char* combo_preview = sComp->GetTexName();
+			for (int i = 0; i < IM_ARRAYSIZE(items); i++)
+			{
+				if (items[i] == combo_preview)
+				{
+					combo_preview = items[i];
+					break;
+				}
+			}
+#if 0
 			if(ImGui::Combo("##image", &selected_img, items, IM_ARRAYSIZE(items)))
 			{
+				
 				sComp->SetTexture(SelectImage(selected_img));
 			}
+#elif 1
+			if (ImGui::BeginCombo("##combo", combo_preview))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+				{
+					const bool is_selected = (selected_img == n);
+					if (ImGui::Selectable(items[n], is_selected))
+					{
+						selected_img = n;
+						sComp->SetTexture(SelectImage(selected_img));
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+#endif
 			ImGui::TreePop();
 		}
 	}
@@ -352,6 +409,35 @@ const char* MyEditor::SelectImage(int n)
 	default:
 		return "";
 	}
+}
+
+void MyEditor::SaveFile()
+{
+	if (curPath.empty())
+		show_make_new_file = true;
+	
+	else
+		GameObjectManager::GetPtr()->SaveAllObjects(curPath.c_str());
+}
+
+void MyEditor::CloseFile()
+{
+	GameObjectManager::GetPtr()->DeleteAllObject();
+	selectedObj = nullptr;
+
+	new_obj = false;
+	curPath.clear();
+	message.clear();
+	tmpStr.clear();
+	selected = -1;
+	selected_obj = 0;
+	selected_img = 0;
+	selected_type = 0;
+
+	show_new_obj_window = false;
+	show_obj_setting = false;
+	show_add_comp = false;
+	show_make_new_file = false;
 }
 
 bool filterInput(const std::string& input) {
@@ -459,6 +545,7 @@ void MyEditor::ShowObjectSetting(bool* p_open)
 			else
 			{
 				selectedObj->SetID(tmpStr);
+				GameObjectManager::GetPtr()->ChangeFirstStr(selectedObj, tmpStr);
 				if(selectedObj->GetID() == tmpStr)
 				{
 					message = "Successfully modified.";
@@ -618,7 +705,6 @@ void MyEditor::ShowAddComponent(bool* p_open)
 
 void MyEditor::ShowAllObjects(bool* p_open)
 {
-	//ImVec2 center = ImGui::GetMainViewport()->;
 	ImGui::SetNextWindowPos(ImVec2(Helper::W_WIDTH - 202.f, 130.f), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 	ImGui::SetNextWindowSize(ImVec2(400, 220), ImGuiCond_Always);
 	if (ImGui::Begin("Objects", p_open, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize))
@@ -682,6 +768,75 @@ void MyEditor::ShowAllObjects(bool* p_open)
 			ImGui::SameLine();
 			if (ImGui::Button("Save")) {}
 	}
+	ImGui::End();
+}
+
+void MyEditor::ShowMakeNewFile(bool* p_open)
+{
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	ImVec2 windowSize = ImVec2(400, 140);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	float centerX = (windowSize.x - 260.f) * 0.5f;
+
+	if (ImGui::Begin("New File", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		float textX = ImGui::CalcTextSize("Enter a new file name").x;
+		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Enter a new file name.");
+
+		std::string buf{};
+
+		ImGui::NewLine();
+		ImGui::SetCursorPosX(centerX);
+		if (ImGui::InputTextWithHint("  ", "File name", &buf, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackAlways))
+		{
+			tmpStr = buf;
+			if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+			{
+				if (!filterInput(buf))
+				{
+					message = "Creation failed. \nOnly letters and numbers are allowed.";
+					alarm_window = true;
+				}
+				else
+				{
+					curPath = buf;
+					curPath = curPath + ".dat";
+					//MyFile::CreateDirectory(buf.c_str());
+					GameObjectManager::GetPtr()->SaveAllObjects(curPath.c_str());
+					show_make_new_file = false;
+				}
+			}
+		}
+
+		ImGui::NewLine();
+		float buttonX = (windowSize.x - 165.f) * 0.5f;
+		ImGui::SetCursorPosX(buttonX);
+		if (ImGui::Button("Create", ImVec2(80, 0)))
+		{
+			if (!filterInput(tmpStr))
+			{
+				message = "Creation failed. \nOnly letters and numbers are allowed.";
+				alarm_window = true;
+			}
+			else
+			{
+				curPath = tmpStr;
+				curPath = curPath + ".dat";
+				//MyFile::CreateDirectory(tmpStr.c_str());
+				GameObjectManager::GetPtr()->SaveAllObjects(curPath.c_str());
+				tmpStr.clear();
+				show_make_new_file = false;
+			}
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(80, 0)))
+			show_make_new_file = false;
+	}
+
 	ImGui::End();
 }
 

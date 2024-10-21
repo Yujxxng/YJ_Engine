@@ -16,7 +16,7 @@
 
 typedef struct Texture
 {
-	const char* texName;
+	char texName[1024] = "";
 	GLuint tex;
 	int width, height;
 }Texture;

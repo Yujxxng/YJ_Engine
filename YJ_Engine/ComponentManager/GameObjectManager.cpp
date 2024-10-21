@@ -89,10 +89,28 @@ void GameObjectManager::DeleteObject(std::string id)
     UpdateIterator();
 }
 
+void GameObjectManager::ChangeFirstStr(GameObject* obj, std::string newName)
+{
+    for (auto it = objects.begin(); it != objects.end(); it++)
+    {
+        if (it->second == obj)
+            it->first = newName;
+    }
+}
+
+void GameObjectManager::CopyCurrentState()
+{
+    tmp_objects = objects;
+}
+
 void GameObjectManager::DeleteAllObject()
 {
-    for (auto& obj : objects)
-        delete obj.second;
+    for (auto it = objects.begin(); it != objects.end();)
+    {
+        delete it->second;
+        it = objects.erase(it);
+    }
+
     UpdateIterator();
 }
 
@@ -113,7 +131,7 @@ void GameObjectManager::SaveAllObjects(const char* path)
     for (auto& obj : objects)
         data.merge_patch(obj.second->SaveToJson());
 
-    std::cout << data << std::endl;
+    //std::cout << data << std::endl;
 
     std::ofstream ofs(path);
     if (!ofs.is_open())
