@@ -17,7 +17,6 @@ TransformComponent::TransformComponent(GameObject* go) : EngineComponent(go), po
 
 void TransformComponent::CalculateMatrix()
 {
-#if 1
 	GLFWwindow* currentWindow = glfwGetCurrentContext();
 	GLint wWidth, wHeight;
 	glfwGetWindowSize(currentWindow, &wWidth, &wHeight);
@@ -65,18 +64,6 @@ void TransformComponent::CalculateMatrix()
 	glm::mat3 tmp = Camera2D::GetPtr()->world_to_ndc_xform;
 	mdl_xform = (tra_mtx * rot_mtx * scl_mtx);
 	mdl_to_ndc_xform = tmp * mdl_xform;
-	
-	//mdl_to_ndc_xform = tra_mtx * rot_mtx * scl_mtx * h;
-
-#elif 0
-	glm::mat4 transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(position.x, position.y, 0.0f));
-	transform = glm::rotate(transform, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	transform = glm::scale(transform, glm::vec3(scale.x, scale.y, 1.0f));
-
-	mdl_to_ndc_xform = transform;
-
-#endif
 }
 void TransformComponent::Update()
 {
@@ -87,14 +74,21 @@ void TransformComponent::SetPos(float px, float py)
 {
 	this->position.x = px;
 	this->position.y = py;
-
+	position.x = std::min(std::max(position.x, -Helper::W_WIDTH / 2.f), (Helper::W_WIDTH / 2.f));
+	position.y = std::min(std::max(position.y, -Helper::W_HEIGHT / 2.f), (Helper::W_HEIGHT / 2.f));
 	CalculateMatrix();
+
+	this->owner->SetDirty(true);
 }
 
 void TransformComponent::SetPos(const glm::vec2& otherPos)
 {
 	this->position = otherPos;
+	position.x = std::min(std::max(position.x, -Helper::W_WIDTH / 2.f), (Helper::W_WIDTH / 2.f));
+	position.y = std::min(std::max(position.y, -Helper::W_HEIGHT / 2.f), (Helper::W_HEIGHT / 2.f));
 	CalculateMatrix();
+
+	this->owner->SetDirty(true);
 }
 
 void TransformComponent::SetScale(float sx, float sy)
@@ -102,18 +96,24 @@ void TransformComponent::SetScale(float sx, float sy)
 	this->scale.x = sx;
 	this->scale.y = sy;
 	CalculateMatrix();
+
+	this->owner->SetDirty(true);
 }
 
 void TransformComponent::SetScale(const  glm::vec2& otherScale)
 {
 	this->scale = otherScale;
 	CalculateMatrix();
+
+	this->owner->SetDirty(true);
 }
 
 void TransformComponent::SetRotate(float angle)
 {
 	this->angle_disp = angle;
 	CalculateMatrix();
+
+	this->owner->SetDirty(true);
 }
 
 void TransformComponent::LoadFromJson(const json& data)
@@ -161,4 +161,3 @@ ComponentSerializer* TransformComponent::CreateComponent(GameObject* owner)
 
 	return tmp;
 }
-

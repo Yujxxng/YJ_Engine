@@ -70,8 +70,11 @@ void GSM::GameStateManager::Update()
     if (currentLevel)
     {
         Camera2D::GetPtr()->Update(Helper::ptr_window);
-        LogicComponentManager::GetPtr()->Update();
-        EngineComponentManager::GetPtr()->Update();
+        if(!Helper::editMode)
+        {
+            LogicComponentManager::GetPtr()->Update();
+            EngineComponentManager::GetPtr()->Update();
+        }
         GraphicComponentManager::GetPtr()->Update();
 
         currentLevel->Update();

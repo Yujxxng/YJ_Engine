@@ -5,6 +5,7 @@
 #include "../Components/SpriteComponent.h"
 #include "../Components/SimpleObjectCreator.h"
 #include "../Components/PlayerComponent.h"
+#include "../Components/RigidbodyComponent.h"
 
 Registry* Registry::registry_ptr = nullptr;
 
@@ -14,7 +15,7 @@ Registry::Registry()
 	componentMap.insert({ "SimpleObjectCreator", &SimpleObjectCreator::CreateComponent });
 	componentMap.insert({ "Transform", &TransformComponent::CreateComponent });
 	componentMap.insert({ "Player", &PlayerComponent::CreateComponent });
-
+	componentMap.insert({ "Rigidbody", &RigidbodyComponent::CreateComponent });
 }
 
 ComponentSerializer* Registry::CreateComponent(const std::string& type, GameObject* owner)

@@ -1,6 +1,6 @@
 #include "PlayerComponent.h"
 #include "TransformComponent.h"
-//#include "RigidbodyComponent.h"
+#include "RigidbodyComponent.h"
 #include "glew.h"
 #include "glfw3.h"
 
@@ -14,32 +14,40 @@ PlayerComponent::PlayerComponent(GameObject* owner) : LogicComponent(owner)
 
 void PlayerComponent::Update()
 {
-	TransformComponent* tComp = (TransformComponent*)owner->FindComponent("Transform");
-	if (!tComp)
-		return;
+	//TransformComponent* tComp = (TransformComponent*)owner->FindComponent("Transform");
+	//if (!tComp)
+	//	return;
 	
-	//RigidbodyComponent* r = (RigidbodyComponent*)owner->FindComponent("Rigidbody");
-	//if (!r) return;
+	RigidbodyComponent* rComp = (RigidbodyComponent*)owner->FindComponent("Rigidbody");
+	if (!rComp) return;
 
 	//Check for input
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		//std::cout << "Press LEFT" << std::endl;
-		tComp->SetPos({ tComp->GetPos().x - 1.f * speed, tComp->GetPos().y });
+		rComp->AddVelocity(-speed, 0);
 	}
 
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		//std::cout << "Press RIGHT" << std::endl;
-		tComp->SetPos({ tComp->GetPos().x + 1.f * speed, tComp->GetPos().y });
+		rComp->AddVelocity(speed, 0);
 	}
-	//if (AEInputCheckCurr(AEVK_LEFT)) r->AddVelocity(-speed, 0);
-	//if (AEInputCheckCurr(AEVK_RIGHT)) r->AddVelocity(speed, 0);
+
+	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		rComp->AddVelocity(0, speed);
+	}
+
+	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		rComp->AddVelocity(0, -speed);
+	}
 }
 
 void PlayerComponent::SetSpeed(float v)
 {
 	this->speed = v;
+
+	this->owner->SetDirty(true);
 }
 const float PlayerComponent::GetSpeed() const
 {

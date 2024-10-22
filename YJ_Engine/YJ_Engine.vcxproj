@@ -156,6 +156,7 @@
     <ClCompile Include="ComponentManager\LogicComponent.cpp" />
     <ClCompile Include="ComponentManager\LogicComponentManager.cpp" />
     <ClCompile Include="Components\PlayerComponent.cpp" />
+    <ClCompile Include="Components\RigidbodyComponent.cpp" />
     <ClCompile Include="Components\SimpleObjectCreator.cpp" />
     <ClCompile Include="Components\SpriteComponent.cpp" />
     <ClCompile Include="Components\TransformComponent.cpp" />
@@ -172,7 +173,6 @@
     <ClCompile Include="myStd\Shader.cpp" />
     <ClCompile Include="myStd\Texture.cpp" />
     <ClCompile Include="Object\Camera.cpp" />
-    <ClCompile Include="Object\TestObject.cpp" />
     <ClCompile Include="Serializer\ComponentSerializer.cpp" />
     <ClCompile Include="Serializer\Registry.cpp" />
     <ClCompile Include="source\imgui\imgui.cpp" />
@@ -190,11 +190,13 @@
     <ClInclude Include="ComponentManager\EngineComponentManager.h" />
     <ClInclude Include="ComponentManager\GameObject.h" />
     <ClInclude Include="ComponentManager\GameObjectManager.h" />
+    <ClInclude Include="ComponentManager\GameObjectState.h" />
     <ClInclude Include="ComponentManager\GraphicComponent.h" />
     <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
     <ClInclude Include="ComponentManager\LogicComponent.h" />
     <ClInclude Include="ComponentManager\LogicComponentManager.h" />
     <ClInclude Include="Components\PlayerComponent.h" />
+    <ClInclude Include="Components\RigidbodyComponent.h" />
     <ClInclude Include="Components\SimpleObjectCreator.h" />
     <ClInclude Include="Components\SpriteComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
@@ -210,7 +212,6 @@
     <ClInclude Include="myStd\MyFile.h" />
     <ClInclude Include="myStd\Shader.h" />
     <ClInclude Include="Object\Camera.h" />
-    <ClInclude Include="Object\TestObject.h" />
     <ClInclude Include="Serializer\ComponentSerializer.h" />
     <ClInclude Include="Serializer\Registry.h" />
     <ClInclude Include="source\imgui\imconfig.h" />

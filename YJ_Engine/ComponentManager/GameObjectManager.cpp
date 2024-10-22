@@ -2,6 +2,11 @@
 #include <fstream>
 #include <iostream>
 
+#include "../Components/TransformComponent.h"
+#include "../Components/SpriteComponent.h"
+#include "../Components/PlayerComponent.h"
+#include "../Components/RigidbodyComponent.h"
+
 GameObjectManager* GameObjectManager::obj_ptr = nullptr;
 
 GameObjectManager* GameObjectManager::GetPtr()
@@ -23,12 +28,6 @@ void GameObjectManager::DeletePtr()
         delete obj_ptr;
         obj_ptr = nullptr;
     }
-}
-
-GameObject* GameObjectManager::GetLastObjects()
-{
-    if (objects.empty()) return nullptr;
-    return objects.back().second;
 }
 
 GameObject* GameObjectManager::FindObjects(std::string id)
@@ -98,11 +97,6 @@ void GameObjectManager::ChangeFirstStr(GameObject* obj, std::string newName)
     }
 }
 
-void GameObjectManager::CopyCurrentState()
-{
-    tmp_objects = objects;
-}
-
 void GameObjectManager::DeleteAllObject()
 {
     for (auto it = objects.begin(); it != objects.end();)
@@ -114,6 +108,84 @@ void GameObjectManager::DeleteAllObject()
     UpdateIterator();
 }
 
+void GameObjectManager::TakeSnapshot()
+{
+    if(!snapshot.empty())
+        snapshot.clear();
+
+    for (const auto& obj : objects)
+    {
+        if (obj.second->GetDirty())
+        {
+            GameObjectState state;
+            TransformComponent* tComp = (TransformComponent*)obj.second->FindComponent("Transform");
+            if (tComp)
+            {
+                state.position = tComp->GetPos();
+                state.scale = tComp->GetScale();
+                state.angle = tComp->GetRot();
+            }
+
+            SpriteComponent* sComp = (SpriteComponent*)obj.second->FindComponent("Sprite");
+            if (sComp)
+            {
+                state.color = sComp->GetColor();
+                state.texName = sComp->GetTexName();
+            }
+
+            RigidbodyComponent* rComp = (RigidbodyComponent*)obj.second->FindComponent("Rigidbody");
+            if (rComp)
+            {
+                state.velocity = rComp->GetVelocity();
+                state.drag = rComp->GetDrag();
+            }
+
+            PlayerComponent* pComp = (PlayerComponent*)obj.second->FindComponent("Player");
+            if (pComp)
+            {
+                state.speed = pComp->GetSpeed();
+            }
+            snapshot.push_back(std::make_pair(obj.second, state));
+            obj.second->ResetDirty();
+        }
+    }
+}
+
+void GameObjectManager::RestoreSnapshot()
+{
+    for (auto it = snapshot.begin(); it != snapshot.end(); it++)
+    {
+        TransformComponent* tComp = (TransformComponent*)it->first->FindComponent("Transform");
+        if (tComp)
+        {
+            tComp->SetPos(it->second.position);
+            tComp->SetScale(it->second.scale);
+            tComp->SetRotate(it->second.angle);
+        }
+
+        SpriteComponent* sComp = (SpriteComponent*)it->first->FindComponent("Sprite");
+        if (sComp)
+        {
+            sComp->SetColor(it->second.color);
+            //sComp->SetTexture(it->second.texName.c_str());
+        }
+
+        RigidbodyComponent* rComp = (RigidbodyComponent*)it->first->FindComponent("Rigidbody");
+        if (rComp)
+        {
+            rComp->SetVelocity(it->second.velocity);
+            rComp->SetDrag(it->second.drag);
+        }
+
+        PlayerComponent* pComp = (PlayerComponent*)it->first->FindComponent("Player");
+        if (pComp)
+        {
+            pComp->SetSpeed(it->second.speed);
+        }
+        it->first->ResetDirty();
+    }
+}
+
 void GameObjectManager::LoadAllObjects(const json& data)
 {
     for (auto& obj : data.items())
@@ -122,6 +194,8 @@ void GameObjectManager::LoadAllObjects(const json& data)
         GameObject* newObject = new GameObject(id);
         newObject->LoadToJson(data);
     }
+
+    TakeSnapshot();
 }
 
 void GameObjectManager::SaveAllObjects(const char* path)

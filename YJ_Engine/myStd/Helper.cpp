@@ -1,6 +1,7 @@
 #include "Helper.h"
 #include <iostream>
 #include "../GSM/GameStateManager.h"
+#include "../ComponentManager/GameObjectManager.h"
 
 GLint Helper::W_WIDTH;
 GLint Helper::W_HEIGHT;
@@ -110,7 +111,11 @@ void Helper::key_cb(GLFWwindow* pwin, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(pwin, GLFW_TRUE);
     }
     if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
+    {
         Helper::editMode = !Helper::editMode;
+        if (Helper::editMode)
+            GameObjectManager::GetPtr()->RestoreSnapshot();
+    }
 }
 
 void Helper::mousebutton_cb(GLFWwindow* pwin, int button, int action, int mod)
@@ -163,6 +168,32 @@ void Helper::setup_event_callbacks()
     glfwSetMouseButtonCallback(ptr_window, mousebutton_cb);
     //glfwSetCursorPosCallback(ptr_window, mousepos_cb);
     glfwSetScrollCallback(ptr_window, mousescroll_cb);
+}
+
+void Helper::update_time(double fps_calc_interval)
+{
+    // get elapsed time (in seconds) between previous and current frames
+    static double prev_time = glfwGetTime();
+    double curr_time = glfwGetTime();
+    delta_time = curr_time - prev_time;
+    prev_time = curr_time;
+
+    // fps calculations
+    static double count = 0.0; // number of game loop iterations
+    static double start_time = glfwGetTime();
+    // get elapsed time since very beginning (in seconds) ...
+    double elapsed_time = curr_time - start_time;
+
+    ++count;
+
+    // update fps at least every 10 seconds ...
+    fps_calc_interval = (fps_calc_interval < 0.0) ? 0.0 : fps_calc_interval;
+    fps_calc_interval = (fps_calc_interval > 10.0) ? 10.0 : fps_calc_interval;
+    if (elapsed_time > fps_calc_interval) {
+        Helper::fps = count / elapsed_time;
+        start_time = curr_time;
+        count = 0.0;
+    }
 }
 
 void Helper::print_specs()

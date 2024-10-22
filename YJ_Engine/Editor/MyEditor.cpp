@@ -11,6 +11,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/PlayerComponent.h"
+#include "../Components/RigidbodyComponent.h"
 
 MyEditor* MyEditor::editor_ptr = nullptr;
 
@@ -74,6 +75,21 @@ void MyEditor::TopBar()
 			ImGui::EndMenu();
 		}
 
+		ImGui::SetCursorPosX(1520.f);
+
+		ImGui::PushID(0);
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(4.f / 7.0f, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(4.f / 7.0f, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(4.f / 7.0f, 0.8f, 0.8f));
+
+		if (ImGui::Button("Save", ImVec2(40.f, 18.f)))
+		{
+			SaveFile();
+		}
+
+		ImGui::PopStyleColor(3);
+		ImGui::PopID();
+
 		ImGui::SetCursorPosX(1560.f);
 
 		ImGui::PushID(0);
@@ -81,8 +97,11 @@ void MyEditor::TopBar()
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(7.0f, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(7.0f, 0.8f, 0.8f));
 
-		if (ImGui::Button("Exit", ImVec2(40.f, 0)))
+		if (ImGui::Button("Exit", ImVec2(40.f, 18.f)))
+		{
+			GameObjectManager::GetPtr()->TakeSnapshot();
 			Helper::editMode = false;
+		}
 	
 		ImGui::PopStyleColor(3);
 		ImGui::PopID();
@@ -92,7 +111,7 @@ void MyEditor::TopBar()
 
 void MyEditor::ComponentListBox()
 {
-	const char* components[] = { "Transform", "Sprite", "Player"};
+	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody" };
 
 	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
 	{
@@ -197,6 +216,8 @@ void MyEditor::DrawComponentProperties(std::string compName)
 		DrawSprite();
 	else if (compName == "Player")
 		DrawPlayer();
+	else if (compName == "Rigidbody")
+		DrawRigidbody();
 }
 
 void MyEditor::DrawTransform()
@@ -390,6 +411,74 @@ void MyEditor::DrawPlayer()
 
 				speed = speed;
 				pComp->SetSpeed(speed);
+			}
+			ImGui::TreePop();
+		}
+	}
+}
+
+void MyEditor::DrawRigidbody()
+{
+	RigidbodyComponent* rComp = (RigidbodyComponent*)selectedObj->FindComponent("Rigidbody");
+	if (rComp != nullptr)
+	{
+		//VELOCITY
+		float vel_x{ rComp->GetVelocity().x}, vel_y{rComp->GetVelocity().y};
+		if (ImGui::TreeNode("Velocity"))
+		{
+			ImGui::Text("X :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##vel_x", &vel_x, -100.f, 100.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				vel_x = vel_x;
+				rComp->SetVelocity(vel_x, vel_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_vel_x", &vel_x, 0.0f, 0.0f, "%.2f"))
+			{
+				vel_x = std::max(-100.f, std::min(vel_x, 100.f));
+
+				vel_x = vel_x;
+				rComp->SetVelocity(vel_x, vel_y);
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Y :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##vel_y", &vel_y, -100.f, 100.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				vel_y = vel_y;
+				rComp->SetVelocity(vel_x, vel_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_vel_y", &vel_y, 0.0f, 0.0f, "%.2f"))
+			{
+				vel_y = std::max(-100.f, std::min(vel_y, 100.f));
+
+				vel_y = vel_y;
+				rComp->SetVelocity(vel_x, vel_y);
+			}
+
+			ImGui::TreePop();
+		}
+
+		//DRAG
+		float drag{ rComp->GetDrag() };
+		if (ImGui::TreeNode("Drag"))
+		{
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##drag", &drag, 0.f, 360.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				drag = drag;
+				rComp->SetDrag(drag);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##input_drag", &drag, 0.0f, 0.0f, "%.2f"))
+			{
+				drag = std::max(0.f, std::min(drag, 10.f));
+
+				drag = drag;
+				rComp->SetDrag(drag);
 			}
 			ImGui::TreePop();
 		}

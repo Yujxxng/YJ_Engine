@@ -1,11 +1,11 @@
 #include "GameObject.h"
-#include "../Serializer/Registry.h"
 #include "../ComponentManager/GameObjectManager.h"
+#include "../Serializer/Registry.h"
 
 #include <fstream>
 #include <iostream>
 
-GameObject::GameObject(std::string id)
+GameObject::GameObject(std::string id) : dirty(false)
 {
 	ID = id;
 	GameObjectManager::GetPtr()->AddObject(this);
@@ -39,6 +39,21 @@ const std::string GameObject::GetID() const
 void GameObject::SetID(std::string id)
 {
 	this->ID = id;
+}
+
+bool GameObject::GetDirty() const
+{
+	return dirty;
+}
+
+void GameObject::SetDirty(bool b)
+{
+	dirty = b;
+}
+
+void GameObject::ResetDirty()
+{
+	dirty = false;
 }
 
 void GameObject::AddComponent(BaseComponent* component)

@@ -68,6 +68,8 @@ void SpriteComponent::Update()
 void SpriteComponent::SetColor(const Color& otherColor)
 {
 	color = otherColor;
+
+	this->owner->SetDirty(true);
 }
 void SpriteComponent::SetColor(float r, float g, float b, float a)
 {
@@ -75,12 +77,16 @@ void SpriteComponent::SetColor(float r, float g, float b, float a)
 	color.g = (unsigned char)g;
 	color.b = (unsigned char)b;
 	color.a = (unsigned char)a;
+
+	this->owner->SetDirty(true);
 }
 void SpriteComponent::SetTexture(const char* fileName)
 {
 	if (tex)
 		delete tex;
 	tex = CreateTexture(fileName);
+
+	this->owner->SetDirty(true);
 }
 
 Color& SpriteComponent::GetColor()

@@ -87,31 +87,33 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glfwPollEvents();
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		//ImGui::ShowDemoWindow(); // Show demo window! :)
-		if(Helper::editMode)
-			MyEditor::GetPtr()->Draw();
-
-		double currentTime = glfwGetTime();
-		frames++;
+		Helper::update_time(1.0);
+		frm = std::to_string(Helper::fps) + "fps";
 		
-		if (currentTime - lastTime >= 1.0f)
-		{
-			//std::cout << 1000.0f / frames << "ms/frame | " << frames << "fps" << std::endl;
-			frm = std::to_string(frames) + "fps";
-			frames = 0;
-			lastTime = currentTime;
-		}
+		frames++;
+		//double currentTime = glfwGetTime();
+		//if (currentTime - lastTime >= 1.0f)
+		//{
+		//	//std::cout << 1000.0f / frames << "ms/frame | " << frames << "fps" << std::endl;
+		//	frm = std::to_string(frames) + "fps";
+		//	frames = 0;
+		//	lastTime = currentTime;
+		//}
+		
 		str = "YJ_Engine | " + frm;
 		glfwSetWindowTitle(Helper::ptr_window, str.c_str());
 
 		gsm->Update();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		if(Helper::editMode)
+		{
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+			//ImGui::ShowDemoWindow(); // Show demo window! :)
+			MyEditor::GetPtr()->Draw();
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		}
 
 		glfwSwapBuffers(Helper::ptr_window);
 
@@ -121,7 +123,6 @@ int main()
 
 		if (glfwWindowShouldClose(Helper::ptr_window))
 			gsm->gGameRunning = 0;
-
 	}
 
 	gsm->Exit();

@@ -15,9 +15,9 @@ enum OBJECT_TYPE
 NLOHMANN_JSON_SERIALIZE_ENUM
 (OBJECT_TYPE,
 	{
-		{PLAYER, "PLAYER"},
-		{SCENE, "SCENE"},
-		{OTHERS, "OTHERS"},
+		{PLAYER,	"PLAYER"},
+		{SCENE,		"SCENE"},
+		{OTHERS,	"OTHERS"},
 	}
 )
 
@@ -26,6 +26,8 @@ class GameObject
 	std::string ID;
 	OBJECT_TYPE ObjectType;
 	std::list<BaseComponent*> components;
+
+	bool dirty; //If status change
 
 public:
 	GameObject() = delete;
@@ -37,6 +39,10 @@ public:
 
 	const std::string GetID() const;
 	void SetID(std::string id);
+
+	bool GetDirty() const;
+	void SetDirty(bool);
+	void ResetDirty();
 
 	void AddComponent(BaseComponent* component);
 	void AddComponent(std::string compName);

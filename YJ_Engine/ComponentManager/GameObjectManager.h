@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "../Object/TestObject.h"
+#include "GameObjectState.h"
 #include "../Serializer/Registry.h"
 
 #include <list>
@@ -23,7 +23,7 @@ class GameObjectManager
 
 	using StrObjPair = std::pair<std::string, GameObject*>;
 	std::list<StrObjPair> objects;
-	std::list<StrObjPair> tmp_objects;
+	std::list<std::pair<GameObject*, GameObjectState>> snapshot;
 
 public:
 	static GameObjectManager* GetPtr();
@@ -33,18 +33,18 @@ public:
 	std::list<StrObjPair>::iterator Iter_end = objects.end();
 	void UpdateIterator();
 
-	GameObject* GetLastObjects();
-	GameObject* FindObjects(std::string);
-	
 	int GetAllObjectsNumber();
 
+	GameObject* FindObjects(std::string);
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);
 	void DeleteObject(std::string id);
 	void ChangeFirstStr(GameObject* obj, std::string newName);
-	void CopyCurrentState();
 
 	void DeleteAllObject();
+
+	void TakeSnapshot();
+	void RestoreSnapshot();
 
 	void LoadAllObjects(const json& data);
 	void SaveAllObjects(const char* path);

@@ -26,6 +26,8 @@ struct Helper
 
 	static void setup_event_callbacks();
 
+	static void update_time(double fpsCalcInt = 1.0);
+
 	static void print_specs();
 
 	static GLint W_WIDTH, W_HEIGHT;

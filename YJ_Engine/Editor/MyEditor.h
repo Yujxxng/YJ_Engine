@@ -60,6 +60,7 @@ private:
 	void DrawTransform();
 	void DrawSprite();
 	void DrawPlayer();
+	void DrawRigidbody();
 
 	const char* SelectImage(int n);
 	void SaveFile();

@@ -60,9 +60,6 @@
     <ClCompile Include="ComponentManager\EngineComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Object\TestObject.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Components\PlayerComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -123,6 +120,9 @@
     <ClCompile Include="Editor\MyEditor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Components\RigidbodyComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myStd\Shader.h">
@@ -177,9 +177,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ComponentManager\EngineComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\TestObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Components\PlayerComponent.h">
@@ -243,6 +240,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="myStd\MyFile.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\RigidbodyComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager\GameObjectState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
