@@ -1,20 +1,17 @@
 #pragma once
 #include "../ComponentManager/EngineComponentManager.h"
 
-#include "../Utils/myUtils.h"
+#include "../myStd/Helper.h"
 
 class ColliderComponent : public EngineComponent
 {
-	AEVec2 pos{};
-	AEVec2 size{};
-
-	bool CheckEpsilon(float v, float EP = EPSILON);
-
+	glm::vec2 pos{};
+	glm::vec2 size{};
 public:
 	ColliderComponent(GameObject* owner);
 
-	AEVec2 GetPos() const { return pos; }
-	AEVec2 GetSize() const { return size; }
+	glm::vec2 GetPos() const { return pos; }
+	glm::vec2 GetSize() const { return size; }
 
 	void SetCollision(float posX, float posY, float sizeX, float sizeY);
 	void SetPos(float x, float y);

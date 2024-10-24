@@ -1,14 +1,6 @@
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
 
-bool ColliderComponent::CheckEpsilon(float v, float EP)
-{
-	if (v < -EP || v > EP)
-		return true;
-
-	return false;
-}
-
 ColliderComponent::ColliderComponent(GameObject* owner) : EngineComponent(owner)
 {
 	ID = "Collider";
@@ -56,7 +48,7 @@ bool ColliderComponent::IsCollision(ColliderComponent* other) const
 		my_leftY < other_rightY || my_rightY > other_leftY)
 		return false;
 	
-	if (my_leftX <= -(W_WIDTH / 2) || my_rightX >= (W_WIDTH / 2)) return true;
+	if (my_leftX <= -(Helper::W_WIDTH / 2) || my_rightX >= (Helper::W_WIDTH / 2)) return true;
 
 	return true;
 }
