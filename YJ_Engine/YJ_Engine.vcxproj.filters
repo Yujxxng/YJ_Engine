@@ -126,6 +126,9 @@
     <ClCompile Include="Components\ColliderComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="myStd\MyCollision.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myStd\Shader.h">
@@ -252,6 +255,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Components\ColliderComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="myStd\MyCollision.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

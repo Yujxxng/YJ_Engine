@@ -13,4 +13,7 @@ struct Circle
 	float r;
 };
 
-bool AABBCollision(AABB* a, AABB* b);
+bool AABBCollision(const AABB* a, const AABB* b);
+bool CircleCollision(const Circle* a, const Circle* b);
+bool PointCircleCollision(const glm::vec2 p, const Circle* c);
+bool PointRectCollision(const glm::vec2 p, const AABB* a);

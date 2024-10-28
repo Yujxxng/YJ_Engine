@@ -170,6 +170,7 @@
     <ClCompile Include="myStd\Color.cpp" />
     <ClCompile Include="myStd\Helper.cpp" />
     <ClCompile Include="myStd\Mesh.cpp" />
+    <ClCompile Include="myStd\MyCollision.cpp" />
     <ClCompile Include="myStd\MyFile.cpp" />
     <ClCompile Include="myStd\Shader.cpp" />
     <ClCompile Include="myStd\Texture.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="myStd\Color.h" />
     <ClInclude Include="myStd\Helper.h" />
     <ClInclude Include="myStd\Mesh.h" />
+    <ClInclude Include="myStd\MyCollision.h" />
     <ClInclude Include="myStd\MyFile.h" />
     <ClInclude Include="myStd\Shader.h" />
     <ClInclude Include="Object\Camera.h" />
