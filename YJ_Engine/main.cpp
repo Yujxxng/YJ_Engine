@@ -109,7 +109,7 @@ int main()
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
-			//ImGui::ShowDemoWindow(); // Show demo window! :)
+			ImGui::ShowDemoWindow(); // Show demo window! :)
 			MyEditor::GetPtr()->Draw();
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

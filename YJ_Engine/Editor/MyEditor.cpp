@@ -615,6 +615,26 @@ void MyEditor::DrawCollider()
 			}
 			ImGui::TreePop();
 		}
+
+		if (ImGui::TreeNode("Layer"))
+		{
+			DrawLayer();
+			ImGui::TreePop();
+		}
+	}
+}
+
+void MyEditor::DrawLayer()
+{
+	if (ImGui::BeginTable("##Layer table", 5))
+	{
+		bool no_char = false;
+		bool no_tile = false;
+		ImGui::TableNextColumn(); ImGui::Text("Character"); ImGui::Checkbox("##CHARACTER", &no_char);
+		ImGui::TableNextColumn(); ImGui::Text("Bomb"); ImGui::Checkbox("##BOMB", &no_tile);
+		ImGui::TableNextColumn(); ImGui::Text("Item"); ImGui::Checkbox("##ITEM", &no_tile);
+		ImGui::TableNextColumn(); ImGui::Text("Tile"); ImGui::Checkbox("##TILE", &no_tile);
+		ImGui::EndTable();
 	}
 }
 

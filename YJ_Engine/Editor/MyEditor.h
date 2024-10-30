@@ -63,6 +63,7 @@ private:
 	void DrawPlayer();
 	void DrawRigidbody();
 	void DrawCollider();
+	void DrawLayer();
 
 	const char* SelectImage(int n);
 	void SaveFile();
