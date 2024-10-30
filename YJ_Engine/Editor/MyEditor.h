@@ -40,6 +40,7 @@ private:
 	int selected_obj = 0;	//For AllObjList
 	int selected_img = 0;	//For image combo
 	int selected_type = 0;
+	int selected_collider_type = 0;
 
 private:
 	void AlarmWindow(bool* p_open, std::string msg);
@@ -61,6 +62,7 @@ private:
 	void DrawSprite();
 	void DrawPlayer();
 	void DrawRigidbody();
+	void DrawCollider();
 
 	const char* SelectImage(int n);
 	void SaveFile();

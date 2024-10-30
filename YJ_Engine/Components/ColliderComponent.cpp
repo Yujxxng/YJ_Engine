@@ -1,10 +1,15 @@
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
+#include "../myStd/Mesh.h"
+#include "../myStd/Shader.h"
+#include "../Object/Camera.h"
+#include "../myStd/MyCollision.h"
 
 ColliderComponent::ColliderComponent(GameObject* owner) : EngineComponent(owner)
 {
 	ID = "Collider";
 
+	ColliderType = COLLIDER_TYPE::AABB;
 	pos = { 0, 0 };
 	size = { 0, 0 };
 
@@ -31,120 +36,146 @@ void ColliderComponent::SetPos(float x, float y)
 	pos.y = y;
 }
 
-bool ColliderComponent::IsCollision(ColliderComponent* other) const
+void ColliderComponent::SetSize(float x, float y)
 {
-	float my_leftX = pos.x - (size.x / 2.f);
-	float my_leftY = pos.y + (size.y / 2.f);
-	float my_rightX = pos.x + (size.x / 2.f);
-	float my_rightY = pos.y - (size.y / 2.f);
+	size.x = x;
+	size.y = y;
+}
 
-	float other_leftX = other->pos.x - (other->size.x / 2.f);
-	float other_leftY = other->pos.y + (other->size.y / 2.f);
-	float other_rightX = other->pos.x + (other->size.x / 2.f);
-	float other_rightY = other->pos.y - (other->size.y / 2.f);
+void ColliderComponent::SetType(COLLIDER_TYPE cType)
+{
+	ColliderType = cType;
+}
 
+void ColliderComponent::SetRadius(float r)
+{
+	radius = r;
+}
 
-	if (my_leftX > other_rightX || my_rightX < other_leftX ||
-		my_leftY < other_rightY || my_rightY > other_leftY)
-		return false;
-	
-	if (my_leftX <= -(Helper::W_WIDTH / 2) || my_rightX >= (Helper::W_WIDTH / 2)) return true;
+void ColliderComponent::SetLayer(LAYER l)
+{
+	layer = l;
+}
 
-	return true;
+void ColliderComponent::DrawCollider()
+{
+	Mesh* mesh = new Mesh;
+	mesh->SetupMesh();
+
+	Shader shader;
+	shader.setShader("Assets/Shaders/shader.vs", "Assets/Shaders/shader.fs");
+
+	shader.use();
+
+	//Color
+	mesh->SetColor(255, 0, 0, 255);
+
+	//Transform
+	glm::mat3 scl_mtx = glm::mat3x3(1.f), rot_mtx = glm::mat3x3(1.f), tra_mtx = glm::mat3x3(1.f);
+
+	scl_mtx = glm::mat3(
+		size.x, 0.f, 0.f,
+		0.f, size.y, 0.f,
+		0.f, 0.f, 1.f
+	);
+
+	float angle = glm::radians(0.0f);
+	float c = std::cos(angle);
+	float s = std::sin(angle);
+
+	rot_mtx = glm::mat3(
+		c, s, 0.f,
+		-s, c, 0.f,
+		0.f, 0.f, 1.f
+	);
+
+	tra_mtx = glm::mat3(
+		1.f, 0.f, 0.f,
+		0.f, 1.f, 0.f,
+		pos.x, pos.y, 1.f
+	);
+
+	glm::mat3 tmp = Camera2D::GetPtr()->world_to_ndc_xform;
+	glm::mat3x3 tranf = tra_mtx * rot_mtx * scl_mtx;
+	tranf = tmp * tranf;
+
+	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
+	glUniform3f(uniform_var_color, (255.f / 255.f), (0.f / 255.f), (0.f / 255.f));
+	//glUniform3f(uniform_var_color, color.r, color.g, color.b);
+	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
+	if (uniform_var_loc1 >= 0)
+		glUniformMatrix3fv(uniform_var_loc1, 1, GL_FALSE, glm::value_ptr(tranf));
+	else {
+		std::cout << "Uniform variable doesn't exist!!!\n";
+	}
+
+	mesh->Draw();
+
+	shader.unUse();
+	delete mesh;
 }
 
 void ColliderComponent::Update()
 {
-	TransformComponent* t = (TransformComponent*)this->owner->FindComponent("Transform");
-	SetPos(t->GetPos().x, t->GetPos().y);
-	/*
-	AEGfxMeshStart();
+	//TransformComponent* t = (TransformComponent*)this->owner->FindComponent("Transform");
+	//SetPos(t->GetPos().x, t->GetPos().y);
+	//double cursorX, cursorY;
+	//glfwGetCursorPos(Helper::ptr_window, &cursorX, &cursorY);
+	//cursorX = cursorX - (Helper::W_WIDTH / 2.f);
+	//cursorY = (Helper::W_HEIGHT / 2.f) - cursorY;
+	//std::cout << cursorX << ", " << cursorY << std::endl;
 
-	AEGfxTriAdd(
-		-0.5f, -0.5f, 0xFFFFFFFF, 0.0f, 1.0f,
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
+	//AABB test;
+	//test.max.x = pos.x + (size.x / 2.f);
+	//test.max.y = pos.y + (size.y / 2.f);
+	//test.min.x = pos.x - (size.x / 2.f);
+	//test.min.y = pos.y - (size.x / 2.f);
 
-	AEGfxTriAdd(
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		0.5f, 0.5f, 0xFFFFFFFF, 1.0f, 0.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
+	//if (PointRectCollision({ cursorX, cursorY }, &test))
+	//	std::cout << "collision" << std::endl;
 
-	AEGfxVertexList* mesh = AEGfxMeshEnd();
-
-	AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-
-	//AEGfxSetColorToMultiply(mColor.r / 255.f, mColor.g / 255.f, mColor.b / 255.f, 255.f);
-	AEGfxSetColorToMultiply(1.f, 0.f, 0.f, 1.f);
-
-	AEGfxSetColorToAdd(1.f, 0.f, 0.f, 1.f);
-
-	AEGfxSetBlendMode(AE_GFX_BM_BLEND);
-	AEGfxSetTransparency(1);
-
-	AEMtx33 tranf;
-	//Create a transtorm matrix
-	AEMtx33 translateMtx;
-	AEMtx33Trans(&translateMtx, pos.x, pos.y);
-
-	//Create a Rotation matrix
-	AEMtx33 rotationMtx;
-	AEMtx33Rot(&rotationMtx, 0);
-
-	//Create a scale matrix
-	AEMtx33 scaleMtx;
-	AEMtx33Scale(&scaleMtx, size.x, size.y);
-
-	//Concatenate them
-	AEMtx33Concat(&tranf, &rotationMtx, &scaleMtx);
-	AEMtx33Concat(&tranf, &translateMtx, &tranf);
-
-	AEGfxSetTransform(tranf.m);
-
-	AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
-
-	AEGfxMeshFree(mesh);
-	*/
+	if(show)
+		DrawCollider();
 }
 
 void ColliderComponent::LoadFromJson(const json& data)
 {
-	/*
-	auto componentData = data.find("componentData");
-	if (componentData != data.end())
+	auto colliderData = data.find("Collider");
+	if (colliderData != data.end())
 	{
-		auto it = componentData->find("velocity");
-		Velocity.x = it->begin().value();
-		Velocity.y = (it->begin() + 1).value();
+		std::cout << colliderData.key() << ", " << colliderData.value() << std::endl;
+		auto collider_type = colliderData.value().find("Type").value().get<COLLIDER_TYPE>();
+		ColliderType = collider_type;
 
-		it = componentData->find("maxVelocity");
-		MAXVelocity.x = it->begin().value();
-		MAXVelocity.y = (it->begin() + 1).value();
+		pos.x = colliderData.value().find("position").value().at(0);
+		pos.y = colliderData.value().find("position").value().at(1);
 
-		it = componentData->find("drag");
-		drag = it.value();
+		size.x = colliderData.value().find("scale").value().at(0);
+		size.y = colliderData.value().find("scale").value().at(1);
 	}
-	*/
+	else
+	{
+		std::cout << "DATA::EMPTY COLLIDER DATA" << std::endl;
+		return;
+	}
 }
 
 json ColliderComponent::SaveToJson()
 {
-	json data, componentData;
-	data["type"] = "Collider";
+	json collider;
+	collider["Type"] = ColliderType;
+	collider["position"] = { pos.x, pos.y };
+	collider["scale"] = { size.x, size.y };
 
-	/*
-	componentData["velocity"] = { Velocity.x, Velocity.y };
-	componentData["maxVelocity"] = { MAXVelocity.x, MAXVelocity.y };
-	componentData["drag"] = drag;
-	*/
-
-	data["componentData"] = componentData;
-	return data;
+	return collider;
 }
 
 ComponentSerializer* ColliderComponent::CreateComponent(GameObject* owner)
 {
-	return owner->FindComponent("Collider");
+	ColliderComponent* tmp = new ColliderComponent(owner);
+	owner->AddComponent(tmp);
+
+	return tmp;
 }
 
 

@@ -147,6 +147,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentManager\CollisionManager.cpp" />
     <ClCompile Include="ComponentManager\EngineComponent.cpp" />
     <ClCompile Include="ComponentManager\EngineComponentManager.cpp" />
     <ClCompile Include="ComponentManager\GameObject.cpp" />
@@ -188,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentManager\BaseComponent.h" />
+    <ClInclude Include="ComponentManager\CollisionManager.h" />
     <ClInclude Include="ComponentManager\EngineComponent.h" />
     <ClInclude Include="ComponentManager\EngineComponentManager.h" />
     <ClInclude Include="ComponentManager\GameObject.h" />

@@ -12,6 +12,7 @@
 #include "../Components/SpriteComponent.h"
 #include "../Components/PlayerComponent.h"
 #include "../Components/RigidbodyComponent.h"
+#include "../Components/ColliderComponent.h"
 
 MyEditor* MyEditor::editor_ptr = nullptr;
 
@@ -111,7 +112,7 @@ void MyEditor::TopBar()
 
 void MyEditor::ComponentListBox()
 {
-	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody" };
+	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody", "Collider" };
 
 	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
 	{
@@ -218,6 +219,8 @@ void MyEditor::DrawComponentProperties(std::string compName)
 		DrawPlayer();
 	else if (compName == "Rigidbody")
 		DrawRigidbody();
+	else if (compName == "Collider")
+		DrawCollider();
 }
 
 void MyEditor::DrawTransform()
@@ -479,6 +482,136 @@ void MyEditor::DrawRigidbody()
 
 				drag = drag;
 				rComp->SetDrag(drag);
+			}
+			ImGui::TreePop();
+		}
+	}
+}
+
+void MyEditor::DrawCollider()
+{
+	ColliderComponent *cComp = (ColliderComponent*)selectedObj->FindComponent("Collider");
+	if (cComp != nullptr)
+	{
+		ImGui::Text("Visible"); ImGui::SameLine();
+		ImGui::Checkbox("##collider_visible", &cComp->show);
+
+		ImGui::Text("TYPE :"); ImGui::SameLine();
+		const char* items[] = { "AABB", "CIRCLE" };
+		const char* combo_preview_value = items[selected_collider_type];
+
+		ImGui::SetNextItemWidth(100.f);
+		if (ImGui::BeginCombo("##ColliderType", combo_preview_value, 0))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			{
+				const bool is_selected = (selected_collider_type == n);
+				if (ImGui::Selectable(items[n], is_selected))
+				{
+					selected_collider_type = n;
+					//selectedObj->SetType(n);
+				}
+
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		if (selected_collider_type == 1)
+		{
+			cComp->SetType(COLLIDER_TYPE::CIRCLE);
+			float radius = cComp->GetRadius();
+			ImGui::Text("Radius:"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##collider_radius", &radius, 0.f, 100.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				radius = radius;
+				cComp->SetRadius(radius);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##collider_input_radius", &radius, 0.0f, 0.0f, "%.2f"))
+			{
+				radius = radius;
+				cComp->SetRadius(radius);
+			}
+		}
+
+		//POSITION
+		float pos_x{ cComp->GetPos().x}, pos_y{cComp->GetPos().y};
+		if (ImGui::TreeNode("Position"))
+		{
+			ImGui::Text("X :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##collider_pos_x", &pos_x, -1000.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				pos_x = pos_x;
+				cComp->SetPos(pos_x, pos_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##collider_input_pos_x", &pos_x, 0.0f, 0.0f, "%.2f"))
+			{
+				pos_x = std::max(-100.f, std::min(pos_x, 100.f));
+
+				pos_x = pos_x;
+				cComp->SetPos(pos_x, pos_y);
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Y :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##collider_pos_y", &pos_y, -1000.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				pos_y = pos_y;
+				cComp->SetPos(pos_x, pos_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##collider_input_pos_y", &pos_y, 0.0f, 0.0f, "%.2f"))
+			{
+				pos_y = std::max(-100.f, std::min(pos_y, 100.f));
+
+				pos_y = pos_y;
+				cComp->SetPos(pos_x, pos_y);
+			}
+
+			ImGui::TreePop();
+		}
+
+		//SIZE
+		float size_x{ cComp->GetSize().x }, size_y{ cComp->GetSize().y };
+		if (ImGui::TreeNode("Size"))
+		{
+			ImGui::Text("X :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##collider_size_x", &size_x, -1000.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				size_x = size_x;
+				cComp->SetSize(size_x, size_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##collider_input_size_x", &size_x, 0.0f, 0.0f, "%.2f"))
+			{
+				size_x = std::max(-100.f, std::min(size_x, 100.f));
+
+				size_x = size_x;
+				cComp->SetSize(size_x, size_y);
+			}
+
+			ImGui::NewLine();
+			ImGui::Text("Y :"); ImGui::SameLine();
+			ImGui::SetNextItemWidth(220.f);
+			if (ImGui::SliderFloat("##collider_size_y", &size_y, -1000.f, 1000.f, "%.2f", ImGuiSliderFlags_NoInput))
+			{
+				size_y = size_y;
+				cComp->SetSize(size_x, size_y);
+			}
+			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
+			if (ImGui::InputFloat("##collider_input_size_y", &size_y, 0.0f, 0.0f, "%.2f"))
+			{
+				size_y = std::max(-100.f, std::min(size_y, 100.f));
+
+				size_y = size_y;
+				cComp->SetSize(size_x, size_y);
 			}
 			ImGui::TreePop();
 		}
