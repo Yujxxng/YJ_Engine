@@ -25,5 +25,46 @@ void CollisionManager::DeletePtr()
 
 void CollisionManager::Update()
 {
+    for (auto i = colliders.begin(); i != colliders.end(); i++)
+    {
+        for (auto j = std::next(i); j != colliders.end(); j++)
+        {
+            if (CanCollide((*i)->GetLayer(), (*j)->GetLayer()))
+            {
+                struct AABB a {}, b{};
+                a = ConvertToAABB((*i)->GetPos(), (*i)->GetSize());
+                b = ConvertToAABB((*j)->GetPos(), (*j)->GetSize());
 
+                if (AABBCollision(&a, &b))
+                    std::cout << "COLLISION!!!!!!!!!!!!!!" << std::endl;
+            }
+        }
+    }
+}
+
+void CollisionManager::AddCollider(ColliderComponent* c)
+{
+    colliders.push_back(c);
+}
+
+bool CollisionManager::FindCollider(ColliderComponent* c)
+{
+    for (auto& collider : colliders)
+    {
+        if (c == collider)
+            return true;
+    }
+
+    return false;
+}
+
+bool CollisionManager::CanCollide(enum LAYER a, enum LAYER b)
+{
+    if ((a == LAYER::CHARACTER && b == LAYER::WALL) ||
+        (a == LAYER::WALL && b == LAYER::CHARACTER))
+    {
+        return true;
+    }
+
+    return false;
 }

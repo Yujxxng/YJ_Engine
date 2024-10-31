@@ -21,3 +21,5 @@ bool CircleAABBCollision(const struct Circle* c, const struct AABB* a);
 
 void ClosestPtPointAABB(const glm::vec2 p, const struct AABB* b, glm::vec2& q);
 float SqDistPointAABB(const glm::vec2 p, const struct AABB* b);
+
+struct AABB ConvertToAABB(const glm::vec2 pos, const glm::vec2 size);

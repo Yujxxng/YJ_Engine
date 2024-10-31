@@ -1,5 +1,7 @@
 #include "RigidbodyComponent.h"
 #include "TransformComponent.h"
+#include "ColliderComponent.h"
+
 #include <algorithm>
 
 bool RigidbodyComponent::CheckEpsilon(float v, float EP)
@@ -106,6 +108,15 @@ void RigidbodyComponent::Update()
 
 	if (!CheckEpsilon(Velocity.y))
 		Velocity.y = 0;
+
+	ColliderComponent* cComp = (ColliderComponent*)owner->FindComponent("Collider");
+	if (!cComp) return;
+
+	x = (float)(cComp->GetPos().x + Velocity.x * Helper::delta_time); // + 1.0f + 2 * acc * time * time
+	y = (float)(cComp->GetPos().y + Velocity.y * Helper::delta_time); // + 1.0f + 2 * acc * time * time
+
+	cComp->SetPos(x, y);
+
 }
 
 void RigidbodyComponent::LoadFromJson(const json& data)

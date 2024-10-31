@@ -1,5 +1,7 @@
 #pragma once
+#include "../ComponentManager/GameObject.h"
 #include "../ComponentManager/EngineComponentManager.h"
+#include "../ComponentManager/CollisionManager.h"
 
 #include "../myStd/Helper.h"
 
@@ -15,9 +17,9 @@ NLOHMANN_JSON_SERIALIZE_ENUM
 		{AABB,		"AABB"},
 		{CIRCLE,	"CIRCLE"},
 	}
-	)
+)
 
-enum LAYER : uint32_t
+enum LAYER
 {
 	NONE = 0,
 	CHARACTER = 1 << 0,
@@ -25,7 +27,7 @@ enum LAYER : uint32_t
 	BOMB = 1 << 2,
 	ITEM = 1 << 3,
 
-	ALL = ~0u
+	ALL = CHARACTER | WALL | BOMB | ITEM,
 };
 
 class ColliderComponent : public EngineComponent
@@ -36,7 +38,7 @@ class ColliderComponent : public EngineComponent
 	glm::vec2 size{};
 	float radius = -1;
 
-	LAYER layer;
+	LAYER layer = NONE;
 	uint32_t layerMask;
 
 public:
@@ -46,15 +48,17 @@ public:
 
 	glm::vec2 GetPos() const { return pos; }
 	glm::vec2 GetSize() const { return size; }
-	COLLIDER_TYPE GetColliderType() const { return ColliderType; }
 	float GetRadius() const { return radius; }
+	COLLIDER_TYPE GetColliderType() const { return ColliderType; }
+	LAYER GetLayer() const { return layer; }
+	const char* GetLayerToString();
 
 	void SetCollision(float posX, float posY, float sizeX, float sizeY);
 	void SetPos(float x, float y);
 	void SetSize(float x, float y);
 	void SetType(COLLIDER_TYPE cType);
 	void SetRadius(float r);
-	void SetLayer(LAYER l);
+	void SetLayer(enum LAYER l);
 
 	void DrawCollider();
 

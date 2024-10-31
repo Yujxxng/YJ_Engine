@@ -36,6 +36,8 @@ public:
 	int GetAllObjectsNumber();
 
 	GameObject* FindObjects(std::string);
+	GameObject* FindObjects(double x, double y);
+	
 	void AddObject(GameObject* obj);
 	void DeleteObject(GameObject* obj);
 	void DeleteObject(std::string id);

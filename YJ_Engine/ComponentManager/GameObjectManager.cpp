@@ -6,6 +6,9 @@
 #include "../Components/SpriteComponent.h"
 #include "../Components/PlayerComponent.h"
 #include "../Components/RigidbodyComponent.h"
+#include "../Components/ColliderComponent.h"
+
+#include "../myStd/MyCollision.h"
 
 GameObjectManager* GameObjectManager::obj_ptr = nullptr;
 
@@ -36,6 +39,22 @@ GameObject* GameObjectManager::FindObjects(std::string id)
     {
         if (id == obj.first)
             return obj.second;
+    }
+
+    return nullptr;
+}
+
+GameObject* GameObjectManager::FindObjects(double x, double y)
+{
+    for (auto& obj : objects)
+    {
+        TransformComponent* tComp = (TransformComponent*)obj.second->FindComponent("Transform");
+        if (tComp)
+        {
+            struct AABB tmp = ConvertToAABB(tComp->GetPos(), tComp->GetScale());
+            if (PointRectCollision({ x, y }, &tmp))
+                return obj.second;
+        }
     }
 
     return nullptr;
@@ -145,6 +164,13 @@ void GameObjectManager::TakeSnapshot()
             {
                 state.speed = pComp->GetSpeed();
             }
+
+            ColliderComponent* cComp = (ColliderComponent*)obj.second->FindComponent("Collider");
+            if (cComp)
+            {
+                state.collider_pos = cComp->GetPos();
+                state.collider_size = cComp->GetSize();
+            }
             snapshot.push_back(std::make_pair(obj.second, state));
             obj.second->ResetDirty();
         }
@@ -181,6 +207,13 @@ void GameObjectManager::RestoreSnapshot()
         if (pComp)
         {
             pComp->SetSpeed(it->second.speed);
+        }
+
+        ColliderComponent* cComp = (ColliderComponent*)it->first->FindComponent("Collider");
+        if (cComp)
+        {
+            cComp->SetPos(it->second.collider_pos.x, it->second.collider_pos.y);
+            cComp->SetSize(it->second.collider_size.x, it->second.collider_size.y);
         }
         it->first->ResetDirty();
     }

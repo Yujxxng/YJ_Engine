@@ -28,6 +28,7 @@ private:
 	bool show_delete_cmp = false;
 	bool show_add_comp = false;
 	bool show_make_new_file = false;
+	bool show_layer_matrix = false;
 private:
 	bool new_obj = false;
 
@@ -41,7 +42,9 @@ private:
 	int selected_img = 0;	//For image combo
 	int selected_type = 0;
 	int selected_collider_type = 0;
+	int selected_layer = 0;
 
+	bool is_window_focus = false;
 private:
 	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
@@ -52,11 +55,13 @@ private:
 	void ShowAddComponent(bool* p_open);
 	void ShowAllObjects(bool* p_open);
 	void ShowMakeNewFile(bool* p_open);
+	void ShowLayerMatrix(bool* p_open);
 
 	void TopBar();
 	void ComponentListBox();
 	void ShowHasComponent();
 	void ShowMenuFile();
+	void ShowMenuView();
 	void DrawComponentProperties(std::string compName);
 	void DrawTransform();
 	void DrawSprite();
@@ -68,6 +73,9 @@ private:
 	const char* SelectImage(int n);
 	void SaveFile();
 	void CloseFile();
+
+	GameObject* ClickObject(double cursorX, double cursorY);
+	void MoveObjectOnDrag();
 public:
 
 	static MyEditor* GetPtr();

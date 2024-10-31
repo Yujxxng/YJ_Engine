@@ -4,6 +4,7 @@
 #include "..\ComponentManager\LogicComponent.h"
 #include "..\ComponentManager\EngineComponentManager.h"
 #include "..\ComponentManager\GraphicComponentManager.h"
+#include "..\ComponentManager\CollisionManager.h"
 #include "../Object/Camera.h"
 #include "../Serializer/Registry.h"
 
@@ -76,7 +77,7 @@ void GSM::GameStateManager::Update()
             EngineComponentManager::GetPtr()->Update();
         }
         GraphicComponentManager::GetPtr()->Update();
-
+        CollisionManager::GetPtr()->Update();
         currentLevel->Update();
     }
 }
@@ -97,6 +98,7 @@ void GSM::GameStateManager::Exit()
     LogicComponentManager::DeletePtr();
     EngineComponentManager::DeletePtr();
     GraphicComponentManager::DeletePtr();
+    CollisionManager::DeletePtr();
     Registry::DeletePtr();
     //EventManager::DeletePtr();
 }

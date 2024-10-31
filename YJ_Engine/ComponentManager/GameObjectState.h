@@ -24,4 +24,8 @@ public:
 	//Rigidbody
 	glm::vec2 velocity;
 	float drag;
+
+	//Collider
+	glm::vec2 collider_pos;
+	glm::vec2 collider_size;
 };

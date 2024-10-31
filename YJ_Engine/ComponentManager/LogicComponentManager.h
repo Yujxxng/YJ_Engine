@@ -13,7 +13,7 @@ class LogicComponentManager
 	const LogicComponentManager& operator=(const LogicComponentManager& other) = delete;
 
 	static LogicComponentManager* logic_ptr;
-	list<LogicComponent*> logics;
+	std::list<LogicComponent*> logics;
 
 public:
 	static LogicComponentManager* GetPtr();

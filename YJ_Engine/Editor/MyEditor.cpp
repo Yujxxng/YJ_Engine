@@ -38,6 +38,27 @@ void MyEditor::DeletePtr()
 
 void MyEditor::Draw()
 {
+	if(is_window_focus && ImGui::IsMouseReleased(0))
+		is_window_focus = false;
+
+	if (ImGui::IsMouseClicked(1))
+	{
+		double cursorX, cursorY;
+		glfwGetCursorPos(Helper::ptr_window, &cursorX, &cursorY);
+		cursorX = cursorX - (Helper::W_WIDTH / 2.f);
+		cursorY = (Helper::W_HEIGHT / 2.f) - cursorY;
+
+		selectedObj = ClickObject(cursorX, cursorY);
+
+		if (selectedObj == nullptr)
+			is_window_focus = false;
+	}
+
+	if (!is_window_focus)
+	{
+		MoveObjectOnDrag();
+	}
+
 	TopBar();
 	if (show_all_obj)
 		ShowAllObjects(&show_all_obj);
@@ -62,6 +83,9 @@ void MyEditor::Draw()
 	if (show_make_new_file)
 		ShowMakeNewFile(&show_make_new_file);
 
+	if (show_layer_matrix)
+		ShowLayerMatrix(&show_layer_matrix);
+
 	if (alarm_window)
 		AlarmWindow(&alarm_window, message);
 }
@@ -76,6 +100,14 @@ void MyEditor::TopBar()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("View"))
+		{
+			ShowMenuView();
+			ImGui::EndMenu();
+		}
+
+
+		//Edit Mode Button
 		ImGui::SetCursorPosX(1520.f);
 
 		ImGui::PushID(0);
@@ -195,7 +227,6 @@ void MyEditor::ShowMenuFile()
 	}
 	if (ImGui::MenuItem("Save", "Ctrl+S"))
 	{
-		std::cout << "Save" << std::endl;
 		SaveFile();
 	}
 	if (ImGui::MenuItem("Save As.."))
@@ -204,8 +235,15 @@ void MyEditor::ShowMenuFile()
 	}
 	if (ImGui::MenuItem("Close", "Alt+F4"))
 	{
-		std::cout << "Close" << std::endl;
 		GSM::GameStateManager::GetGSMPtr()->gGameRunning = 0;
+	}
+}
+
+void MyEditor::ShowMenuView()
+{
+	if (ImGui::MenuItem("Layer"))
+	{
+		show_layer_matrix = true;
 	}
 }
 
@@ -497,19 +535,52 @@ void MyEditor::DrawCollider()
 		ImGui::Checkbox("##collider_visible", &cComp->show);
 
 		ImGui::Text("TYPE :"); ImGui::SameLine();
-		const char* items[] = { "AABB", "CIRCLE" };
-		const char* combo_preview_value = items[selected_collider_type];
+		const char* collider_types[] = { "AABB", "CIRCLE" };
+		const char* collider_type_combo_value = collider_types[selected_collider_type];
 
 		ImGui::SetNextItemWidth(100.f);
-		if (ImGui::BeginCombo("##ColliderType", combo_preview_value, 0))
+		if (ImGui::BeginCombo("##ColliderType", collider_type_combo_value, 0))
 		{
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			for (int n = 0; n < IM_ARRAYSIZE(collider_types); n++)
 			{
 				const bool is_selected = (selected_collider_type == n);
-				if (ImGui::Selectable(items[n], is_selected))
+				if (ImGui::Selectable(collider_types[n], is_selected))
 				{
 					selected_collider_type = n;
 					//selectedObj->SetType(n);
+				}
+
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::SameLine();
+		ImGui::Text("Layer :"); ImGui::SameLine();
+		const char* layer_types[] = { "None", "Character", "Wall", "Bomb", "Item" };
+		const char* layer_combo_value = cComp->GetLayerToString();//= layer_types[selected_layer];
+
+		ImGui::SetNextItemWidth(100.f);
+		if (ImGui::BeginCombo("##ColliderLayerType", layer_combo_value, 0))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(layer_types); n++)
+			{
+				const bool is_selected = (selected_layer == n);
+				if (ImGui::Selectable(layer_types[n], is_selected))
+				{
+					selected_layer = n;
+
+					if (selected_layer == 0)
+						cComp->SetLayer(LAYER::NONE);
+					else if (selected_layer == 1)
+						cComp->SetLayer(LAYER::CHARACTER);
+					else if (selected_layer == 2)
+						cComp->SetLayer(LAYER::WALL);
+					else if (selected_layer == 3)
+						cComp->SetLayer(LAYER::BOMB);
+					else if (selected_layer == 4)
+						cComp->SetLayer(LAYER::ITEM);
 				}
 
 				if (is_selected)
@@ -551,7 +622,7 @@ void MyEditor::DrawCollider()
 			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
 			if (ImGui::InputFloat("##collider_input_pos_x", &pos_x, 0.0f, 0.0f, "%.2f"))
 			{
-				pos_x = std::max(-100.f, std::min(pos_x, 100.f));
+				pos_x = std::max(-100.f, std::min(pos_x, 1000.f));
 
 				pos_x = pos_x;
 				cComp->SetPos(pos_x, pos_y);
@@ -568,7 +639,7 @@ void MyEditor::DrawCollider()
 			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
 			if (ImGui::InputFloat("##collider_input_pos_y", &pos_y, 0.0f, 0.0f, "%.2f"))
 			{
-				pos_y = std::max(-100.f, std::min(pos_y, 100.f));
+				pos_y = std::max(-100.f, std::min(pos_y, 1000.f));
 
 				pos_y = pos_y;
 				cComp->SetPos(pos_x, pos_y);
@@ -591,7 +662,7 @@ void MyEditor::DrawCollider()
 			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
 			if (ImGui::InputFloat("##collider_input_size_x", &size_x, 0.0f, 0.0f, "%.2f"))
 			{
-				size_x = std::max(-100.f, std::min(size_x, 100.f));
+				size_x = std::max(-100.f, std::min(size_x, 1000.f));
 
 				size_x = size_x;
 				cComp->SetSize(size_x, size_y);
@@ -608,17 +679,11 @@ void MyEditor::DrawCollider()
 			ImGui::SameLine(); ImGui::SetNextItemWidth(60.f);
 			if (ImGui::InputFloat("##collider_input_size_y", &size_y, 0.0f, 0.0f, "%.2f"))
 			{
-				size_y = std::max(-100.f, std::min(size_y, 100.f));
+				size_y = std::max(-100.f, std::min(size_y, 1000.f));
 
 				size_y = size_y;
 				cComp->SetSize(size_x, size_y);
 			}
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Layer"))
-		{
-			DrawLayer();
 			ImGui::TreePop();
 		}
 	}
@@ -629,11 +694,34 @@ void MyEditor::DrawLayer()
 	if (ImGui::BeginTable("##Layer table", 5))
 	{
 		bool no_char = false;
-		bool no_tile = false;
-		ImGui::TableNextColumn(); ImGui::Text("Character"); ImGui::Checkbox("##CHARACTER", &no_char);
-		ImGui::TableNextColumn(); ImGui::Text("Bomb"); ImGui::Checkbox("##BOMB", &no_tile);
-		ImGui::TableNextColumn(); ImGui::Text("Item"); ImGui::Checkbox("##ITEM", &no_tile);
-		ImGui::TableNextColumn(); ImGui::Text("Tile"); ImGui::Checkbox("##TILE", &no_tile);
+		bool no_wall = false;
+		ImGui::TableNextColumn(); ImGui::Text("         ");
+		ImGui::TableNextColumn(); ImGui::Text("Character"); 
+		ImGui::TableNextColumn(); ImGui::Text("Bomb"); 
+		ImGui::TableNextColumn(); ImGui::Text("Item"); 
+		ImGui::TableNextColumn(); ImGui::Text("Wall"); 
+
+		ImGui::TableNextColumn(); ImGui::Text("Wall"); 
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Char", &no_char);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Bomb", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Item", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Wall", &no_wall);
+
+		ImGui::TableNextColumn(); ImGui::Text("Item");
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Char", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Bomb", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Item", &no_wall);
+		ImGui::TableNextRow();
+
+		ImGui::TableNextColumn(); ImGui::Text("Bomb");
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Char", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Bomb", &no_wall);
+		ImGui::TableNextRow();
+
+		ImGui::TableNextColumn(); ImGui::Text("Character");
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Char&Char", &no_wall);
+
+
 		ImGui::EndTable();
 	}
 }
@@ -682,6 +770,30 @@ void MyEditor::CloseFile()
 	show_make_new_file = false;
 }
 
+GameObject* MyEditor::ClickObject(double cursorX, double cursorY)
+{
+	GameObject* tmp = GameObjectManager::GetPtr()->FindObjects(cursorX, cursorY);
+
+	return tmp;
+}
+
+void MyEditor::MoveObjectOnDrag()
+{
+	if (ImGui::IsMouseDragging(0))
+	{
+		ImVec2 dragDelta = ImGui::GetMouseDragDelta(0);
+
+		TransformComponent* tComp = (TransformComponent*)selectedObj->FindComponent("Transform");
+		if(tComp)
+		{
+			glm::vec2 objPosition = tComp->GetPos();
+			tComp->SetPos(objPosition.x + dragDelta.x, objPosition.y - dragDelta.y);
+
+			ImGui::ResetMouseDragDelta(0);
+		}
+	}
+}
+
 bool filterInput(const std::string& input) {
 	if (input.empty())
 		return false;
@@ -704,6 +816,9 @@ void MyEditor::ShowCreateNewObjectWindow(bool* p_open)
 
 	if(ImGui::Begin("New Object", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		float textX = ImGui::CalcTextSize("Enter new object's ID.").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
 		ImGui::AlignTextToFramePadding();
@@ -760,6 +875,9 @@ void MyEditor::ShowObjectSetting(bool* p_open)
 
 	if (ImGui::Begin("Object Setting", p_open, ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		ImGui::SetCursorPosX((windowSize.x - 200.f) * 0.5f);
 		if (ImGui::Button("Delete Object", ImVec2(200, 0)))
 		{
@@ -843,6 +961,9 @@ void MyEditor::ShowDeleteObject(bool* p_open)
 
 	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		float textX = ImGui::CalcTextSize("Are you sure you want to delete this object?").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
 		ImGui::AlignTextToFramePadding();
@@ -924,6 +1045,9 @@ void MyEditor::ShowAddComponent(bool* p_open)
 
 	if (ImGui::Begin("Add Component", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
 			show_add_comp = false;
 
@@ -951,15 +1075,8 @@ void MyEditor::ShowAllObjects(bool* p_open)
 	ImGui::SetNextWindowSize(ImVec2(400, 220), ImGuiCond_Always);
 	if (ImGui::Begin("Objects", p_open, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize))
 	{
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Close", "Ctrl+W")) { *p_open = false; }
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
 
 		// Left
 		int i = 0;
@@ -1001,7 +1118,6 @@ void MyEditor::ShowAllObjects(bool* p_open)
 				new_obj = false;
 			}
 
-
 			ImGui::EndChild();
 		}
 
@@ -1023,6 +1139,9 @@ void MyEditor::ShowMakeNewFile(bool* p_open)
 
 	if (ImGui::Begin("New File", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		float textX = ImGui::CalcTextSize("Enter a new file name").x;
 		ImGui::SetCursorPosX((windowSize.x - textX) * 0.5f);
 		ImGui::AlignTextToFramePadding();
@@ -1082,6 +1201,18 @@ void MyEditor::ShowMakeNewFile(bool* p_open)
 	ImGui::End();
 }
 
+void MyEditor::ShowLayerMatrix(bool* p_open)
+{
+	if (ImGui::Begin("Layer Matrix", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
+		DrawLayer();
+	}
+	ImGui::End();
+}
+
 void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 {
 	ImVec2 textSize = ImGui::CalcTextSize(msg.c_str());
@@ -1091,6 +1222,9 @@ void MyEditor::AlarmWindow(bool* p_open, std::string msg)
 	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 	if (ImGui::Begin(" ", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
+		if (ImGui::IsWindowFocused())
+			is_window_focus = true;
+
 		//When this window should close
 		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
 			alarm_window = false;

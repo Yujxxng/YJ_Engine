@@ -22,6 +22,30 @@ ColliderComponent::ColliderComponent(GameObject* owner) : EngineComponent(owner)
 }
 
 
+const char* ColliderComponent::GetLayerToString()
+{
+	switch (this->layer)
+	{
+	case NONE:
+		return "None";
+
+	case CHARACTER:
+		return "Character";
+
+	case WALL:
+		return "Wall";
+
+	case BOMB:
+		return "Bomb";
+
+	case ITEM:
+		return "Item";
+
+	default:
+		return "";
+	}
+}
+
 void ColliderComponent::SetCollision(float posX, float posY, float sizeX, float sizeY)
 {
 	pos.x = posX;
@@ -34,6 +58,9 @@ void ColliderComponent::SetPos(float x, float y)
 {
 	pos.x = x;
 	pos.y = y;
+
+	pos.x = std::min(std::max(pos.x, -Helper::W_WIDTH / 2.f), (Helper::W_WIDTH / 2.f));
+	pos.y = std::min(std::max(pos.y, -Helper::W_HEIGHT / 2.f), (Helper::W_HEIGHT / 2.f));
 }
 
 void ColliderComponent::SetSize(float x, float y)
@@ -52,9 +79,12 @@ void ColliderComponent::SetRadius(float r)
 	radius = r;
 }
 
-void ColliderComponent::SetLayer(LAYER l)
+void ColliderComponent::SetLayer(enum LAYER l)
 {
 	layer = l;
+	
+	if(!CollisionManager::GetPtr()->FindCollider(this))
+		CollisionManager::GetPtr()->AddCollider(this);
 }
 
 void ColliderComponent::DrawCollider()
@@ -116,23 +146,26 @@ void ColliderComponent::DrawCollider()
 }
 
 void ColliderComponent::Update()
-{
-	//TransformComponent* t = (TransformComponent*)this->owner->FindComponent("Transform");
-	//SetPos(t->GetPos().x, t->GetPos().y);
-	//double cursorX, cursorY;
-	//glfwGetCursorPos(Helper::ptr_window, &cursorX, &cursorY);
-	//cursorX = cursorX - (Helper::W_WIDTH / 2.f);
-	//cursorY = (Helper::W_HEIGHT / 2.f) - cursorY;
-	//std::cout << cursorX << ", " << cursorY << std::endl;
+{/*
+	TransformComponent* t = (TransformComponent*)this->owner->FindComponent("Transform");
+	if(t)
+		SetPos(t->GetPos().x, t->GetPos().y);*/
+	/*
+	double cursorX, cursorY;
+	glfwGetCursorPos(Helper::ptr_window, &cursorX, &cursorY);
+	cursorX = cursorX - (Helper::W_WIDTH / 2.f);
+	cursorY = (Helper::W_HEIGHT / 2.f) - cursorY;
+	std::cout << cursorX << ", " << cursorY << std::endl;
 
-	//AABB test;
-	//test.max.x = pos.x + (size.x / 2.f);
-	//test.max.y = pos.y + (size.y / 2.f);
-	//test.min.x = pos.x - (size.x / 2.f);
-	//test.min.y = pos.y - (size.x / 2.f);
+	AABB test;
+	test.max.x = pos.x + (size.x / 2.f);
+	test.max.y = pos.y + (size.y / 2.f);
+	test.min.x = pos.x - (size.x / 2.f);
+	test.min.y = pos.y - (size.x / 2.f);
 
-	//if (PointRectCollision({ cursorX, cursorY }, &test))
-	//	std::cout << "collision" << std::endl;
+	if (PointRectCollision({ cursorX, cursorY }, &test))
+		std::cout << "collision" << std::endl;
+	*/
 
 	if(show)
 		DrawCollider();

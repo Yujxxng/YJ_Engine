@@ -1,7 +1,10 @@
 #pragma once
-#include "GameObject.h"
-#include "../Components/ColliderComponent.h"
+#include <list>
+
 #include "../myStd/MyCollision.h"
+#include "../Components/ColliderComponent.h"
+
+class ColliderComponent;
 
 class CollisionManager
 {
@@ -13,9 +16,15 @@ class CollisionManager
 
 	static CollisionManager* collision_ptr;
 
+	std::list<ColliderComponent*> colliders;
+
 public:
 	static CollisionManager* GetPtr();
 	static void DeletePtr();
 
 	void Update();
+
+	void AddCollider(ColliderComponent* c);
+	bool FindCollider(ColliderComponent* c);
+	bool CanCollide(enum LAYER a, enum LAYER b);
 };

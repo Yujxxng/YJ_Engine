@@ -1,10 +1,10 @@
 #include "MyCollision.h"
 
-bool AABBCollision(AABB* a, AABB* b)
+bool AABBCollision(const struct AABB* a, const struct AABB* b)
 {
     if (a->max.x < b->min.x || a->min.x > b->max.x) return false;
-    if (a->max.y < b->min.y || a->min.y > b->max.y) return false;
-    if(a->max.y)
+    if (a->max.y > b->min.y || a->min.y < b->max.y) return false;
+
     return true;
 }
 
@@ -34,16 +34,13 @@ bool PointCircleCollision(const glm::vec2 p, const Circle* c)
 bool PointRectCollision(const glm::vec2 p, const AABB* a)
 {
     if (p.x < a->min.x || p.x > a->max.x ||
-        p.y < a->min.y || p.y > a->max.y) return false;
+        p.y > a->min.y || p.y < a->max.y) return false;
 
     return true;
 }
 
 bool CircleAABBCollision(const Circle* c, const AABB* a)
 {
-    //glm::vec2 q{};
-    //ClosestPtPointAABB(c->center, a, q);
-
     float dist = 0.0f;
     dist = SqDistPointAABB(c->center, a);
 
@@ -74,4 +71,17 @@ float SqDistPointAABB(const glm::vec2 p, const AABB* b)
     }
 
     return sqDist;
+}
+
+struct AABB ConvertToAABB(const glm::vec2 pos, const glm::vec2 size)
+{
+    struct AABB tmp {};
+
+    tmp.min.x = pos.x - (size.x / 2.f);
+    tmp.min.y = pos.y + (size.y / 2.f);
+
+    tmp.max.x = pos.x + (size.x / 2.f);
+    tmp.max.y = pos.y - (size.y / 2.f);
+
+    return tmp;
 }
