@@ -26,5 +26,8 @@ public:
 
 	void AddCollider(ColliderComponent* c);
 	bool FindCollider(ColliderComponent* c);
-	bool CanCollide(enum LAYER a, enum LAYER b);
+	bool CanCollide(ColliderComponent* a, ColliderComponent* b);
+
+	void SetLayerMask(enum LAYER a, enum LAYER b);
+	void RemoveLayerMask(enum LAYER a, enum LAYER b);
 };

@@ -45,6 +45,28 @@ private:
 	int selected_layer = 0;
 
 	bool is_window_focus = false;
+
+	//For LayerMask
+	bool wallChar = false;
+	bool wallEnem = false;
+	bool wallBomb = false;
+	bool wallItem = false;
+	bool wallWall = false;
+
+	bool itemChar = false;
+	bool itemEnem = false;
+	bool itemBomb = false;
+	bool itemItem = false;
+
+	bool bombChar = false;
+	bool bombEnem = false;
+	bool bombBomb = false;
+
+	bool enemChar = false;
+	bool enemEnem = false;
+
+	bool charChar = false;
+
 private:
 	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
@@ -73,6 +95,7 @@ private:
 	const char* SelectImage(int n);
 	void SaveFile();
 	void CloseFile();
+	void UpdateLayerMask();
 
 	GameObject* ClickObject(double cursorX, double cursorY);
 	void MoveObjectOnDrag();

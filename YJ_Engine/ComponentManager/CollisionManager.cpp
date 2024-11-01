@@ -29,7 +29,7 @@ void CollisionManager::Update()
     {
         for (auto j = std::next(i); j != colliders.end(); j++)
         {
-            if (CanCollide((*i)->GetLayer(), (*j)->GetLayer()))
+            if (CanCollide(*i, *j))
             {
                 struct AABB a {}, b{};
                 a = ConvertToAABB((*i)->GetPos(), (*i)->GetSize());
@@ -58,13 +58,29 @@ bool CollisionManager::FindCollider(ColliderComponent* c)
     return false;
 }
 
-bool CollisionManager::CanCollide(enum LAYER a, enum LAYER b)
+bool CollisionManager::CanCollide(ColliderComponent* a, ColliderComponent* b)
 {
-    if ((a == LAYER::CHARACTER && b == LAYER::WALL) ||
-        (a == LAYER::WALL && b == LAYER::CHARACTER))
-    {
-        return true;
-    }
+    return (static_cast<uint32_t>(a->GetLayer()) & b->GetLayerMask()) != 0 &&
+        (static_cast<uint32_t>(b->GetLayer()) & a->GetLayerMask()) != 0;
+}
 
-    return false;
+void CollisionManager::SetLayerMask(enum LAYER a, enum LAYER b)
+{
+    for (auto& collider : colliders)
+    {
+        if (collider->GetLayer() == a)
+            collider->AddLayerMask(b);
+        if (collider->GetLayer() == b)
+            collider->AddLayerMask(a);
+    }
+}
+void CollisionManager::RemoveLayerMask(enum LAYER a, enum LAYER b)
+{
+    for (auto& collider : colliders)
+    {
+        if (collider->GetLayer() == a)
+            collider->RemoveLayerMask(b);
+        if (collider->GetLayer() == b)
+            collider->RemoveLayerMask(a);
+    }
 }

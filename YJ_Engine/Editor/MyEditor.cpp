@@ -558,7 +558,7 @@ void MyEditor::DrawCollider()
 
 		ImGui::SameLine();
 		ImGui::Text("Layer :"); ImGui::SameLine();
-		const char* layer_types[] = { "None", "Character", "Wall", "Bomb", "Item" };
+		const char* layer_types[] = { "None", "Character", "Enemy", "Wall", "Bomb", "Item" };
 		const char* layer_combo_value = cComp->GetLayerToString();//= layer_types[selected_layer];
 
 		ImGui::SetNextItemWidth(100.f);
@@ -576,10 +576,12 @@ void MyEditor::DrawCollider()
 					else if (selected_layer == 1)
 						cComp->SetLayer(LAYER::CHARACTER);
 					else if (selected_layer == 2)
-						cComp->SetLayer(LAYER::WALL);
+						cComp->SetLayer(LAYER::ENEMY);
 					else if (selected_layer == 3)
-						cComp->SetLayer(LAYER::BOMB);
+						cComp->SetLayer(LAYER::WALL);
 					else if (selected_layer == 4)
+						cComp->SetLayer(LAYER::BOMB);
+					else if (selected_layer == 5)
 						cComp->SetLayer(LAYER::ITEM);
 				}
 
@@ -691,36 +693,42 @@ void MyEditor::DrawCollider()
 
 void MyEditor::DrawLayer()
 {
-	if (ImGui::BeginTable("##Layer table", 5))
+	if (ImGui::BeginTable("##Layer table", 6))
 	{
-		bool no_char = false;
-		bool no_wall = false;
 		ImGui::TableNextColumn(); ImGui::Text("         ");
 		ImGui::TableNextColumn(); ImGui::Text("Character"); 
+		ImGui::TableNextColumn(); ImGui::Text("Enemy");
 		ImGui::TableNextColumn(); ImGui::Text("Bomb"); 
 		ImGui::TableNextColumn(); ImGui::Text("Item"); 
 		ImGui::TableNextColumn(); ImGui::Text("Wall"); 
 
 		ImGui::TableNextColumn(); ImGui::Text("Wall"); 
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Char", &no_char);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Bomb", &no_wall);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Item", &no_wall);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Wall", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Char", &wallChar);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Enem", &wallEnem);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Bomb", &wallBomb);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Item", &wallItem);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Wall&Wall", &wallWall);
 
 		ImGui::TableNextColumn(); ImGui::Text("Item");
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Char", &no_wall);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Bomb", &no_wall);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Item", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Char", &itemChar);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Enem", &itemEnem);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Bomb", &itemBomb);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Item&Item", &itemItem);
 		ImGui::TableNextRow();
 
 		ImGui::TableNextColumn(); ImGui::Text("Bomb");
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Char", &no_wall);
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Bomb", &no_wall);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Char", &bombChar);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Enem", &bombEnem);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Bomb&Bomb", &bombBomb);
+		ImGui::TableNextRow();
+
+		ImGui::TableNextColumn(); ImGui::Text("Enemy");
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Enem&Char", &enemChar);
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Enem&Enem", &enemEnem);
 		ImGui::TableNextRow();
 
 		ImGui::TableNextColumn(); ImGui::Text("Character");
-		ImGui::TableNextColumn(); ImGui::Checkbox("##Char&Char", &no_wall);
-
+		ImGui::TableNextColumn(); ImGui::Checkbox("##Char&Char", &charChar);
 
 		ImGui::EndTable();
 	}
@@ -768,6 +776,44 @@ void MyEditor::CloseFile()
 	show_obj_setting = false;
 	show_add_comp = false;
 	show_make_new_file = false;
+}
+
+void MyEditor::UpdateLayerMask()
+{
+	if (wallChar)	CollisionManager::GetPtr()->SetLayerMask(WALL, CHARACTER);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(WALL, CHARACTER);
+	if (wallEnem)	CollisionManager::GetPtr()->SetLayerMask(WALL, ENEMY);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(WALL, ENEMY);
+	if (wallBomb)	CollisionManager::GetPtr()->SetLayerMask(WALL, BOMB);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(WALL, BOMB);
+	if (wallItem)	CollisionManager::GetPtr()->SetLayerMask(WALL, ITEM);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(WALL, ITEM);
+	if (wallWall)	CollisionManager::GetPtr()->SetLayerMask(WALL, WALL);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(WALL, WALL);
+
+	if (itemChar)	CollisionManager::GetPtr()->SetLayerMask(ITEM, CHARACTER);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ITEM, CHARACTER);
+	if (itemEnem)	CollisionManager::GetPtr()->SetLayerMask(ITEM, ENEMY);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ITEM, ENEMY);
+	if (itemBomb)	CollisionManager::GetPtr()->SetLayerMask(ITEM, BOMB);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ITEM, BOMB);
+	if (itemItem)	CollisionManager::GetPtr()->SetLayerMask(ITEM, ITEM);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ITEM, ITEM);
+
+	if (bombChar)	CollisionManager::GetPtr()->SetLayerMask(BOMB, CHARACTER);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(BOMB, CHARACTER);
+	if (bombEnem)	CollisionManager::GetPtr()->SetLayerMask(BOMB, ENEMY);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(BOMB, ENEMY);
+	if (bombBomb)	CollisionManager::GetPtr()->SetLayerMask(BOMB, BOMB);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(BOMB, BOMB);
+
+	if (enemChar)	CollisionManager::GetPtr()->SetLayerMask(ENEMY, CHARACTER);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ENEMY, CHARACTER);
+	if (enemEnem)	CollisionManager::GetPtr()->SetLayerMask(ENEMY, ENEMY);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(ENEMY, ENEMY);
+
+	if (charChar)	CollisionManager::GetPtr()->SetLayerMask(CHARACTER, CHARACTER);
+	else			CollisionManager::GetPtr()->RemoveLayerMask(CHARACTER, CHARACTER);
 }
 
 GameObject* MyEditor::ClickObject(double cursorX, double cursorY)
@@ -1203,12 +1249,15 @@ void MyEditor::ShowMakeNewFile(bool* p_open)
 
 void MyEditor::ShowLayerMatrix(bool* p_open)
 {
+	ImVec2 windowSize = ImVec2(400, 170);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 	if (ImGui::Begin("Layer Matrix", p_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 	{
 		if (ImGui::IsWindowFocused())
 			is_window_focus = true;
 
 		DrawLayer();
+		UpdateLayerMask();
 	}
 	ImGui::End();
 }

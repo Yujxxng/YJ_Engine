@@ -21,14 +21,27 @@ NLOHMANN_JSON_SERIALIZE_ENUM
 
 enum LAYER
 {
-	NONE = 0,
-	CHARACTER = 1 << 0,
-	WALL = 1 << 1,
-	BOMB = 1 << 2,
-	ITEM = 1 << 3,
+	NONE = 1 << 0,
+	CHARACTER = 1 << 1,
+	ENEMY = 1 << 2,
+	WALL = 1 << 3,
+	BOMB = 1 << 4,
+	ITEM = 1 << 5,
 
-	ALL = CHARACTER | WALL | BOMB | ITEM,
+	ALL = CHARACTER | ENEMY | WALL | BOMB | ITEM,
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM
+(LAYER,
+	{
+		{NONE,		"NONE"},
+		{CHARACTER,	"CHARACTER"},
+		{ENEMY,		"ENEMY"},
+		{WALL,		"WALL"},
+		{BOMB,		"BOMB"},
+		{ITEM,		"ITEM"},
+	}
+)
 
 class ColliderComponent : public EngineComponent
 {
@@ -39,7 +52,7 @@ class ColliderComponent : public EngineComponent
 	float radius = -1;
 
 	LAYER layer = NONE;
-	uint32_t layerMask;
+	uint32_t layerMask = NONE;
 
 public:
 	bool show = false;
@@ -52,6 +65,7 @@ public:
 	COLLIDER_TYPE GetColliderType() const { return ColliderType; }
 	LAYER GetLayer() const { return layer; }
 	const char* GetLayerToString();
+	uint32_t GetLayerMask() const { return layerMask; }
 
 	void SetCollision(float posX, float posY, float sizeX, float sizeY);
 	void SetPos(float x, float y);
@@ -59,6 +73,9 @@ public:
 	void SetType(COLLIDER_TYPE cType);
 	void SetRadius(float r);
 	void SetLayer(enum LAYER l);
+
+	void AddLayerMask(enum LAYER layer);
+	void RemoveLayerMask(enum LAYER layer);
 
 	void DrawCollider();
 

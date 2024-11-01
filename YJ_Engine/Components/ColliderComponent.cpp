@@ -32,6 +32,9 @@ const char* ColliderComponent::GetLayerToString()
 	case CHARACTER:
 		return "Character";
 
+	case ENEMY:
+		return "Enemy";
+
 	case WALL:
 		return "Wall";
 
@@ -85,6 +88,16 @@ void ColliderComponent::SetLayer(enum LAYER l)
 	
 	if(!CollisionManager::GetPtr()->FindCollider(this))
 		CollisionManager::GetPtr()->AddCollider(this);
+}
+
+void ColliderComponent::AddLayerMask(enum LAYER layer)
+{
+	this->layerMask |= static_cast<uint32_t>(layer);
+}
+
+void ColliderComponent::RemoveLayerMask(enum LAYER layer)
+{
+	this->layerMask &= ~static_cast<uint32_t>(layer);
 }
 
 void ColliderComponent::DrawCollider()
