@@ -75,6 +75,7 @@ public:
 
 	void Update() override;
 
+	void SetShader(const char* vs, const char* fs);
 	void SetColor(const Color&);
 	void SetColor(float r, float g, float b, float a);
 	void SetTexture(const char* fileName);
