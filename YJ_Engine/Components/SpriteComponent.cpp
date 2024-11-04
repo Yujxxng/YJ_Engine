@@ -65,6 +65,11 @@ void SpriteComponent::Update()
 	
 	shader.unUse();
 }
+void SpriteComponent::SetShader(const char* vs, const char* fs)
+{
+	shader.setShader(vs, fs);
+}
+
 void SpriteComponent::SetColor(const Color& otherColor)
 {
 	color = otherColor;

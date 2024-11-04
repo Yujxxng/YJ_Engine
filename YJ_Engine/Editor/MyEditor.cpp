@@ -435,6 +435,32 @@ void MyEditor::DrawPlayer()
 	PlayerComponent* pComp = (PlayerComponent*)selectedObj->FindComponent("Player");
 	if (pComp != nullptr)
 	{
+		//KEYSET
+		if(ImGui::RadioButton("None", &keySetNumber, 0))
+			pComp->ClearKeySet(); 
+		
+		ImGui::SameLine();
+		if (ImGui::RadioButton("1P", &keySetNumber, 1))
+		{
+			pComp->ClearKeySet();
+			pComp->AddKey("A");
+			pComp->AddKey("S");
+			pComp->AddKey("D");
+			pComp->AddKey("W");
+			pComp->AddKey("LEFT_SHIFT");
+		}
+
+		ImGui::SameLine();
+		if (ImGui::RadioButton("2P", &keySetNumber, 2))
+		{
+			pComp->ClearKeySet();
+			pComp->AddKey("LEFT");
+			pComp->AddKey("RIGHT");
+			pComp->AddKey("UP");
+			pComp->AddKey("DOWN");
+			pComp->AddKey("RIGHT_SHIFT");
+		}
+
 		//SPEED
 		float speed{ pComp->GetSpeed()};
 		if (ImGui::TreeNode("Speed"))

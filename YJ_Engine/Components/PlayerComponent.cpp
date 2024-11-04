@@ -21,7 +21,71 @@ void PlayerComponent::Update()
 	
 	RigidbodyComponent* rComp = (RigidbodyComponent*)owner->FindComponent("Rigidbody");
 	if (!rComp) return;
+	
+	for(auto& key : keySet)
+	{
+		if (key == "LEFT")
+		{
+			if(glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
+				rComp->AddVelocity(-speed, 0);
+		}
 
+		if(key == "RIGHT")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+				rComp->AddVelocity(speed, 0);
+		}
+
+		if(key == "UP")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_UP) == GLFW_PRESS)
+				rComp->AddVelocity(0, speed);
+		}
+
+		if(key == "DOWN")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_DOWN) == GLFW_PRESS)
+				rComp->AddVelocity(0, -speed);
+		}
+		
+
+		if(key == "A")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_A) == GLFW_PRESS)
+				rComp->AddVelocity(-speed, 0);
+		}
+
+		if (key == "D")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_D) == GLFW_PRESS)
+				rComp->AddVelocity(speed, 0);
+		}
+
+		if (key == "W")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_W) == GLFW_PRESS)
+				rComp->AddVelocity(0, speed);
+		}
+
+		if (key == "S")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_S) == GLFW_PRESS)
+				rComp->AddVelocity(0, -speed);
+		}
+
+		if (key == "LEFT_SHIFT")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+				0;
+		}
+
+		if (key == "RIGHT_SHIFT")
+		{
+			if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+				0;
+		}
+	}
+	/*
 	//Check for input
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
@@ -42,6 +106,25 @@ void PlayerComponent::Update()
 	{
 		rComp->AddVelocity(0, -speed);
 	}
+	*/
+}
+
+void PlayerComponent::AddKey(std::string key)
+{
+	keySet.insert(key);
+}
+
+bool PlayerComponent::FindKey(std::string key)
+{
+	if (keySet.find(key) != keySet.end())
+		return true;
+
+	return false;
+}
+
+void PlayerComponent::ClearKeySet()
+{
+	keySet.clear();
 }
 
 void PlayerComponent::SetSpeed(float v)

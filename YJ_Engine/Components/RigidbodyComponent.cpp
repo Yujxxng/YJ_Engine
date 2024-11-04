@@ -100,7 +100,7 @@ void RigidbodyComponent::Update()
 
 	t->SetPos({ x,y });
 
-	//ClearVelocity();
+	ClearVelocity();
 
 	//If is too low, just set to 0
 	if (!CheckEpsilon(Velocity.x))

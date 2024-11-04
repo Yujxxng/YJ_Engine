@@ -67,6 +67,8 @@ private:
 
 	bool charChar = false;
 
+	//for keyset
+	int keySetNumber = 0;
 private:
 	void AlarmWindow(bool* p_open, std::string msg);
 	void ShowCreateNewObjectWindow(bool* p_open);
