@@ -1,7 +1,9 @@
 #include "PlayerComponent.h"
 #include "TransformComponent.h"
 #include "RigidbodyComponent.h"
+#include "SpriteComponent.h"
 #include "Grid.h"
+#include "Bomb.h"
 
 #include "glew.h"
 #include "glfw3.h"
@@ -112,6 +114,14 @@ void PlayerComponent::Update()
 	{
 		glm::vec2 tmp = GetNearestGridPos(tComp->GetPos());
 		std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
+		Bomb* bomb = (Bomb*)owner->FindComponent("Bomb");
+
+		if (!bomb) return;
+		bomb->ActiveBomb();
+
+		SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
+		if (!sComp) return;
+		sComp->SetColor({ 255, 0, 0, 255 });
 	}
 }
 

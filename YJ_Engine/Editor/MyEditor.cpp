@@ -144,7 +144,7 @@ void MyEditor::TopBar()
 
 void MyEditor::ComponentListBox()
 {
-	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody", "Collider" };
+	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody", "Collider", "Bomb" };
 
 	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
 	{

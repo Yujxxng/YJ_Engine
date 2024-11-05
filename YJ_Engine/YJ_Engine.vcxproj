@@ -156,6 +156,7 @@
     <ClCompile Include="ComponentManager\GraphicComponentManager.cpp" />
     <ClCompile Include="ComponentManager\LogicComponent.cpp" />
     <ClCompile Include="ComponentManager\LogicComponentManager.cpp" />
+    <ClCompile Include="Components\Bomb.cpp" />
     <ClCompile Include="Components\ColliderComponent.cpp" />
     <ClCompile Include="Components\PlayerComponent.cpp" />
     <ClCompile Include="Components\RigidbodyComponent.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
     <ClInclude Include="ComponentManager\LogicComponent.h" />
     <ClInclude Include="ComponentManager\LogicComponentManager.h" />
+    <ClInclude Include="Components\Bomb.h" />
     <ClInclude Include="Components\ColliderComponent.h" />
     <ClInclude Include="Components\PlayerComponent.h" />
     <ClInclude Include="Components\RigidbodyComponent.h" />
