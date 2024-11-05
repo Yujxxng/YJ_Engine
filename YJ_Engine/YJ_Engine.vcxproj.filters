@@ -132,7 +132,7 @@
     <ClCompile Include="ComponentManager\CollisionManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Grid.cpp">
+    <ClCompile Include="Components\Grid.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,7 +269,7 @@
     <ClInclude Include="ComponentManager\CollisionManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Grid.h">
+    <ClInclude Include="Components\Grid.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

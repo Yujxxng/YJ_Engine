@@ -80,8 +80,21 @@ void Shader::setFloat(const std::string& name, float value) const
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
+const char* Shader::GetVertexName()
+{
+	return vertex;
+}
+
+const char* Shader::GetFragmentName()
+{
+	return fragment;
+}
+
 void Shader::setShader(const char* vertexPath, const char* fragmentPath)
 {
+	strcpy_s(vertex, vertexPath);
+	strcpy_s(fragment, fragmentPath);
+
 	std::string vertexCode;
 	std::string fragmentCode;
 	std::ifstream vShaderFile;

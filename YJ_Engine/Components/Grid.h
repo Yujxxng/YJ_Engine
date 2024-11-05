@@ -1,28 +1,26 @@
 #pragma once
 #include "../ComponentManager/LogicComponentManager.h"
 #include "../myStd/Helper.h"
-#include <unordered_set>
 
-class PlayerComponent : public LogicComponent
+class Grid : public LogicComponent
 {
-	std::unordered_set<std::string> keySet;
-	float speed = 1.f;
+	int row = 15;
+	int col = 13;
 
+	float size = 60.f;
+	//900 x 780
+
+	glm::vec2 min{};
+	glm::vec2 max{};
 public:
-	PlayerComponent(GameObject* owner);
+	Grid(GameObject* owner);
 
 	void Update() override;
 
-	void AddKey(std::string key);
-	bool FindKey(std::string key);
-	void ClearKeySet();
-	void SetSpeed(float speed);
-
-	const float GetSpeed() const;
 	glm::vec2 GetNearestGridPos(const glm::vec2 playerPos);
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;
-	
+
 	static ComponentSerializer* CreateComponent(GameObject* owner);
 };

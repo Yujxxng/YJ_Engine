@@ -82,6 +82,8 @@ public:
 
 	Color& GetColor();
 	const char* GetTexName();
+	const char* GetFragmentShaderName();
+	const char* GetVertexShaderName();
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;

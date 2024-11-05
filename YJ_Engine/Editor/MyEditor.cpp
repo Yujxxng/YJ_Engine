@@ -390,6 +390,39 @@ void MyEditor::DrawSprite()
 			ImGui::TreePop();
 		}
 
+		//SHADER
+		if (ImGui::TreeNode("Shader"))
+		{
+			const char* shaders[] = { "Assets/Shaders/shader.fs", "Assets/Shaders/grid.frag" };
+			const char* shader_preview = sComp->GetFragmentShaderName();
+			for (int i = 0; i < IM_ARRAYSIZE(shaders); i++)
+			{
+				if (shaders[i] == shader_preview)
+				{
+					shader_preview = shaders[i];
+					break;
+				}
+			}
+
+			if (ImGui::BeginCombo("##combo", shader_preview))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(shaders); n++)
+				{
+					const bool is_selected = (selected_sdr == n);
+					if (ImGui::Selectable(shaders[n], is_selected))
+					{
+						selected_sdr = n;
+						sComp->SetShader(sComp->GetVertexShaderName(), shaders[selected_sdr]);
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::TreePop();
+		}
+
+		//IMAGE
 		if (ImGui::TreeNode("Image"))
 		{
 			const char* items[] = { "Assets/white.png", "Assets/manggom.png", "Assets/PlanetTexture.png" };
@@ -402,13 +435,7 @@ void MyEditor::DrawSprite()
 					break;
 				}
 			}
-#if 0
-			if(ImGui::Combo("##image", &selected_img, items, IM_ARRAYSIZE(items)))
-			{
-				
-				sComp->SetTexture(SelectImage(selected_img));
-			}
-#elif 1
+
 			if (ImGui::BeginCombo("##combo", combo_preview))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
@@ -424,7 +451,6 @@ void MyEditor::DrawSprite()
 				}
 				ImGui::EndCombo();
 			}
-#endif
 			ImGui::TreePop();
 		}
 	}

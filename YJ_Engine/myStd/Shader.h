@@ -9,6 +9,9 @@
 
 class Shader
 {
+	char vertex[1024] = "";
+	char fragment[1024] = "";
+
 public:
 	unsigned int ID{};
 
@@ -20,6 +23,9 @@ public:
 	void setBool(const std::string& name, bool value) const;
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
+
+	const char* GetVertexName();
+	const char* GetFragmentName();
 
 private:
 	void checkCompileErrors(unsigned int shader, std::string type);

@@ -40,6 +40,7 @@ private:
 	int selected = -1;		//For list
 	int selected_obj = 0;	//For AllObjList
 	int selected_img = 0;	//For image combo
+	int selected_sdr = 0;	//For Shader combo
 	int selected_type = 0;
 	int selected_collider_type = 0;
 	int selected_layer = 0;

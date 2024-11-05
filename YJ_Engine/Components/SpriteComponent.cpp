@@ -53,6 +53,7 @@ void SpriteComponent::Update()
 
 	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
 	glUniform3f(uniform_var_color, (color.r / 255.f), (color.g / 255.f), (color.b / 255.f));
+	//glUniform2f(glGetUniformLocation(shader.ID, "texSize"), tex->width, tex->height);
 	//glUniform3f(uniform_var_color, color.r, color.g, color.b);
 	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
 	if (uniform_var_loc1 >= 0) 
@@ -104,6 +105,16 @@ const char* SpriteComponent::GetTexName()
 	return tex->texName;
 }
 
+const char* SpriteComponent::GetFragmentShaderName()
+{
+	return shader.GetFragmentName();
+}
+
+const char* SpriteComponent::GetVertexShaderName()
+{
+	return shader.GetVertexName();
+}
+
 void SpriteComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -121,6 +132,10 @@ void SpriteComponent::LoadFromJson(const json& data)
 		std::string texName;
 		texName = spriteData.value().find("texName").value();
 		this->SetTexture(texName.c_str());
+
+		std::string frag;
+		frag = spriteData.value().find("shader").value();
+		this->SetShader("Assets/Shaders/shader.vs", frag.c_str());
 	}
 	else
 	{
@@ -143,7 +158,8 @@ json SpriteComponent::SaveToJson()
 
 	sprite["color"] = { color.r, color.g, color.b, color.a };
 	sprite["texName"] = tex->texName;
-	//sprite["shader"] = (vtx, fgm) shader_file_name;
+	sprite["shader"] = shader.GetFragmentName();
+	//(vtx, fgm) shader_file_name;
 
 	return sprite;
 }
