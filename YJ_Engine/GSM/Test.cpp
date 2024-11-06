@@ -9,7 +9,6 @@
 #include <string>
 #include "../myStd/MyFile.h"
 #include "../Object/Camera.h"
-#include "../Object/TestObject.h"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"

@@ -106,6 +106,19 @@ std::vector<std::string> GameObject::GetComponentsID()
 	return cID;
 }
 
+void GameObject::CopyThisObject(GameObject* other)
+{
+	other->ID = this->ID + "_copy";
+	other->ObjectType = this->ObjectType;
+	other->alive = this->alive;
+	other->dirty = false;
+
+	for (auto& comp : components)
+	{
+		comp->CopyComponent(other);
+	}
+}
+
 void GameObject::LoadToJson(const json& data)
 {
 	for (auto& obj : data.items())

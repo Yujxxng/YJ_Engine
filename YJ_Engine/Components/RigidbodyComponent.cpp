@@ -119,6 +119,17 @@ void RigidbodyComponent::Update()
 
 }
 
+void RigidbodyComponent::CopyComponent(GameObject* owner)
+{
+	RigidbodyComponent* tmp = new RigidbodyComponent(owner);
+
+	tmp->drag = this->drag;
+	tmp->Velocity = this->Velocity;
+	tmp->MAXVelocity = this->MAXVelocity;
+
+	owner->AddComponent(tmp);
+}
+
 void RigidbodyComponent::LoadFromJson(const json& data)
 {
 	auto rigidbodyData = data.find("Rigidbody");

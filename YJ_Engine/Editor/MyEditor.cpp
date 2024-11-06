@@ -14,6 +14,8 @@
 #include "../Components/RigidbodyComponent.h"
 #include "../Components/ColliderComponent.h"
 
+#include "../Object/BombManager.h"
+
 MyEditor* MyEditor::editor_ptr = nullptr;
 
 MyEditor* MyEditor::GetPtr()
@@ -100,6 +102,12 @@ void MyEditor::TopBar()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Edit"))
+		{
+			ShowMenuEdit();
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("View"))
 		{
 			ShowMenuView();
@@ -144,7 +152,7 @@ void MyEditor::TopBar()
 
 void MyEditor::ComponentListBox()
 {
-	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody", "Collider", "Bomb" };
+	const char* components[] = { "Transform", "Sprite", "Player", "Rigidbody", "Collider", "Timer" };
 
 	if (ImGui::BeginListBox(" ", ImVec2(250.f, 100.f)))
 	{
@@ -244,6 +252,20 @@ void MyEditor::ShowMenuView()
 	if (ImGui::MenuItem("Layer"))
 	{
 		show_layer_matrix = true;
+	}
+}
+
+void MyEditor::ShowMenuEdit()
+{
+	if (ImGui::MenuItem("Copy Object", "Ctrl+J"))
+	{
+		GameObject* obj = new GameObject("copy");
+		selectedObj->CopyThisObject(obj);
+		selectedObj = obj;
+	}
+	if (ImGui::MenuItem("Delete", "Delete"))
+	{
+		0;
 	}
 }
 

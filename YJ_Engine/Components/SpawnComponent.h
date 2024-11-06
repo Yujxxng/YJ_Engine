@@ -1,14 +1,15 @@
 #pragma once
+#include "../myStd/Helper.h"
 #include "../ComponentManager/LogicComponentManager.h"
+#include <chrono>
 
-class SimpleObjectCreator : public LogicComponent
+class SpawnComponent : LogicComponent
 {
-	int num_column{};
-	int num_row{};
+	bool spawn = false;
+	GameObject* spawnObj = nullptr;
 
 public:
-	~SimpleObjectCreator() override;
-	SimpleObjectCreator(GameObject* owner);
+	SpawnComponent(GameObject* owner);
 
 	void Update() override;
 
@@ -16,6 +17,6 @@ public:
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;
-	
+
 	static ComponentSerializer* CreateComponent(GameObject* owner);
 };

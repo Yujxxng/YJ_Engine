@@ -87,6 +87,7 @@ private:
 	void ShowHasComponent();
 	void ShowMenuFile();
 	void ShowMenuView();
+	void ShowMenuEdit();
 	void DrawComponentProperties(std::string compName);
 	void DrawTransform();
 	void DrawSprite();

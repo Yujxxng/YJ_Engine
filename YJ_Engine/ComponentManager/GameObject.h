@@ -25,11 +25,14 @@ class GameObject
 {
 	std::string ID;
 	OBJECT_TYPE ObjectType;
+
 	std::list<BaseComponent*> components;
 
 	bool dirty; //If status change
 
 public:
+	bool alive = false;
+	
 	GameObject() = delete;
 	GameObject(std::string id);
 	virtual ~GameObject();
@@ -51,6 +54,8 @@ public:
 
 	bool CheckComponent(std::string compName);
 	std::vector<std::string> GetComponentsID();
+
+	void CopyThisObject(GameObject* other);
 
 	void LoadToJson(const json& data);
 	json SaveToJson();

@@ -33,6 +33,10 @@ glm::vec2 Grid::GetNearestGridPos(const glm::vec2 playerPos)
 	return resPos;
 }
 
+void Grid::CopyComponent(GameObject* owner)
+{
+}
+
 void Grid::LoadFromJson(const json& data)
 {
 }

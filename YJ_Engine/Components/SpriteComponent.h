@@ -78,12 +78,15 @@ public:
 	void SetShader(const char* vs, const char* fs);
 	void SetColor(const Color&);
 	void SetColor(float r, float g, float b, float a);
+	void SetAlpha(float a);
 	void SetTexture(const char* fileName);
 
 	Color& GetColor();
 	const char* GetTexName();
 	const char* GetFragmentShaderName();
 	const char* GetVertexShaderName();
+
+	void CopyComponent(GameObject* owner) override;
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;

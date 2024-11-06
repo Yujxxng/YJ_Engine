@@ -116,6 +116,16 @@ void TransformComponent::SetRotate(float angle)
 	this->owner->SetDirty(true);
 }
 
+void TransformComponent::CopyComponent(GameObject* owner)
+{
+	TransformComponent* tmp = new TransformComponent(owner);
+	tmp->angle_disp = this->angle_disp;
+	tmp->position = this->position;
+	tmp->scale = this->scale;
+	
+	owner->AddComponent(tmp);
+}
+
 void TransformComponent::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;

@@ -156,7 +156,8 @@
     <ClCompile Include="ComponentManager\GraphicComponentManager.cpp" />
     <ClCompile Include="ComponentManager\LogicComponent.cpp" />
     <ClCompile Include="ComponentManager\LogicComponentManager.cpp" />
-    <ClCompile Include="Components\Bomb.cpp" />
+    <ClCompile Include="Components\SpawnComponent.cpp" />
+    <ClCompile Include="Components\TimerComponent.cpp" />
     <ClCompile Include="Components\ColliderComponent.cpp" />
     <ClCompile Include="Components\PlayerComponent.cpp" />
     <ClCompile Include="Components\RigidbodyComponent.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="myStd\MyFile.cpp" />
     <ClCompile Include="myStd\Shader.cpp" />
     <ClCompile Include="myStd\Texture.cpp" />
+    <ClCompile Include="Object\BombManager.cpp" />
     <ClCompile Include="Object\Camera.cpp" />
     <ClCompile Include="Components\Grid.cpp" />
     <ClCompile Include="Serializer\ComponentSerializer.cpp" />
@@ -201,7 +203,8 @@
     <ClInclude Include="ComponentManager\GraphicComponentManager.h" />
     <ClInclude Include="ComponentManager\LogicComponent.h" />
     <ClInclude Include="ComponentManager\LogicComponentManager.h" />
-    <ClInclude Include="Components\Bomb.h" />
+    <ClInclude Include="Components\SpawnComponent.h" />
+    <ClInclude Include="Components\TimerComponent.h" />
     <ClInclude Include="Components\ColliderComponent.h" />
     <ClInclude Include="Components\PlayerComponent.h" />
     <ClInclude Include="Components\RigidbodyComponent.h" />
@@ -220,6 +223,7 @@
     <ClInclude Include="myStd\MyCollision.h" />
     <ClInclude Include="myStd\MyFile.h" />
     <ClInclude Include="myStd\Shader.h" />
+    <ClInclude Include="Object\BombManager.h" />
     <ClInclude Include="Object\Camera.h" />
     <ClInclude Include="Components\Grid.h" />
     <ClInclude Include="Serializer\ComponentSerializer.h" />

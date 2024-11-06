@@ -18,6 +18,10 @@ void SimpleObjectCreator::Update()
 {
 }
 
+void SimpleObjectCreator::CopyComponent(GameObject* owner)
+{
+}
+
 void SimpleObjectCreator::LoadFromJson(const json& data)
 {
 	std::cout << __FUNCTION__ << std::endl;

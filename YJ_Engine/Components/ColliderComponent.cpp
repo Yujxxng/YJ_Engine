@@ -184,6 +184,19 @@ void ColliderComponent::Update()
 		DrawCollider();
 }
 
+void ColliderComponent::CopyComponent(GameObject* owner)
+{
+	ColliderComponent* tmp = new ColliderComponent(owner);
+	tmp->pos = this->pos;
+	tmp->size = this->size;
+	tmp->radius = this->radius;
+	tmp->layer = this->layer;
+	tmp->layerMask = this->layerMask;
+	tmp->show = this->show;
+
+	owner->AddComponent(tmp);
+}
+
 void ColliderComponent::LoadFromJson(const json& data)
 {
 	auto colliderData = data.find("Collider");

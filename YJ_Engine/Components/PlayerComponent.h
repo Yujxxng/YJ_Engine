@@ -21,6 +21,8 @@ public:
 	const float GetSpeed() const;
 	glm::vec2 GetNearestGridPos(const glm::vec2 playerPos);
 
+	void CopyComponent(GameObject* owner) override;
+
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;
 	

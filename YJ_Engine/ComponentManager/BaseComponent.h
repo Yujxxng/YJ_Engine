@@ -23,4 +23,6 @@ public:
 	std::string GetID(){ return this->ID; }
 
 	virtual void Update() = 0;
+
+	virtual void CopyComponent(GameObject* owner) = 0;
 };

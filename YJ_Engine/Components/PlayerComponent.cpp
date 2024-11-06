@@ -3,7 +3,8 @@
 #include "RigidbodyComponent.h"
 #include "SpriteComponent.h"
 #include "Grid.h"
-#include "Bomb.h"
+#include "TimerComponent.h"
+#include "../Object/BombManager.h"
 
 #include "glew.h"
 #include "glfw3.h"
@@ -88,40 +89,32 @@ void PlayerComponent::Update()
 				0;
 		}
 	}
-	/*
-	//Check for input
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-		rComp->AddVelocity(-speed, 0);
-	}
 
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-		rComp->AddVelocity(speed, 0);
-	}
-
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		rComp->AddVelocity(0, speed);
-	}
-
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		rComp->AddVelocity(0, -speed);
-	}
-	*/
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		glm::vec2 tmp = GetNearestGridPos(tComp->GetPos());
-		std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
-		Bomb* bomb = (Bomb*)owner->FindComponent("Bomb");
+		GameObject* bomb = GameObjectManager::GetPtr()->FindObjects("bomb");
+		
+		TransformComponent* bomb_tComp = (TransformComponent*)bomb->FindComponent("Transform");
+		bomb_tComp->SetPos(tmp);
+		
+		SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
+		sComp->SetAlpha(255);
+		
+		TimerComponent* timerComp = (TimerComponent*)bomb->FindComponent("Timer");
+		timerComp->ActiveTimer();
+		
+		//bomb->alive = true;
 
-		if (!bomb) return;
-		bomb->ActiveBomb();
+		//std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
+		/*TimerComponent* timer = (TimerComponent*)owner->FindComponent("Timer");
+
+		if (!timer) return;
+		timer->ActiveTimer();
 
 		SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
 		if (!sComp) return;
-		sComp->SetColor({ 255, 0, 0, 255 });
+		sComp->SetColor({ 255, 0, 0, 255 });*/
 	}
 }
 
@@ -177,6 +170,18 @@ glm::vec2 PlayerComponent::GetNearestGridPos(const glm::vec2 playerPos) //need t
 	resPos.y = min.y - (60.f * idx.y) - 30.f;
 
 	return resPos;
+}
+void PlayerComponent::CopyComponent(GameObject* owner)
+{
+	PlayerComponent* tmp = new PlayerComponent(owner);
+	if (!keySet.empty())
+	{
+		for (auto& k : keySet)
+			tmp->keySet.insert(k);
+	}
+	tmp->speed = this->speed;
+
+	owner->AddComponent(tmp);
 }
 void PlayerComponent::LoadFromJson(const json& data)
 {

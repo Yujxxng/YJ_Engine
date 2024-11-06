@@ -52,7 +52,7 @@ void SpriteComponent::Update()
 		tranf = glm::mat3x3(1.0f);
 
 	GLint uniform_var_color = glGetUniformLocation(shader.ID, "uColor");
-	glUniform3f(uniform_var_color, (color.r / 255.f), (color.g / 255.f), (color.b / 255.f));
+	glUniform4f(uniform_var_color, (color.r / 255.f), (color.g / 255.f), (color.b / 255.f), (color.a / 255.f));
 	//glUniform2f(glGetUniformLocation(shader.ID, "texSize"), tex->width, tex->height);
 	//glUniform3f(uniform_var_color, color.r, color.g, color.b);
 	GLint uniform_var_loc1 = glGetUniformLocation(shader.ID, "uModel_to_NDC");
@@ -86,6 +86,10 @@ void SpriteComponent::SetColor(float r, float g, float b, float a)
 
 	this->owner->SetDirty(true);
 }
+void SpriteComponent::SetAlpha(float a)
+{
+	this->color.a = a;
+}
 void SpriteComponent::SetTexture(const char* fileName)
 {
 	if (tex)
@@ -113,6 +117,16 @@ const char* SpriteComponent::GetFragmentShaderName()
 const char* SpriteComponent::GetVertexShaderName()
 {
 	return shader.GetVertexName();
+}
+
+void SpriteComponent::CopyComponent(GameObject* owner)
+{
+	SpriteComponent* tmp = new SpriteComponent(owner);
+
+	tmp->color = this->color;
+	tmp->SetTexture(this->tex->texName);
+
+	owner->AddComponent(tmp);
 }
 
 void SpriteComponent::LoadFromJson(const json& data)

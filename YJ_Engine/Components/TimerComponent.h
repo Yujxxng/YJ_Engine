@@ -3,21 +3,24 @@
 #include "../ComponentManager/LogicComponentManager.h"
 #include <chrono>
 
-class Bomb : LogicComponent
+class TimerComponent : LogicComponent
 {
 	bool active = false;
-
+	bool timeOut = false;
+	
 	std::chrono::steady_clock::time_point startTime;
-	std::chrono::seconds boomTime = std::chrono::seconds(2);
-
-	int power = 1;
+	std::chrono::duration<float> timer = std::chrono::duration<float>(2.f);
 
 public:
-	Bomb(GameObject* owner);
+	TimerComponent(GameObject* owner);
 
 	void Update() override;
 
-	void ActiveBomb();
+	void SetTimer(float second);
+	void ActiveTimer();
+	bool TimeOut();
+
+	void CopyComponent(GameObject* owner) override;
 
 	void LoadFromJson(const json& data) override;
 	json SaveToJson() override;

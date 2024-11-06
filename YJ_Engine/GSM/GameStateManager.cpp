@@ -1,10 +1,13 @@
 #include "GameStateManager.h"
 #include "BaseLevel.h"
+
 #include "..\ComponentManager\LogicComponentManager.h"
 #include "..\ComponentManager\LogicComponent.h"
 #include "..\ComponentManager\EngineComponentManager.h"
 #include "..\ComponentManager\GraphicComponentManager.h"
 #include "..\ComponentManager\CollisionManager.h"
+#include "..\Object\BombManager.h"
+
 #include "../Object/Camera.h"
 #include "../Serializer/Registry.h"
 
@@ -71,11 +74,11 @@ void GSM::GameStateManager::Update()
     if (currentLevel)
     {
         Camera2D::GetPtr()->Update(Helper::ptr_window);
-        if(!Helper::editMode)
-        {
+        //if(!Helper::editMode)
+        //{
             LogicComponentManager::GetPtr()->Update();
             EngineComponentManager::GetPtr()->Update();
-        }
+        //}
         GraphicComponentManager::GetPtr()->Update();
         CollisionManager::GetPtr()->Update();
         currentLevel->Update();

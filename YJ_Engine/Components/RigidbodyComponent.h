@@ -29,6 +29,8 @@ public:
 
 	void Update() override;
 
+	void CopyComponent(GameObject* owner) override;
+
 	void LoadFromJson(const json&) override;
 	json SaveToJson() override;
 
