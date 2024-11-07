@@ -92,19 +92,18 @@ void PlayerComponent::Update()
 
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
+		std::cout << "dd" << std::endl;
 		glm::vec2 tmp = GetNearestGridPos(tComp->GetPos());
-		GameObject* bomb = GameObjectManager::GetPtr()->FindObjects("bomb");
-		
+
+		GameObject* bomb = BombManager::GetPtr()->GetBomb();
+		if (!bomb) return;
 		TransformComponent* bomb_tComp = (TransformComponent*)bomb->FindComponent("Transform");
 		bomb_tComp->SetPos(tmp);
-		
-		SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
-		sComp->SetAlpha(255);
-		
-		TimerComponent* timerComp = (TimerComponent*)bomb->FindComponent("Timer");
-		timerComp->ActiveTimer();
-		
-		//bomb->alive = true;
+		bomb->alive = true;
+		//SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
+		//sComp->SetAlpha(255);
+		//TimerComponent* timerComp = (TimerComponent*)bomb->FindComponent("Timer");
+		//timerComp->ActiveTimer();
 
 		//std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
 		/*TimerComponent* timer = (TimerComponent*)owner->FindComponent("Timer");
@@ -115,6 +114,7 @@ void PlayerComponent::Update()
 		SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
 		if (!sComp) return;
 		sComp->SetColor({ 255, 0, 0, 255 });*/
+
 	}
 }
 

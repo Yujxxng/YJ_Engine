@@ -74,6 +74,7 @@ void GSM::GameStateManager::Update()
     if (currentLevel)
     {
         Camera2D::GetPtr()->Update(Helper::ptr_window);
+        BombManager::GetPtr()->Update();
         //if(!Helper::editMode)
         //{
             LogicComponentManager::GetPtr()->Update();
@@ -103,6 +104,7 @@ void GSM::GameStateManager::Exit()
     GraphicComponentManager::DeletePtr();
     CollisionManager::DeletePtr();
     Registry::DeletePtr();
+    
     //EventManager::DeletePtr();
 }
 

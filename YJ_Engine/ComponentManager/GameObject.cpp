@@ -108,7 +108,9 @@ std::vector<std::string> GameObject::GetComponentsID()
 
 void GameObject::CopyThisObject(GameObject* other)
 {
-	other->ID = this->ID + "_copy";
+	if(other->ID == "")
+		other->ID = this->ID + "_copy";
+	
 	other->ObjectType = this->ObjectType;
 	other->alive = this->alive;
 	other->dirty = false;

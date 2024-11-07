@@ -16,6 +16,7 @@
 #include "source/imgui/imgui.h"
 #include "source/imgui/imgui_impl_glfw.h"
 #include "source/imgui/imgui_impl_opengl3.h"
+#include "Object/BombManager.h"
 
 void copyAssets()
 {
@@ -128,8 +129,8 @@ int main()
 	gsm->Exit();
 	gsm->DeleteGSM();
 
+	BombManager::DeletePtr();
 	GameObjectManager::DeletePtr();
-
 	shutdownImgui();
 	MyEditor::DeletePtr();
 

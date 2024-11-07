@@ -10,7 +10,6 @@ class TimerComponent : LogicComponent
 	
 	std::chrono::steady_clock::time_point startTime;
 	std::chrono::duration<float> timer = std::chrono::duration<float>(2.f);
-
 public:
 	TimerComponent(GameObject* owner);
 

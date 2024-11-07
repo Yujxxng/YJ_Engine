@@ -11,12 +11,14 @@ void TimerComponent::Update()
 	if (active)
 	{
 		auto now = std::chrono::steady_clock::now();
-		auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
-		
+		//auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
+		std::chrono::duration<float> elapsedTime = now - startTime;
+
 		if (elapsedTime >= timer)
 		{
 			std::cout << "TimeOut" << std::endl;
 			active = false;
+			owner->alive = false;
 			timeOut = true;
 			SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
 			if (!sComp) return;
@@ -33,6 +35,7 @@ void TimerComponent::SetTimer(float second)
 void TimerComponent::ActiveTimer()
 {
 	active = true;
+	timeOut = false;
 	startTime = std::chrono::steady_clock::now();
 }
 

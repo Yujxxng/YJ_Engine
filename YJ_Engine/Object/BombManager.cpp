@@ -12,7 +12,7 @@ BombManager* BombManager::GetPtr()
 	if (bomb_ptr == nullptr)
 	{
 		bomb_ptr = new BombManager;
-		//bomb_ptr->InitBombManager();
+		bomb_ptr->InitBombManager();
 
 		return bomb_ptr;
 	}
@@ -31,18 +31,18 @@ void BombManager::DeletePtr()
 
 void BombManager::InitBombManager()
 {
+	MyFile::LoadObjectFile("prefab.dat");
 	GameObject* bomb = GameObjectManager::GetPtr()->FindObjects("bomb");
 
-	for (int i = 0; i < poolSize; i++)
-		BombPool.push_back(std::make_unique<GameObject>(""));
-
-	for (int i = 0; i < poolSize; i++)
+	BombPool.push_back(bomb);
+	for (int i = 0; i < poolSize - 1; i++)
 	{
-		std::string s = "bomb" + std::to_string(i);
-
-		bomb->CopyThisObject(BombPool[i].get());
-		BombPool[i]->SetID(s);
+		std::string s = "bomb" + std::to_string(i + 1);
+		BombPool.push_back(new GameObject(s));
 	}
+
+	for (int i = 1; i < poolSize; i++)
+		bomb->CopyThisObject(BombPool[i]);
 }
 
 GameObject* BombManager::GetBomb()
@@ -50,7 +50,7 @@ GameObject* BombManager::GetBomb()
 	for (auto& bomb : BombPool)
 	{
 		if (!bomb->alive)
-			return bomb.get();
+			return bomb;
 	}
 	return nullptr;
 }
@@ -74,9 +74,11 @@ void BombManager::Update()
 		if (bomb->alive)
 		{
 			SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
-			sComp->SetAlpha(255);
+			if(sComp)
+				sComp->SetAlpha(255);
 			TimerComponent* tComp = (TimerComponent*)bomb->FindComponent("Timer");
-			tComp->ActiveTimer();
+			if(tComp)
+				tComp->ActiveTimer();
 		}
 	}
 }

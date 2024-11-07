@@ -1,4 +1,6 @@
 #pragma once
+#include "../myStd/MyFile.h"
+#include "../ComponentManager/GameObject.h"
 #include "../ComponentManager/GameObjectManager.h"
 #include <vector>
 #include <memory>
@@ -18,7 +20,7 @@ public:
 	static void DeletePtr();
 
 	int poolSize = 10;
-	std::vector<std::unique_ptr<GameObject>> BombPool;
+	std::vector<GameObject*> BombPool;
 
 	void InitBombManager();
 
