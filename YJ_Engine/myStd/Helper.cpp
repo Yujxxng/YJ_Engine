@@ -11,6 +11,8 @@ std::string Helper::W_TITLE;
 GLFWwindow* Helper::ptr_window;
 bool Helper::editMode = false;
 
+bool Helper::key_space = false;
+
 bool Helper::init(GLint width, GLint height, std::string title)
 {
     W_WIDTH = width;
@@ -90,18 +92,23 @@ void Helper::fbsize_cb(GLFWwindow* ptr_win, int width, int height)
 void Helper::key_cb(GLFWwindow* pwin, int key, int scancode, int action, int mod)
 {
     if (GLFW_PRESS == action) {
+        if (key == GLFW_KEY_SPACE)
+            key_space = true;
 #ifdef _DEBUG
-        //std::cout << "Key pressed" << std::endl;
+       // std::cout << "Key pressed" << std::endl;
 #endif
     }
     else if (GLFW_REPEAT == action) {
+        //if (key == GLFW_KEY_SPACE)
+        //    key_space = false;
 
 #ifdef _DEBUG
         //std::cout << "Key repeatedly pressed" << std::endl;
 #endif
     }
     else if (GLFW_RELEASE == action) {
-        
+        //if (key == GLFW_KEY_SPACE)
+        //    key_space = false;
 #ifdef _DEBUG
         //std::cout << "Key released" << std::endl;
 #endif

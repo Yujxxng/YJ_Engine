@@ -5,13 +5,16 @@
 
 class SpawnComponent : LogicComponent
 {
-	bool spawn = false;
 	GameObject* spawnObj = nullptr;
 
 public:
+	bool spawn = false;
+	
 	SpawnComponent(GameObject* owner);
 
 	void Update() override;
+
+	void Draw();
 
 	void CopyComponent(GameObject* owner) override;
 

@@ -90,31 +90,36 @@ void PlayerComponent::Update()
 		}
 	}
 
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS)
+	//if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS)
+	//{
+	//	key_space = true;
+	//	//SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
+	//	//sComp->SetAlpha(255);
+	//	//TimerComponent* timerComp = (TimerComponent*)bomb->FindComponent("Timer");
+	//	//timerComp->ActiveTimer();
+
+	//	//std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
+	//	/*TimerComponent* timer = (TimerComponent*)owner->FindComponent("Timer");
+
+	//	if (!timer) return;
+	//	timer->ActiveTimer();
+
+	//	SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
+	//	if (!sComp) return;
+	//	sComp->SetColor({ 255, 0, 0, 255 });*/
+
+	//}
+	//if (key_space)
+	if(Helper::key_space)
 	{
-		std::cout << "dd" << std::endl;
+		Helper::key_space = false;
 		glm::vec2 tmp = GetNearestGridPos(tComp->GetPos());
 
 		GameObject* bomb = BombManager::GetPtr()->GetBomb();
 		if (!bomb) return;
 		TransformComponent* bomb_tComp = (TransformComponent*)bomb->FindComponent("Transform");
 		bomb_tComp->SetPos(tmp);
-		bomb->alive = true;
-		//SpriteComponent* sComp = (SpriteComponent*)bomb->FindComponent("Sprite");
-		//sComp->SetAlpha(255);
-		//TimerComponent* timerComp = (TimerComponent*)bomb->FindComponent("Timer");
-		//timerComp->ActiveTimer();
-
-		//std::cout << tComp->GetPos().x << ", " << tComp->GetPos().y << " || " << tmp.x << ", " << tmp.y << std::endl;
-		/*TimerComponent* timer = (TimerComponent*)owner->FindComponent("Timer");
-
-		if (!timer) return;
-		timer->ActiveTimer();
-
-		SpriteComponent* sComp = (SpriteComponent*)owner->FindComponent("Sprite");
-		if (!sComp) return;
-		sComp->SetColor({ 255, 0, 0, 255 });*/
-
+		BombManager::GetPtr()->SetBombPower(bomb, BombPower);
 	}
 }
 
@@ -142,6 +147,19 @@ void PlayerComponent::SetSpeed(float v)
 
 	this->owner->SetDirty(true);
 }
+const int PlayerComponent::GetMaxBombNum() const
+{
+	return MaxBombNum;
+}
+const int PlayerComponent::GetCurBombNum() const
+{
+	return CurBombNum;
+}
+const int PlayerComponent::GetBombPower() const
+{
+	return BombPower;
+}
+
 const float PlayerComponent::GetSpeed() const
 {
 	return speed;
@@ -171,6 +189,22 @@ glm::vec2 PlayerComponent::GetNearestGridPos(const glm::vec2 playerPos) //need t
 
 	return resPos;
 }
+void PlayerComponent::SetMaxBombNum(int n)
+{
+	MaxBombNum = n;
+}
+
+void PlayerComponent::SetCurBombNum(int n)
+{
+	CurBombNum = n;
+}
+
+
+void PlayerComponent::SetBombPower(int n)
+{
+	BombPower = n;
+}
+
 void PlayerComponent::CopyComponent(GameObject* owner)
 {
 	PlayerComponent* tmp = new PlayerComponent(owner);

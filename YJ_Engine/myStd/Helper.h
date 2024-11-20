@@ -37,6 +37,8 @@ struct Helper
 	static GLFWwindow* ptr_window;
 	//static GLfloat clear_color[4]; // rgba normalize components in range 0.0f to 1.0f
 	static bool editMode;
+
+	static bool key_space;
 };
 
 #endif HELPER_H

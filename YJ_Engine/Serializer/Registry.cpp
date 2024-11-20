@@ -9,6 +9,7 @@
 #include "../Components/ColliderComponent.h"
 #include "../Components/Grid.h"
 #include "../Components/TimerComponent.h"
+#include "../Components/SpawnComponent.h"
 
 Registry* Registry::registry_ptr = nullptr;
 
@@ -22,6 +23,7 @@ Registry::Registry()
 	componentMap.insert({ "Collider", &ColliderComponent::CreateComponent });
 	componentMap.insert({ "Grid", &Grid::CreateComponent });
 	componentMap.insert({ "Timer", &TimerComponent::CreateComponent });
+	componentMap.insert({ "Spawn", &SpawnComponent::CreateComponent });
 }
 
 ComponentSerializer* Registry::CreateComponent(const std::string& type, GameObject* owner)

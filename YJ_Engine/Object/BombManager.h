@@ -20,11 +20,21 @@ public:
 	static void DeletePtr();
 
 	int poolSize = 10;
-	std::vector<GameObject*> BombPool;
+	std::vector<std::pair<GameObject*, int>> BombPool;
+
+	int exPoolSize = 100;
+	std::vector<GameObject*> ExplosionPool;
 
 	void InitBombManager();
+	void InitBomb(GameObject* bomb);
 
 	GameObject* GetBomb();
+	GameObject* GetExplosion();
+
+	void SetBombPower(GameObject* bomb, int n);
+
+	void Explosion(std::pair<GameObject*, int> bomb);
+
 	int GetAliveBomb();
 
 	void Update();
