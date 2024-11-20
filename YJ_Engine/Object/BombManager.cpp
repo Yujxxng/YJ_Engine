@@ -74,11 +74,6 @@ void BombManager::InitBomb(GameObject* bomb)
 		tComp->SetTimer(2.0f);
 		tComp->ActiveTimer();
 	}
-	SpawnComponent* spawnComp = (SpawnComponent*)bomb->FindComponent("Spawn");
-	if (spawnComp)
-	{
-		spawnComp->spawn = false;
-	}
 }
 
 
@@ -125,35 +120,36 @@ void BombManager::Explosion(std::pair<GameObject*, int> bomb)
 	glm::vec2 pos = tranComp->GetPos();
 
 	std::vector<GameObject*> explosion;
-	explosion.reserve(bomb.second * 4 + 1);
-	for (int i = 0; i < explosion.size(); i++)
-	{
-		explosion[i] = GetExplosion();
 
-		TransformComponent* eTranComp = (TransformComponent*)explosion[i]->FindComponent("Transform");
-		SpriteComponent* eSpriteComp = (SpriteComponent*)explosion[i]->FindComponent("Sprite");
-		if (i == 0)
+	GameObject* ep = GetExplosion();
+	explosion.push_back(ep);
+	TransformComponent* eTranComp = (TransformComponent*)ep->FindComponent("Transform");
+	eTranComp->SetPos(pos);
+
+	for(int i = 0; i < 4; i++)
+	{
+		for (int k = 0; k < bomb.second; k++)
 		{
-			eTranComp->SetPos(pos);
-			eSpriteComp->SetAlpha(255);
+			ep = GetExplosion();
+			explosion.push_back(ep);
+
+			eTranComp = (TransformComponent*)ep->FindComponent("Transform");
+
+			float x = pos.x + (dx[i] * (k + 1) * (eTranComp->GetScale().x));
+			float y = pos.y + (dy[i] * (k + 1) * (eTranComp->GetScale().y));
+
+			eTranComp->SetPos(x, y);
 		}
-		else
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				for (int k = 0; k < bomb.second; k++)
-				{
-					float x = pos.x + (dx[j] * (k + 1) * (eTranComp->GetScale().x / 2.f));
-					float y = pos.y + (dy[j] * (k + 1) * (eTranComp->GetScale().y / 2.f));
-					eTranComp->SetPos(x, y);
-					eSpriteComp->SetAlpha(255);
-				}
-			}
-		}
-		
 	}
 
+	for (int i = 0; i < explosion.size(); i++)
+	{
+		TimerComponent* eTimer = (TimerComponent*)explosion[i]->FindComponent("Timer");
+		eTimer->ActiveTimer();
 
+		SpriteComponent* eSpriteComp = (SpriteComponent*)explosion[i]->FindComponent("Sprite");
+		eSpriteComp->SetAlpha(255);
+	}
 }
 
 int BombManager::GetAliveBomb()
@@ -188,6 +184,21 @@ void BombManager::Update()
 
 				Explosion(bomb);
 			}
+		}
+	}
+
+	for (auto& ep : ExplosionPool)
+	{
+		TimerComponent* tComp = (TimerComponent*)ep->FindComponent("Timer");
+		if (!tComp)
+			return;
+
+		if (tComp->TimeOut())
+		{
+			ep->alive = false;
+			SpriteComponent* sComp = (SpriteComponent*)ep->FindComponent("Sprite");
+			if (sComp)
+				sComp->SetAlpha(0);
 		}
 	}
 }
